@@ -1,0 +1,17 @@
+{
+  "plan_id": "plan_001",
+  "actions": [
+    {
+      "type": "filesystem",
+      "operation": "move",
+      "selector": {
+        "path": "Pathwarden/temp/source/file.txt"
+      },
+      "destination": {
+        "path": "Pathwarden/temp/archive/file.txt"
+      }
+    }
+  ],
+  "risk_level": "high",
+  "requires_confirmation": true
+}

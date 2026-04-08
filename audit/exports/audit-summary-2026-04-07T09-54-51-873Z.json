@@ -1,0 +1,39 @@
+{
+  "generated_at": "2026-04-07T09:54:51.873Z",
+  "total_events": 2,
+  "refused": 2,
+  "allowed": 0,
+  "executed": 0,
+  "failed": 0,
+  "high_risk_or_critical": 2,
+  "events": [
+    {
+      "event_id": "audit_1775555644346_4qi70c",
+      "timestamp": "2026-04-07T09:54:04.345Z",
+      "mode": "core",
+      "decision_code": "REFUSE_CONFIRMATION_REQUIRED",
+      "refusal_code": "PW-CONFIRM-001",
+      "outcome": "refused",
+      "trigger_hits": [
+        "missing_confirmation",
+        "mutation_requested"
+      ],
+      "risk_level": "high",
+      "message": "Commit requires explicit confirmation"
+    },
+    {
+      "event_id": "audit_1775555644347_2eddlu",
+      "timestamp": "2026-04-07T09:54:04.347Z",
+      "mode": "core",
+      "decision_code": "REFUSE_PROTECTED_PATH",
+      "refusal_code": "PW-PATH-001",
+      "outcome": "refused",
+      "trigger_hits": [
+        "protected_path_access",
+        "mutation_requested"
+      ],
+      "risk_level": "critical",
+      "message": "Operation targets a protected path"
+    }
+  ]
+}

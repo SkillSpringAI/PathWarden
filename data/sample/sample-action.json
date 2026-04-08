@@ -1,0 +1,10 @@
+{
+  "type": "filesystem",
+  "operation": "move",
+  "selector": {
+    "path": "C:/temp/file.txt"
+  },
+  "destination": {
+    "path": "C:/archive/"
+  }
+}
