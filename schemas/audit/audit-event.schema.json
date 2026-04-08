@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Pathwarden Audit Event Schema",
+  "type": "object",
+  "required": [
+    "event_id",
+    "timestamp",
+    "mode",
+    "decision_code",
+    "outcome",
+    "trigger_hits"
+  ],
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "minLength": 3
+    },
+    "timestamp": {
+      "type": "string",
+      "minLength": 10
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["core", "connect", "assistant", "locked_down"]
+    },
+    "decision_code": {
+      "type": "string",
+      "minLength": 3
+    },
+    "refusal_code": {
+      "type": "string",
+      "pattern": "^PW-[A-Z]+-[0-9]{3}$"
+    },
+    "outcome": {
+      "type": "string",
+      "enum": ["allowed", "refused", "executed", "failed"]
+    },
+    "trigger_hits": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "plan_id": {
+      "type": "string"
+    },
+    "commit_id": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

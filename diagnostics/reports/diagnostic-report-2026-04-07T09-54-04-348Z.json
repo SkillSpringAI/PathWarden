@@ -1,0 +1,49 @@
+{
+  "run_id": "diag_1775555644348",
+  "timestamp": "2026-04-07T09:54:04.348Z",
+  "overall_status": "pass",
+  "results": [
+    {
+      "id": "DIAG-001",
+      "name": "Folder Structure Check",
+      "severity": "fatal",
+      "status": "pass",
+      "detail": "All required paths are present"
+    },
+    {
+      "id": "DIAG-002",
+      "name": "Policy File Load Check",
+      "severity": "fatal",
+      "status": "pass",
+      "detail": "Policy files loaded successfully"
+    },
+    {
+      "id": "DIAG-003",
+      "name": "Schema File Load Check",
+      "severity": "fatal",
+      "status": "pass",
+      "detail": "Schema files loaded successfully"
+    },
+    {
+      "id": "DIAG-004",
+      "name": "Refusal Construction Check",
+      "severity": "fatal",
+      "status": "pass",
+      "detail": "Canonical refusal creation works"
+    },
+    {
+      "id": "DIAG-005",
+      "name": "Validator Execution Check",
+      "severity": "fatal",
+      "status": "pass",
+      "detail": "Validator returned governed refusal as expected"
+    },
+    {
+      "id": "DIAG-006",
+      "name": "Protected Path Detection Check",
+      "severity": "fatal",
+      "status": "pass",
+      "detail": "Protected path refusal triggered correctly"
+    }
+  ]
+}

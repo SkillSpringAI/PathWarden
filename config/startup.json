@@ -1,0 +1,8 @@
+{
+  "version": "1.0",
+  "run_diagnostics_on_startup": true,
+  "show_pending_task_summary_on_startup": true,
+  "show_high_risk_task_warnings_on_startup": true,
+  "run_due_auto_tasks_on_startup": true,
+  "write_startup_audit_event": true
+}

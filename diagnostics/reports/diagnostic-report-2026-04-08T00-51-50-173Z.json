@@ -1,0 +1,98 @@
+{
+  "run_id": "diag_1775609510173",
+  "timestamp": "2026-04-08T00:51:50.173Z",
+  "overall_status": "pass",
+  "results": [
+    {
+      "id": "DIAG-001",
+      "name": "Folder Structure Check",
+      "severity": "fatal",
+      "status": "pass",
+      "detail": "All required paths are present"
+    },
+    {
+      "id": "DIAG-002",
+      "name": "Policy File Load Check",
+      "severity": "fatal",
+      "status": "pass",
+      "detail": "Policy files loaded successfully"
+    },
+    {
+      "id": "DIAG-003",
+      "name": "Schema File Load Check",
+      "severity": "fatal",
+      "status": "pass",
+      "detail": "Schema files loaded successfully"
+    },
+    {
+      "id": "DIAG-004",
+      "name": "Ajv Compile Check",
+      "severity": "fatal",
+      "status": "pass",
+      "detail": "Schemas compiled successfully"
+    },
+    {
+      "id": "DIAG-005",
+      "name": "Refusal Construction Check",
+      "severity": "fatal",
+      "status": "pass",
+      "detail": "Canonical refusal creation works"
+    },
+    {
+      "id": "DIAG-006",
+      "name": "Validator Refusal Path Check",
+      "severity": "fatal",
+      "status": "pass",
+      "detail": "Validator returned governed refusal as expected"
+    },
+    {
+      "id": "DIAG-007",
+      "name": "Validator Allow Path Check",
+      "severity": "fatal",
+      "status": "pass",
+      "detail": "Validator returned governed allow decision"
+    },
+    {
+      "id": "DIAG-008",
+      "name": "Protected Path Detection Check",
+      "severity": "fatal",
+      "status": "pass",
+      "detail": "Protected path refusal triggered correctly"
+    },
+    {
+      "id": "DIAG-009",
+      "name": "Audit Write Check",
+      "severity": "fatal",
+      "status": "pass",
+      "detail": "Audit write succeeded"
+    },
+    {
+      "id": "DIAG-010",
+      "name": "Journal Write Check",
+      "severity": "fatal",
+      "status": "pass",
+      "detail": "Journal write succeeded"
+    },
+    {
+      "id": "DIAG-011",
+      "name": "Copy Sandbox Check",
+      "severity": "fatal",
+      "status": "pass",
+      "detail": "Copy executed successfully in sandbox"
+    },
+    {
+      "id": "DIAG-012",
+      "name": "Rename Sandbox Check",
+      "severity": "fatal",
+      "status": "pass",
+      "detail": "Rename executed successfully in sandbox"
+    },
+    {
+      "id": "DIAG-013",
+      "name": "Sandbox Cleanup Check",
+      "severity": "warn",
+      "status": "pass",
+      "detail": "Sandbox cleanup completed"
+    }
+  ]
+}

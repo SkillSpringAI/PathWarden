@@ -1,0 +1,35 @@
+{
+  "version": "1.0",
+  "templates": [
+    {
+      "id": "template_run_diagnostics",
+      "name": "Run Diagnostics",
+      "description": "Run a full diagnostic check",
+      "type": "run_diagnostics",
+      "mode": "core",
+      "requires_confirmation": false,
+      "approved": true,
+      "auto_run": true
+    },
+    {
+      "id": "template_export_audit",
+      "name": "Export Audit Report",
+      "description": "Generate a human-readable audit report",
+      "type": "export_audit",
+      "mode": "core",
+      "requires_confirmation": false,
+      "approved": true,
+      "auto_run": true
+    },
+    {
+      "id": "template_validate_plan",
+      "name": "Validate Plan",
+      "description": "Validate a queued or supplied plan",
+      "type": "validate_plan",
+      "mode": "core",
+      "requires_confirmation": false,
+      "approved": true,
+      "auto_run": false
+    }
+  ]
+}

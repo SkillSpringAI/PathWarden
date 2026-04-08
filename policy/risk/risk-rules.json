@@ -1,0 +1,41 @@
+{
+  "version": "1.0",
+  "risk_rules": [
+    {
+      "operation": "list",
+      "risk": "low"
+    },
+    {
+      "operation": "search",
+      "risk": "low"
+    },
+    {
+      "operation": "stat",
+      "risk": "low"
+    },
+    {
+      "operation": "copy",
+      "risk": "medium"
+    },
+    {
+      "operation": "create",
+      "risk": "medium"
+    },
+    {
+      "operation": "rename",
+      "risk": "medium"
+    },
+    {
+      "operation": "move",
+      "risk": "high"
+    },
+    {
+      "operation": "write",
+      "risk": "high"
+    },
+    {
+      "operation": "delete",
+      "risk": "critical"
+    }
+  ]
+}

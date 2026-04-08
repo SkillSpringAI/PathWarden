@@ -1,0 +1,17 @@
+{
+  "version": "1.0",
+  "allow_auto_run_for": [
+    "run_diagnostics",
+    "export_audit",
+    "validate_plan"
+  ],
+  "deny_auto_run_for": [
+    "execute_plan",
+    "custom"
+  ],
+  "startup_reserved_task_types": [
+    "run_diagnostics",
+    "export_audit"
+  ],
+  "high_risk_requires_manual_review": true
+}

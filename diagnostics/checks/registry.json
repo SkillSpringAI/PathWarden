@@ -1,0 +1,83 @@
+{
+  "version": "1.1",
+  "checks": [
+    {
+      "id": "DIAG-001",
+      "name": "Folder Structure Check",
+      "description": "Verify required folders and files exist",
+      "severity": "fatal"
+    },
+    {
+      "id": "DIAG-002",
+      "name": "Policy File Load Check",
+      "description": "Verify policy JSON files parse correctly",
+      "severity": "fatal"
+    },
+    {
+      "id": "DIAG-003",
+      "name": "Schema File Load Check",
+      "description": "Verify schema JSON files parse correctly",
+      "severity": "fatal"
+    },
+    {
+      "id": "DIAG-004",
+      "name": "Ajv Compile Check",
+      "description": "Verify JSON Schemas compile successfully",
+      "severity": "fatal"
+    },
+    {
+      "id": "DIAG-005",
+      "name": "Refusal Construction Check",
+      "description": "Verify canonical refusal creation works",
+      "severity": "fatal"
+    },
+    {
+      "id": "DIAG-006",
+      "name": "Validator Refusal Path Check",
+      "description": "Verify validator refuses risky action without confirmation",
+      "severity": "fatal"
+    },
+    {
+      "id": "DIAG-007",
+      "name": "Validator Allow Path Check",
+      "description": "Verify validator allows valid action with confirmation",
+      "severity": "fatal"
+    },
+    {
+      "id": "DIAG-008",
+      "name": "Protected Path Detection Check",
+      "description": "Verify protected path rules trigger correctly",
+      "severity": "fatal"
+    },
+    {
+      "id": "DIAG-009",
+      "name": "Audit Write Check",
+      "description": "Verify audit events can be written",
+      "severity": "fatal"
+    },
+    {
+      "id": "DIAG-010",
+      "name": "Journal Write Check",
+      "description": "Verify journal entries can be written",
+      "severity": "fatal"
+    },
+    {
+      "id": "DIAG-011",
+      "name": "Copy Sandbox Check",
+      "description": "Verify copy executes safely in sandbox",
+      "severity": "fatal"
+    },
+    {
+      "id": "DIAG-012",
+      "name": "Rename Sandbox Check",
+      "description": "Verify rename executes safely in sandbox",
+      "severity": "fatal"
+    },
+    {
+      "id": "DIAG-013",
+      "name": "Sandbox Cleanup Check",
+      "description": "Verify sandbox cleanup completes after diagnostics",
+      "severity": "warn"
+    }
+  ]
+}

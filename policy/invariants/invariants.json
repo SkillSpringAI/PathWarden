@@ -1,0 +1,47 @@
+{
+  "version": "1.0",
+  "invariants": [
+    {
+      "id": "INV-001",
+      "name": "Mode Restriction",
+      "description": "No action outside active mode scope",
+      "enforced": true
+    },
+    {
+      "id": "INV-002",
+      "name": "Plan Required",
+      "description": "No mutating action without approved plan",
+      "enforced": true
+    },
+    {
+      "id": "INV-003",
+      "name": "Confirmation Required",
+      "description": "No commit without explicit confirmation",
+      "enforced": true
+    },
+    {
+      "id": "INV-004",
+      "name": "Schema Validity",
+      "description": "No execution on schema-invalid input",
+      "enforced": true
+    },
+    {
+      "id": "INV-005",
+      "name": "Protected Paths",
+      "description": "No mutation on protected paths",
+      "enforced": true
+    },
+    {
+      "id": "INV-006",
+      "name": "Audit Required",
+      "description": "Every commit must emit audit event",
+      "enforced": true
+    },
+    {
+      "id": "INV-007",
+      "name": "Journal Required",
+      "description": "Every mutation must emit journal entry",
+      "enforced": true
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "": "http://json-schema.org/draft-07/schema#",
+  "title": "Pathwarden Refusal Schema",
+  "type": "object",
+  "required": [
+    "ok",
+    "decision_code",
+    "refusal_code",
+    "message",
+    "invariant_id",
+    "trigger_hits"
+  ],
+  "properties": {
+    "ok": {
+      "type": "boolean",
+      "const": false
+    },
+    "decision_code": {
+      "type": "string",
+      "minLength": 3
+    },
+    "refusal_code": {
+      "type": "string",
+      "pattern": "^PW-[A-Z]+-[0-9]{3}$"
+    },
+    "message": {
+      "type": "string",
+      "minLength": 5
+    },
+    "invariant_id": {
+      "type": "string",
+      "pattern": "^INV-[0-9]{3}$"
+    },
+    "trigger_hits": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "audit_required": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,29 @@
+{
+  "version": "1.0",
+  "refusals": [
+    {
+      "code": "PW-SCHEMA-001",
+      "message": "Input failed schema validation"
+    },
+    {
+      "code": "PW-MODE-001",
+      "message": "Action not allowed in current mode"
+    },
+    {
+      "code": "PW-PLAN-001",
+      "message": "Mutating action requires approved plan"
+    },
+    {
+      "code": "PW-CONFIRM-001",
+      "message": "Commit requires explicit confirmation"
+    },
+    {
+      "code": "PW-PATH-001",
+      "message": "Operation targets a protected path"
+    },
+    {
+      "code": "PW-AUDIT-001",
+      "message": "Audit requirement not satisfied"
+    }
+  ]
+}
