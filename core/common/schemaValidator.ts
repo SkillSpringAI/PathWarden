@@ -61,7 +61,7 @@ function collectRefs(node: unknown, refs: string[] = []): string[] {
 }
 
 export function getSchemaValidator(relativeSchemaPath: string): ValidateFunction {
-  const absolutePath = resolve(process.cwd(), "Pathwarden", relativeSchemaPath).replace(/\\/g, "/");
+  const absolutePath = resolve(process.cwd(), relativeSchemaPath).replace(/\\/g, "/");
 
   if (validatorCache.has(absolutePath)) {
     return validatorCache.get(absolutePath)!;
@@ -90,3 +90,7 @@ export function formatAjvErrors(errors: ValidateFunction["errors"]): string {
     })
     .join("; ");
 }
+
+
+
+

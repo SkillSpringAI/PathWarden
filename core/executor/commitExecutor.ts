@@ -7,6 +7,7 @@ import { executeCopy } from "../../capabilities/filesystem/fsCopy";
 import { executeRename } from "../../capabilities/filesystem/fsRename";
 import { writeAuditEvent } from "../audit/auditWriter";
 import { writeJournalEntry } from "../journal/journalWriter";
+import { assertPathsAllowed, AccessPolicyDeniedError } from "../../capabilities/filesystem/pathGuards";
 import { makeId } from "../common/ids";
 import { nowIso } from "../common/time";
 import { resolveRisk } from "../kernel/risk";
@@ -94,6 +95,7 @@ function executeSingleAction(
     if (action.operation === "move") {
       const sourcePath = action.selector?.path ?? "";
       const destinationPath = action.destination?.path ?? "";
+      assertPathsAllowed([sourcePath, destinationPath]);
       executeMove(sourcePath, destinationPath);
       return successWithJournalAndAudit("move", "EXECUTE_FILESYSTEM_MOVE", mode, plan, commit, timestamp, riskLevel, sourcePath, destinationPath);
     }
@@ -101,6 +103,7 @@ function executeSingleAction(
     if (action.operation === "copy") {
       const sourcePath = action.selector?.path ?? "";
       const destinationPath = action.destination?.path ?? "";
+      assertPathsAllowed([sourcePath, destinationPath]);
       executeCopy(sourcePath, destinationPath);
       return successWithJournalAndAudit("copy", "EXECUTE_FILESYSTEM_COPY", mode, plan, commit, timestamp, riskLevel, sourcePath, destinationPath);
     }
@@ -108,12 +111,14 @@ function executeSingleAction(
     if (action.operation === "rename") {
       const sourcePath = action.selector?.path ?? "";
       const destinationPath = action.destination?.path ?? "";
+      assertPathsAllowed([sourcePath, destinationPath]);
       executeRename(sourcePath, destinationPath);
       return successWithJournalAndAudit("rename", "EXECUTE_FILESYSTEM_RENAME", mode, plan, commit, timestamp, riskLevel, sourcePath, destinationPath);
     }
 
     if (action.operation === "delete") {
       const targetPath = action.selector?.path ?? "";
+      assertPathsAllowed([targetPath]);
       executeDelete(targetPath);
       return successWithJournalAndAudit("delete", "EXECUTE_FILESYSTEM_DELETE", mode, plan, commit, timestamp, riskLevel, targetPath);
     }
@@ -141,16 +146,23 @@ function executeSingleAction(
       commit_id: commit.commit_id
     };
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
+    const rawMessage = error instanceof Error ? error.message : String(error);
+    const isPolicyDenied = error instanceof AccessPolicyDeniedError;
+    const decisionCode = isPolicyDenied ? "REFUSE_ACCESS_POLICY_DENIED" : "EXECUTE_ACTION_FAILED";
+    const refusalCode = isPolicyDenied ? "PW-POL-001" : "PW-AUDIT-001";
+    const triggerHits = isPolicyDenied ? ["access_policy_denied"] : ["execution_failure"];
+    const message = isPolicyDenied
+      ? `Access policy denied this action. ${rawMessage}`
+      : rawMessage;
 
     writeAuditEvent({
       event_id: makeId("audit"),
       timestamp,
       mode,
-      decision_code: "EXECUTE_ACTION_FAILED",
-      refusal_code: "PW-AUDIT-001",
+      decision_code: decisionCode,
+      refusal_code: refusalCode,
       outcome: "failed",
-      trigger_hits: ["execution_failure"],
+      trigger_hits: triggerHits,
       risk_level: riskLevel,
       message,
       plan_id: plan.plan_id,
@@ -159,8 +171,8 @@ function executeSingleAction(
 
     return {
       ok: false,
-      decision_code: "EXECUTE_ACTION_FAILED",
-      refusal_code: "PW-AUDIT-001",
+      decision_code: decisionCode,
+      refusal_code: refusalCode,
       message,
       plan_id: plan.plan_id,
       commit_id: commit.commit_id
@@ -210,3 +222,6 @@ function successWithJournalAndAudit(
     commit_id: commit.commit_id
   };
 }
+
+
+

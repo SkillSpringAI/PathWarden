@@ -1,6 +1,14 @@
 {
-  "version": "1.0",
-  "allowed_folders": [],
-  "allowed_applications": [],
-  "last_updated": null
+  "version": 1,
+  "defaultMode": "deny",
+  "allowedPaths": [
+    "C:\\Users\\Laptop\\Documents",
+    "C:\\Users\\Laptop\\Downloads"
+  ],
+  "blockedPaths": [
+    "C:\\Windows",
+    "C:\\Program Files",
+    "C:\\Program Files (x86)",
+    "C:\\Users\\Laptop\\AppData"
+  ]
 }
