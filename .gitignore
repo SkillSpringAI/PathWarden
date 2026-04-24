@@ -38,3 +38,6 @@ journal/events/*.jsonl
 tasks/history/*.jsonl
 runtime/locks/*.json
 runtime/state/*.json
+
+# Runtime task drafts
+tasks/drafts/*.json
