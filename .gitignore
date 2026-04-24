@@ -41,3 +41,6 @@ runtime/state/*.json
 
 # Runtime task drafts
 tasks/drafts/*.json
+
+# Runtime task drafts
+tasks/drafts/*.json
