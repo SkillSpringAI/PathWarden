@@ -44,3 +44,6 @@ tasks/drafts/*.json
 
 # Runtime task drafts
 tasks/drafts/*.json
+
+# Runtime queued tasks
+tasks/queue/*.json
