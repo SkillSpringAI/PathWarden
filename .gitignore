@@ -47,3 +47,7 @@ tasks/drafts/*.json
 
 # Runtime queued tasks
 tasks/queue/*.json
+
+# Runtime task history
+# Local temp/test workspace
+tmp/

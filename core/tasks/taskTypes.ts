@@ -1,4 +1,4 @@
-import type { PathwardenMode, PathwardenPlan } from "../kernel/types";
+import type { PathwardenMode, PathwardenPlan, PathwardenCommit } from "../kernel/types";
 
 export type TaskStatus =
   | "pending"
@@ -40,7 +40,7 @@ export interface PathwardenTask {
   auto_run: boolean;
   payload?: {
     plan?: PathwardenPlan;
-    commit?: Record<string, unknown>;
+    commit?: PathwardenCommit;
     notes?: string;
   };
 }
