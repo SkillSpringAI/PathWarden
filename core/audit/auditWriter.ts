@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 import type { AuditEvent } from "./auditTypes";
 
 export function writeAuditEvent(event: AuditEvent): void {
-  const dir = resolve(process.cwd(), "Pathwarden", "audit", "events");
+  const dir = resolve(process.cwd(), "audit", "events");
   if (!existsSync(dir)) {
     mkdirSync(dir, { recursive: true });
   }

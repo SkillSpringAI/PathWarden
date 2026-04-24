@@ -8,7 +8,7 @@ export interface TaskRunState {
 }
 
 function statePath(taskId: string): string {
-  return resolve(process.cwd(), "Pathwarden", "runtime", "recurrence", `${taskId}.json`);
+  return resolve(process.cwd(), "runtime", "recurrence", `${taskId}.json`);
 }
 
 export function loadTaskRunState(taskId: string): TaskRunState {

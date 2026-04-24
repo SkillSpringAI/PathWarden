@@ -12,7 +12,7 @@ export interface GlobalLock {
 const DEFAULT_LOCK_TTL_MS = 5 * 60 * 1000;
 
 function lockPath(lockName: string): string {
-  return resolve(process.cwd(), "Pathwarden", "runtime", "locks", `${lockName}.global.lock.json`);
+  return resolve(process.cwd(), "runtime", "locks", `${lockName}.global.lock.json`);
 }
 
 function ensureLockDir(lockName: string): void {

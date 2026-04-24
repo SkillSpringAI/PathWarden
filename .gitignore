@@ -31,3 +31,10 @@ runtime/locks/
 runtime/state/
 audit/exports/
 *.bak.*
+
+# Runtime event logs
+audit/events/*.jsonl
+journal/events/*.jsonl
+tasks/history/*.jsonl
+runtime/locks/*.json
+runtime/state/*.json

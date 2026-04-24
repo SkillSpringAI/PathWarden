@@ -7,7 +7,7 @@ type StartupState = {
 };
 
 function statePath(): string {
-  return resolve(process.cwd(), "Pathwarden", "runtime", "state", "last-startup-run.json");
+  return resolve(process.cwd(), "runtime", "state", "last-startup-run.json");
 }
 
 export function loadStartupState(): StartupState {

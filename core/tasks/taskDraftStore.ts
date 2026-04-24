@@ -3,11 +3,11 @@ import { resolve } from "node:path";
 import type { TaskDraft } from "./taskDraftTypes";
 
 function draftsDir(): string {
-  return resolve(process.cwd(), "Pathwarden", "tasks", "drafts");
+  return resolve(process.cwd(), "tasks", "drafts");
 }
 
 function reviewedDir(): string {
-  return resolve(process.cwd(), "Pathwarden", "tasks", "drafts", "reviewed");
+  return resolve(process.cwd(), "tasks", "drafts", "reviewed");
 }
 
 function ensureDir(path: string): void {

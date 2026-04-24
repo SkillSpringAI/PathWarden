@@ -10,11 +10,11 @@ function ensureDir(path: string): void {
 }
 
 function queueDir(): string {
-  return resolve(process.cwd(), "Pathwarden", "tasks", "queue");
+  return resolve(process.cwd(), "tasks", "queue");
 }
 
 function historyDir(): string {
-  return resolve(process.cwd(), "Pathwarden", "tasks", "history");
+  return resolve(process.cwd(), "tasks", "history");
 }
 
 export function saveTask(task: PathwardenTask): string {

@@ -6,7 +6,7 @@ import type { TaskLock } from "./taskLockTypes";
 const DEFAULT_LOCK_TTL_MS = 5 * 60 * 1000;
 
 function lockPath(taskId: string): string {
-  return resolve(process.cwd(), "Pathwarden", "runtime", "locks", `${taskId}.lock.json`);
+  return resolve(process.cwd(), "runtime", "locks", `${taskId}.lock.json`);
 }
 
 function ensureLockDir(taskId: string): void {

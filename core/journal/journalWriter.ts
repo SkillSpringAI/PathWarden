@@ -12,7 +12,7 @@ export interface JournalEntry {
 }
 
 export function writeJournalEntry(entry: JournalEntry): void {
-  const dir = resolve(process.cwd(), "Pathwarden", "journal", "events");
+  const dir = resolve(process.cwd(), "journal", "events");
   if (!existsSync(dir)) {
     mkdirSync(dir, { recursive: true });
   }
