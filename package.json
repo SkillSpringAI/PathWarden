@@ -1,20 +1,21 @@
 {
-  "name": "pathwarden",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "check": "tsc -p tsconfig.json --noEmit",
-    "test:path-guards": "tsx scripts/dev/test-path-guards.ts",
-    "test:executor-policy": "tsx scripts/dev/test-executor-policy-denial.ts",
-    "diag": "npm run test:path-guards && npm run test:executor-policy"
-  },
-  "devDependencies": {
-    "@types/node": "^20.11.30",
-    "tsx": "^4.7.1",
-    "typescript": "^5.4.5"
-  },
-  "dependencies": {
-    "ajv": "^8.12.0",
-    "ajv-formats": "^2.1.1"
-  }
+    "name":  "pathwarden",
+    "version":  "0.1.0",
+    "private":  true,
+    "scripts":  {
+                    "check":  "tsc -p tsconfig.json --noEmit",
+                    "test:path-guards":  "tsx scripts/dev/test-path-guards.ts",
+                    "test:executor-policy":  "tsx scripts/dev/test-executor-policy-denial.ts",
+                    "diag":  "npm run test:path-guards \u0026\u0026 npm run test:executor-policy \u0026\u0026 npm run test:capability-grants",
+                    "test:capability-grants":  "tsx scripts/dev/test-capability-grants.ts"
+                },
+    "devDependencies":  {
+                            "@types/node":  "^20.11.30",
+                            "tsx":  "^4.7.1",
+                            "typescript":  "^5.4.5"
+                        },
+    "dependencies":  {
+                         "ajv":  "^8.12.0",
+                         "ajv-formats":  "^2.1.1"
+                     }
 }

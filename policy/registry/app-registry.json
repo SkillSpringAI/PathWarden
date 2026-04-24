@@ -1,0 +1,20 @@
+{
+  "schema_version": "pathwarden.app-registry.v1",
+  "updated_at": "2026-04-24T00:00:00.000Z",
+  "apps": [
+    {
+      "app_id": "pathwarden",
+      "display_name": "PathWarden",
+      "kind": "internal",
+      "status": "enabled",
+      "description": "Internal PathWarden runtime."
+    },
+    {
+      "app_id": "skillspring-quantum",
+      "display_name": "SkillSpring Quantum",
+      "kind": "local_integration",
+      "status": "enabled",
+      "description": "Governed local requester for PathWarden task and capability requests."
+    }
+  ]
+}

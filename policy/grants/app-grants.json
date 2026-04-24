@@ -1,0 +1,44 @@
+{
+  "schema_version": "pathwarden.app-grants.v1",
+  "updated_at": "2026-04-24T00:00:00.000Z",
+  "grants": [
+    {
+      "grant_id": "grant-pathwarden-internal-v1",
+      "app_id": "pathwarden",
+      "status": "enabled",
+      "risk_ceiling": "critical",
+      "requires_approval": false,
+      "audit_required": true,
+      "tool_ids": [
+        "task.createDraft",
+        "task.createExecutePlanTask",
+        "task.readStatus",
+        "audit.readSummary",
+        "diagnostics.readLatest",
+        "filesystem.requestSearch",
+        "filesystem.requestCopy",
+        "filesystem.requestMove",
+        "filesystem.requestRename"
+      ]
+    },
+    {
+      "grant_id": "grant-skillspring-quantum-requester-v1",
+      "app_id": "skillspring-quantum",
+      "status": "enabled",
+      "risk_ceiling": "high",
+      "requires_approval": true,
+      "audit_required": true,
+      "tool_ids": [
+        "task.createDraft",
+        "task.createExecutePlanTask",
+        "task.readStatus",
+        "audit.readSummary",
+        "diagnostics.readLatest",
+        "filesystem.requestSearch",
+        "filesystem.requestCopy",
+        "filesystem.requestMove",
+        "filesystem.requestRename"
+      ]
+    }
+  ]
+}

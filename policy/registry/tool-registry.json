@@ -1,0 +1,87 @@
+{
+  "schema_version": "pathwarden.tool-registry.v1",
+  "updated_at": "2026-04-24T00:00:00.000Z",
+  "tools": [
+    {
+      "tool_id": "task.createDraft",
+      "category": "task",
+      "status": "enabled",
+      "risk_level": "low",
+      "requires_approval": false,
+      "audit_required": true,
+      "description": "Create a draft task for later user review."
+    },
+    {
+      "tool_id": "task.createExecutePlanTask",
+      "category": "task",
+      "status": "enabled",
+      "risk_level": "medium",
+      "requires_approval": true,
+      "audit_required": true,
+      "description": "Create an execute_plan task that must pass PathWarden approval and validation gates."
+    },
+    {
+      "tool_id": "task.readStatus",
+      "category": "task",
+      "status": "enabled",
+      "risk_level": "low",
+      "requires_approval": false,
+      "audit_required": true,
+      "description": "Read task status summaries."
+    },
+    {
+      "tool_id": "audit.readSummary",
+      "category": "audit",
+      "status": "enabled",
+      "risk_level": "low",
+      "requires_approval": false,
+      "audit_required": true,
+      "description": "Read non-sensitive audit summaries."
+    },
+    {
+      "tool_id": "diagnostics.readLatest",
+      "category": "diagnostics",
+      "status": "enabled",
+      "risk_level": "low",
+      "requires_approval": false,
+      "audit_required": true,
+      "description": "Read latest diagnostic summary."
+    },
+    {
+      "tool_id": "filesystem.requestSearch",
+      "category": "filesystem",
+      "status": "enabled",
+      "risk_level": "low",
+      "requires_approval": false,
+      "audit_required": true,
+      "description": "Request a filesystem search through PathWarden policy gates."
+    },
+    {
+      "tool_id": "filesystem.requestCopy",
+      "category": "filesystem",
+      "status": "enabled",
+      "risk_level": "medium",
+      "requires_approval": true,
+      "audit_required": true,
+      "description": "Request a copy action through PathWarden task and approval gates."
+    },
+    {
+      "tool_id": "filesystem.requestMove",
+      "category": "filesystem",
+      "status": "enabled",
+      "risk_level": "high",
+      "requires_approval": true,
+      "audit_required": true,
+      "description": "Request a move action through PathWarden task and approval gates."
+    },
+    {
+      "tool_id": "filesystem.requestRename",
+      "category": "filesystem",
+      "status": "enabled",
+      "risk_level": "medium",
+      "requires_approval": true,
+      "audit_required": true,
+      "description": "Request a rename action through PathWarden task and approval gates."
+    }
+  ]
+}
