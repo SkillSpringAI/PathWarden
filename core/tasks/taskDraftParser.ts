@@ -1,7 +1,70 @@
 import { makeId } from "../common/ids";
 import { nowIso } from "../common/time";
-import type { TaskDraft } from "./taskDraftTypes";
+import type { TaskDraft, DraftDetectedIntent, DraftRiskLevel } from "./taskDraftTypes";
 import type { PathwardenTask, TaskType } from "./taskTypes";
+
+
+function detectDraftIntent(input: string): DraftDetectedIntent {
+  const value = input.toLowerCase();
+
+  if (value.includes("delete") || value.includes("remove")) return "filesystem_delete";
+  if (value.includes("move")) return "filesystem_move";
+  if (value.includes("copy")) return "filesystem_copy";
+  if (value.includes("rename")) return "filesystem_rename";
+  if (value.includes("open")) return "filesystem_open";
+  if (value.includes("search") || value.includes("find")) return "filesystem_search";
+  if (value.includes("remind") || value.includes("check")) return "reminder";
+
+  return "custom";
+}
+
+function resolveDraftRisk(intent: DraftDetectedIntent, input: string): DraftRiskLevel {
+  const value = input.toLowerCase();
+
+  if (
+    intent === "filesystem_delete" ||
+    value.includes("system32") ||
+    value.includes("windows\\") ||
+    value.includes("appdata") ||
+    value.includes("drivers\\etc\\hosts")
+  ) {
+    return "critical";
+  }
+
+  if (
+    intent === "filesystem_move" ||
+    intent === "filesystem_rename" ||
+    intent === "filesystem_copy"
+  ) {
+    return "medium";
+  }
+
+  if (intent === "filesystem_open" || intent === "filesystem_search") {
+    return "low";
+  }
+
+  return "low";
+}
+
+function buildDraftPolicy(input: string) {
+  const detected_intent = detectDraftIntent(input);
+  const risk_level = resolveDraftRisk(detected_intent, input);
+  const isFilesystemIntent = detected_intent.startsWith("filesystem_");
+
+  return {
+    execution_state: "draft_only" as const,
+    requires_approval_before_execution: isFilesystemIntent || risk_level === "critical",
+    policy_status: "not_checked" as const,
+    detected_intent,
+    risk_level,
+    safe_to_autorun: false,
+    notes: [
+      "Draft only. No filesystem action has been executed.",
+      "Policy must be checked again before execution.",
+      "Explicit approval is required before any filesystem operation."
+    ]
+  };
+}
 
 export function parseTaskDraft(rawInput: string): TaskDraft {
   const normalized = rawInput.trim().toLowerCase();
@@ -95,5 +158,6 @@ export function parseTaskDraft(rawInput: string): TaskDraft {
       notes
     },
     suggested_task: suggestedTask
-  };
+  ,
+    draft_policy: buildDraftPolicy(rawInput)};
 }
