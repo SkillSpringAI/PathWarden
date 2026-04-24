@@ -51,3 +51,6 @@ tasks/queue/*.json
 # Runtime task history
 # Local temp/test workspace
 tmp/
+/tasks/history/*.json
+/tasks/queue/*.json
+/tasks/drafts/*.json
