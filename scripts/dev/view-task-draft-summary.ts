@@ -2,24 +2,22 @@ import { listTaskDrafts } from "../../core/tasks/taskDraftStore";
 
 const drafts = listTaskDrafts();
 
-if (drafts.length === 0) {
-  console.log("No task drafts found.");
-  process.exit(0);
-}
+const summary = drafts.map(draft => ({
+  draft_id: draft.draft_id,
+  raw_input: draft.raw_input,
+  created_at: draft.created_at,
+  detected_intent: draft.draft_policy?.detected_intent ?? "unknown",
+  risk_level: draft.draft_policy?.risk_level ?? "unknown",
+  policy_status: draft.draft_policy?.policy_status ?? "unknown",
+  execution_state: draft.draft_policy?.execution_state ?? "unknown",
+  requires_approval_before_execution:
+    draft.draft_policy?.requires_approval_before_execution ?? true,
+  safe_to_autorun: draft.draft_policy?.safe_to_autorun ?? false,
+  task_type: draft.parsed.type,
+  confidence: draft.parsed.confidence,
+  scheduled_for: draft.suggested_task.scheduled_for ?? null,
+  approved: draft.suggested_task.approved,
+  auto_run: draft.suggested_task.auto_run
+}));
 
-console.log("Pathwarden Task Draft Summary");
-console.log("");
-
-for (const draft of drafts) {
-  console.log(`Draft: ${draft.draft_id}`);
-  console.log(`  Raw Input: ${draft.raw_input}`);
-  console.log(`  Suggested Name: ${draft.parsed.name}`);
-  console.log(`  Suggested Type: ${draft.parsed.type}`);
-  console.log(`  Confidence: ${draft.parsed.confidence}`);
-  console.log(`  Requires Confirmation: ${draft.parsed.requires_confirmation ? "Yes" : "No"}`);
-  console.log(`  Approved: ${draft.parsed.approved ? "Yes" : "No"}`);
-  console.log(`  Auto Run: ${draft.parsed.auto_run ? "Yes" : "No"}`);
-  console.log(`  Suggested Schedule: ${draft.parsed.suggested_schedule ?? "N/A"}`);
-  console.log(`  Notes: ${draft.parsed.notes.join(" | ") || "None"}`);
-  console.log("");
-}
+console.log(JSON.stringify(summary, null, 2));
