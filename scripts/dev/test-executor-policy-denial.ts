@@ -1,8 +1,9 @@
 import { executeCommittedPlan } from "../../core/executor/commitExecutor";
 
+import type { PathwardenPlan } from "../../core/kernel/types";
 const mode = "core";
 
-const plan = {
+const plan: PathwardenPlan = {
   plan_id: "plan-test-blocked-delete",
   actions: [
     {
