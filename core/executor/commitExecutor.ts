@@ -13,6 +13,7 @@ import { nowIso } from "../common/time";
 import { resolveRisk } from "../kernel/risk";
 import type { PermissionToken } from "../kernel/permissionToken";
 import { validatePermissionTokenForAction } from "../kernel/permissionTokenValidator";
+import { loadExecutionPolicy } from "../kernel/executionPolicy";
 
 export function executeCommittedPlan(
   mode: PathwardenMode,
@@ -23,6 +24,55 @@ export function executeCommittedPlan(
 ): ExecutionResult {
 
   const executionTraceId = traceId ?? makeId("trace");
+  const executionPolicy = loadExecutionPolicy();
+
+  if (!permissionToken && executionPolicy.mandatory_permission_tokens) {
+    writeAuditEvent({
+      trace_id: executionTraceId,
+      event_id: makeId("audit"),
+      timestamp: nowIso(),
+      mode,
+      decision_code: "REFUSE_PERMISSION_TOKEN_MISSING",
+      refusal_code: "PW-TOKEN-001",
+      outcome: "refused",
+      trigger_hits: ["permission_token_missing", "mandatory_permission_tokens"],
+      message: "Execution policy requires a permission token",
+      plan_id: plan.plan_id
+    });
+
+    return {
+      trace_id: executionTraceId,
+      ok: false,
+      decision_code: "REFUSE_PERMISSION_TOKEN_MISSING",
+      refusal_code: "PW-TOKEN-001",
+      message: "Execution policy requires a permission token",
+      plan_id: plan.plan_id
+    };
+  }
+
+  if (!permissionToken && !executionPolicy.allow_legacy_execution) {
+    writeAuditEvent({
+      trace_id: executionTraceId,
+      event_id: makeId("audit"),
+      timestamp: nowIso(),
+      mode,
+      decision_code: "REFUSE_LEGACY_EXECUTION_DISABLED",
+      refusal_code: "PW-TOKEN-001",
+      outcome: "refused",
+      trigger_hits: ["legacy_execution_disabled"],
+      message: "Execution policy disables legacy execution without a permission token",
+      plan_id: plan.plan_id
+    });
+
+    return {
+      trace_id: executionTraceId,
+      ok: false,
+      decision_code: "REFUSE_LEGACY_EXECUTION_DISABLED",
+      refusal_code: "PW-TOKEN-001",
+      message: "Execution policy disables legacy execution without a permission token",
+      plan_id: plan.plan_id
+    };
+  }
 
   const commitCheck = validateCommit(commitInput);
 
@@ -364,5 +414,6 @@ function successWithJournalAndAudit(
     commit_id: commit.commit_id
   };
 }
+
 
 
