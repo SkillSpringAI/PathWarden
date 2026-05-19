@@ -13,6 +13,7 @@ export function auditTaskEvent(
   const eventId = makeId("audit");
 
   writeAuditEvent({
+    trace_id: task.trace_id,
     event_id: eventId,
     timestamp: nowIso(),
     mode: task.mode,
@@ -20,7 +21,9 @@ export function auditTaskEvent(
     refusal_code: refusalCode,
     outcome,
     trigger_hits: ["task_event"],
-    message
+    message,
+    plan_id: task.payload?.plan?.plan_id,
+    commit_id: task.payload?.commit?.commit_id
   });
 
   return eventId;

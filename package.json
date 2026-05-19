@@ -6,11 +6,12 @@
                     "check":  "tsc -p tsconfig.json --noEmit",
                     "test:path-guards":  "tsx scripts/dev/test-path-guards.ts",
                     "test:executor-policy":  "tsx scripts/dev/test-executor-policy-denial.ts",
-                    "diag":  "npm run test:path-guards \u0026\u0026 npm run test:executor-policy \u0026\u0026 npm run test:capability-grants \u0026\u0026 npm run test:safe-execution-approval \u0026\u0026 npm run test:kernel-hardening \u0026\u0026 npm run test:decision-trace",
+                    "diag":  "npm run test:path-guards \u0026\u0026 npm run test:executor-policy \u0026\u0026 npm run test:capability-grants \u0026\u0026 npm run test:safe-execution-approval \u0026\u0026 npm run test:kernel-hardening \u0026\u0026 npm run test:decision-trace \u0026\u0026 npm run test:task-trace-propagation",
                     "test:capability-grants":  "tsx scripts/dev/test-capability-grants.ts",
                     "test:safe-execution-approval":  "tsx scripts/dev/test-safe-execution-approval-flow.ts",
                     "test:kernel-hardening":  "tsx scripts/dev/test-kernel-hardening.ts",
-                    "test:decision-trace":  "tsx scripts/dev/test-decision-trace.ts"
+                    "test:decision-trace":  "tsx scripts/dev/test-decision-trace.ts",
+                    "test:task-trace-propagation":  "tsx scripts/dev/test-task-trace-propagation.ts"
                 },
     "devDependencies":  {
                             "@types/node":  "^20.11.30",

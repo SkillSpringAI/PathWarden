@@ -15,11 +15,17 @@ import { resolveRisk } from "../kernel/risk";
 export function executeCommittedPlan(
   mode: PathwardenMode,
   plan: PathwardenPlan,
-  commitInput: unknown
+  commitInput: unknown,
+  traceId?: string
 ): ExecutionResult {
+
+  const executionTraceId = traceId ?? makeId("trace");
+
   const commitCheck = validateCommit(commitInput);
+
   if (!commitCheck.ok) {
     writeAuditEvent({
+      trace_id: executionTraceId,
       event_id: makeId("audit"),
       timestamp: nowIso(),
       mode,
@@ -32,6 +38,7 @@ export function executeCommittedPlan(
     });
 
     return {
+      trace_id: executionTraceId,
       ok: false,
       decision_code: commitCheck.refusal.decision_code,
       refusal_code: commitCheck.refusal.refusal_code,
@@ -44,6 +51,7 @@ export function executeCommittedPlan(
 
   if (commit.plan_id !== plan.plan_id) {
     writeAuditEvent({
+      trace_id: executionTraceId,
       event_id: makeId("audit"),
       timestamp: nowIso(),
       mode,
@@ -57,6 +65,7 @@ export function executeCommittedPlan(
     });
 
     return {
+      trace_id: executionTraceId,
       ok: false,
       decision_code: "REFUSE_PLAN_COMMIT_MISMATCH",
       refusal_code: "PW-PLAN-001",
@@ -67,13 +76,21 @@ export function executeCommittedPlan(
   }
 
   for (const action of plan.actions) {
-    const result = executeSingleAction(mode, plan, commit, action);
+    const result = executeSingleAction(
+      mode,
+      plan,
+      commit,
+      action,
+      executionTraceId
+    );
+
     if (!result.ok) {
       return result;
     }
   }
 
   return {
+    trace_id: executionTraceId,
     ok: true,
     decision_code: "EXECUTE_PLAN_SUCCESS",
     message: "Committed plan executed successfully",
@@ -86,44 +103,103 @@ function executeSingleAction(
   mode: PathwardenMode,
   plan: PathwardenPlan,
   commit: PathwardenCommit,
-  action: PathwardenAction
+  action: PathwardenAction,
+  traceId: string
 ): ExecutionResult {
+
   const timestamp = nowIso();
   const riskLevel = resolveRisk(action);
 
   try {
+
     if (action.operation === "move") {
       const sourcePath = action.selector?.path ?? "";
       const destinationPath = action.destination?.path ?? "";
+
       assertPathsAllowed([sourcePath, destinationPath]);
+
       executeMove(sourcePath, destinationPath);
-      return successWithJournalAndAudit("move", "EXECUTE_FILESYSTEM_MOVE", mode, plan, commit, timestamp, riskLevel, sourcePath, destinationPath);
+
+      return successWithJournalAndAudit(
+        "move",
+        "EXECUTE_FILESYSTEM_MOVE",
+        mode,
+        plan,
+        commit,
+        timestamp,
+        riskLevel,
+        traceId,
+        sourcePath,
+        destinationPath
+      );
     }
 
     if (action.operation === "copy") {
       const sourcePath = action.selector?.path ?? "";
       const destinationPath = action.destination?.path ?? "";
+
       assertPathsAllowed([sourcePath, destinationPath]);
+
       executeCopy(sourcePath, destinationPath);
-      return successWithJournalAndAudit("copy", "EXECUTE_FILESYSTEM_COPY", mode, plan, commit, timestamp, riskLevel, sourcePath, destinationPath);
+
+      return successWithJournalAndAudit(
+        "copy",
+        "EXECUTE_FILESYSTEM_COPY",
+        mode,
+        plan,
+        commit,
+        timestamp,
+        riskLevel,
+        traceId,
+        sourcePath,
+        destinationPath
+      );
     }
 
     if (action.operation === "rename") {
       const sourcePath = action.selector?.path ?? "";
       const destinationPath = action.destination?.path ?? "";
+
       assertPathsAllowed([sourcePath, destinationPath]);
+
       executeRename(sourcePath, destinationPath);
-      return successWithJournalAndAudit("rename", "EXECUTE_FILESYSTEM_RENAME", mode, plan, commit, timestamp, riskLevel, sourcePath, destinationPath);
+
+      return successWithJournalAndAudit(
+        "rename",
+        "EXECUTE_FILESYSTEM_RENAME",
+        mode,
+        plan,
+        commit,
+        timestamp,
+        riskLevel,
+        traceId,
+        sourcePath,
+        destinationPath
+      );
     }
 
     if (action.operation === "delete") {
       const targetPath = action.selector?.path ?? "";
+
       assertPathsAllowed([targetPath]);
+
       executeDelete(targetPath);
-      return successWithJournalAndAudit("delete", "EXECUTE_FILESYSTEM_DELETE", mode, plan, commit, timestamp, riskLevel, targetPath);
+
+      return successWithJournalAndAudit(
+        "delete",
+        "EXECUTE_FILESYSTEM_DELETE",
+        mode,
+        plan,
+        commit,
+        timestamp,
+        riskLevel,
+        traceId,
+        targetPath
+      );
     }
 
     writeAuditEvent({
+      trace_id: traceId,
       event_id: makeId("audit"),
       timestamp,
       mode,
@@ -138,6 +214,7 @@ function executeSingleAction(
     });
 
     return {
+      trace_id: traceId,
       ok: false,
       decision_code: "REFUSE_UNIMPLEMENTED_ACTION",
       refusal_code: "PW-MODE-001",
@@ -145,17 +222,35 @@ function executeSingleAction(
       plan_id: plan.plan_id,
       commit_id: commit.commit_id
     };
-  } catch (error) {
+  }
+  catch (error) {
+
     const rawMessage = error instanceof Error ? error.message : String(error);
+
     const isPolicyDenied = error instanceof AccessPolicyDeniedError;
-    const decisionCode = isPolicyDenied ? "REFUSE_ACCESS_POLICY_DENIED" : "EXECUTE_ACTION_FAILED";
-    const refusalCode = isPolicyDenied ? "PW-POL-001" : "PW-AUDIT-001";
-    const triggerHits = isPolicyDenied ? ["access_policy_denied"] : ["execution_failure"];
-    const message = isPolicyDenied
-      ? `Access policy denied this action. ${rawMessage}`
-      : rawMessage;
+
+    const decisionCode =
+      isPolicyDenied
+        ? "REFUSE_ACCESS_POLICY_DENIED"
+        : "EXECUTE_ACTION_FAILED";
+
+    const refusalCode =
+      isPolicyDenied
+        ? "PW-POL-001"
+        : "PW-AUDIT-001";
+
+    const triggerHits =
+      isPolicyDenied
+        ? ["access_policy_denied"]
+        : ["execution_failure"];
+
+    const message =
+      isPolicyDenied
+        ? `Access policy denied this action. ${rawMessage}`
+        : rawMessage;
 
     writeAuditEvent({
+      trace_id: traceId,
       event_id: makeId("audit"),
       timestamp,
       mode,
@@ -170,6 +265,7 @@ function executeSingleAction(
     });
 
     return {
+      trace_id: traceId,
       ok: false,
       decision_code: decisionCode,
       refusal_code: refusalCode,
@@ -188,9 +284,11 @@ function successWithJournalAndAudit(
   commit: PathwardenCommit,
   timestamp: string,
   riskLevel: ReturnType<typeof resolveRisk>,
+  traceId: string,
   targetPath?: string,
   destinationPath?: string
 ): ExecutionResult {
+
   writeJournalEntry({
     entry_id: makeId("journal"),
     timestamp,
@@ -202,6 +300,7 @@ function successWithJournalAndAudit(
   });
 
   writeAuditEvent({
+    trace_id: traceId,
     event_id: makeId("audit"),
     timestamp,
     mode,
@@ -215,6 +314,7 @@ function successWithJournalAndAudit(
   });
 
   return {
+    trace_id: traceId,
     ok: true,
     decision_code: decisionCode,
     message: `${operation} executed successfully`,
@@ -222,6 +322,3 @@ function successWithJournalAndAudit(
     commit_id: commit.commit_id
   };
 }
-
-
-
