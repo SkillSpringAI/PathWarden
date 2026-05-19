@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "pathwarden.execution-policy.v1",
+  "title": "PathWarden Execution Policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "mandatory_permission_tokens",
+    "mandatory_audit",
+    "allow_legacy_execution"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "execution-policy.v1"
+    },
+    "mandatory_permission_tokens": {
+      "type": "boolean"
+    },
+    "mandatory_audit": {
+      "type": "boolean"
+    },
+    "allow_legacy_execution": {
+      "type": "boolean"
+    }
+  }
+}

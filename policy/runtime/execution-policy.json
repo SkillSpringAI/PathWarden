@@ -1,0 +1,6 @@
+{
+  "schema_version": "execution-policy.v1",
+  "mandatory_permission_tokens": false,
+  "mandatory_audit": true,
+  "allow_legacy_execution": true
+}
