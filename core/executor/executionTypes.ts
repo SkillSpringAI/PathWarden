@@ -1,4 +1,5 @@
 export interface ExecutionSuccess {
+  trace_id?: string;
   ok: true;
   decision_code: string;
   message: string;
@@ -7,6 +8,7 @@ export interface ExecutionSuccess {
 }
 
 export interface ExecutionFailure {
+  trace_id?: string;
   ok: false;
   decision_code: string;
   refusal_code: string;
@@ -16,3 +18,4 @@ export interface ExecutionFailure {
 }
 
 export type ExecutionResult = ExecutionSuccess | ExecutionFailure;
+

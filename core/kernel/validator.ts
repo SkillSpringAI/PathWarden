@@ -19,6 +19,7 @@ export function validateAction(
   confirmed = false
 ): ValidationResult {
   const timestamp = nowIso();
+  const traceId = makeId("trace");
 
   const schemaOk = actionSchemaValidator(action);
   if (!schemaOk) {
@@ -31,6 +32,7 @@ export function validateAction(
     );
 
     writeAuditEvent({
+      trace_id: traceId,
       event_id: makeId("audit"),
       timestamp,
       mode,
@@ -41,7 +43,7 @@ export function validateAction(
       message: refusal.message
     });
 
-    return refusal;
+    return { ...refusal, trace_id: traceId };
   }
 
   const typedAction = action as PathwardenAction;
@@ -57,6 +59,7 @@ export function validateAction(
     );
 
     writeAuditEvent({
+      trace_id: traceId,
       event_id: makeId("audit"),
       timestamp,
       mode,
@@ -67,7 +70,7 @@ export function validateAction(
       message: refusal.message
     });
 
-    return refusal;
+    return { ...refusal, trace_id: traceId };
   }
 
   const confirmationNeeded = requiresConfirmation(typedAction);
@@ -81,6 +84,7 @@ export function validateAction(
     );
 
     writeAuditEvent({
+      trace_id: traceId,
       event_id: makeId("audit"),
       timestamp,
       mode,
@@ -92,7 +96,7 @@ export function validateAction(
       message: refusal.message
     });
 
-    return refusal;
+    return { ...refusal, trace_id: traceId };
   }
 
   if (triggerHits.includes("protected_path_access")) {
@@ -105,6 +109,7 @@ export function validateAction(
     );
 
     writeAuditEvent({
+      trace_id: traceId,
       event_id: makeId("audit"),
       timestamp,
       mode,
@@ -116,7 +121,7 @@ export function validateAction(
       message: refusal.message
     });
 
-    return refusal;
+    return { ...refusal, trace_id: traceId };
   }
 
   const risk = resolveRisk(typedAction);
@@ -129,6 +134,7 @@ export function validateAction(
   );
 
   writeAuditEvent({
+    trace_id: traceId,
     event_id: makeId("audit"),
     timestamp,
     mode,
@@ -139,8 +145,5 @@ export function validateAction(
     message: "Action validated successfully"
   });
 
-  return decision;
+  return { ...decision, trace_id: traceId };
 }
-
-
-

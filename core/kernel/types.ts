@@ -30,6 +30,7 @@ export interface PathwardenCommit {
 }
 
 export interface ValidationSuccess {
+  trace_id?: string;
   ok: true;
   mode: PathwardenMode;
   decision_code: string;
@@ -40,6 +41,7 @@ export interface ValidationSuccess {
 }
 
 export interface ValidationRefusal {
+  trace_id?: string;
   ok: false;
   decision_code: string;
   refusal_code: string;
@@ -50,3 +52,4 @@ export interface ValidationRefusal {
 }
 
 export type ValidationResult = ValidationSuccess | ValidationRefusal;
+

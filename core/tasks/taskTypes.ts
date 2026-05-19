@@ -26,6 +26,7 @@ export interface TaskSchedule {
 }
 
 export interface PathwardenTask {
+  trace_id?: string;
   task_id: string;
   name: string;
   description?: string;
@@ -46,9 +47,11 @@ export interface PathwardenTask {
 }
 
 export interface TaskResult {
+  trace_id?: string;
   task_id: string;
   status: Exclude<TaskStatus, "pending" | "scheduled" | "approved" | "running">;
   timestamp: string;
   message: string;
   audit_refs?: string[];
 }
+

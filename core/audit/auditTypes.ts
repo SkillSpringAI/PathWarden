@@ -3,6 +3,7 @@ export type AuditMode = "core" | "connect" | "assistant" | "locked_down";
 export type AuditRisk = "low" | "medium" | "high" | "critical";
 
 export interface AuditEvent {
+  trace_id?: string;
   event_id: string;
   timestamp: string;
   mode: AuditMode;
@@ -15,3 +16,4 @@ export interface AuditEvent {
   plan_id?: string;
   commit_id?: string;
 }
+
