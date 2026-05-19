@@ -11,12 +11,15 @@ import { assertPathsAllowed, AccessPolicyDeniedError } from "../../capabilities/
 import { makeId } from "../common/ids";
 import { nowIso } from "../common/time";
 import { resolveRisk } from "../kernel/risk";
+import type { PermissionToken } from "../kernel/permissionToken";
+import { validatePermissionTokenForAction } from "../kernel/permissionTokenValidator";
 
 export function executeCommittedPlan(
   mode: PathwardenMode,
   plan: PathwardenPlan,
   commitInput: unknown,
-  traceId?: string
+  traceId?: string,
+  permissionToken?: PermissionToken
 ): ExecutionResult {
 
   const executionTraceId = traceId ?? makeId("trace");
@@ -81,7 +84,8 @@ export function executeCommittedPlan(
       plan,
       commit,
       action,
-      executionTraceId
+      executionTraceId,
+      permissionToken
     );
 
     if (!result.ok) {
@@ -104,11 +108,49 @@ function executeSingleAction(
   plan: PathwardenPlan,
   commit: PathwardenCommit,
   action: PathwardenAction,
-  traceId: string
+  traceId: string,
+  permissionToken?: PermissionToken
 ): ExecutionResult {
 
   const timestamp = nowIso();
   const riskLevel = resolveRisk(action);
+
+  if (permissionToken) {
+
+    const tokenCheck = validatePermissionTokenForAction(
+      permissionToken,
+      action,
+      traceId
+    );
+
+    if (!tokenCheck.ok) {
+
+      writeAuditEvent({
+        trace_id: traceId,
+        event_id: makeId("audit"),
+        timestamp,
+        mode,
+        decision_code: tokenCheck.decision_code,
+        refusal_code: tokenCheck.refusal_code,
+        outcome: "refused",
+        trigger_hits: tokenCheck.trigger_hits,
+        risk_level: riskLevel,
+        message: tokenCheck.message,
+        plan_id: plan.plan_id,
+        commit_id: commit.commit_id
+      });
+
+      return {
+        trace_id: traceId,
+        ok: false,
+        decision_code: tokenCheck.decision_code,
+        refusal_code: tokenCheck.refusal_code,
+        message: tokenCheck.message,
+        plan_id: plan.plan_id,
+        commit_id: commit.commit_id
+      };
+    }
+  }
 
   try {
 
@@ -322,3 +364,5 @@ function successWithJournalAndAudit(
     commit_id: commit.commit_id
   };
 }
+
+
