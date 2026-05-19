@@ -1,5 +1,7 @@
-﻿import { loadConfigFile } from "../common/configLoader";
+import { loadConfigFile } from "../common/configLoader";
 import type { RiskLevel } from "./types";
+import type { PermissionToken } from "./permissionToken";
+import { mintPermissionToken } from "./permissionTokenBuilder";
 
 type RegistryStatus = "enabled" | "disabled";
 
@@ -75,6 +77,7 @@ export type CapabilityGrantDecision =
       requires_approval: boolean;
       audit_required: boolean;
       grant_id: string;
+      permission_token: PermissionToken;
     }
   | {
       ok: false;
@@ -214,14 +217,36 @@ export function validateCapabilityGrant(request: CapabilityGrantRequest): Capabi
     );
   }
 
+  const requiresApproval =
+    tool.requires_approval || grant.requires_approval;
+
+  const auditRequired =
+    tool.audit_required || grant.audit_required;
+
+  const permissionToken = mintPermissionToken({
+    trace_id: `trace_capability_${Date.now()}`,
+    app_id: request.app_id,
+    tool_id: request.tool_id,
+    granted_operations: [request.tool_id],
+    risk_ceiling: effectiveRisk,
+    requires_approval: requiresApproval,
+    audit_required: auditRequired,
+    issuer: "pathwarden-kernel",
+    expires_at: "2030-01-01T00:00:00.000Z"
+  });
+
   return {
     ok: true,
     decision_code: "ALLOW_CAPABILITY_GRANT",
     app_id: request.app_id,
     tool_id: request.tool_id,
     risk_level: effectiveRisk,
-    requires_approval: tool.requires_approval || grant.requires_approval,
-    audit_required: tool.audit_required || grant.audit_required,
-    grant_id: grant.grant_id
+    requires_approval: requiresApproval,
+    audit_required: auditRequired,
+    grant_id: grant.grant_id,
+    permission_token: permissionToken
   };
 }
+
+
+
