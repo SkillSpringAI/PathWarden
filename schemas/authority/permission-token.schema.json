@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "pathwarden.permission-token.v1",
+  "title": "PathWarden Permission Token",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "token_id",
+    "trace_id",
+    "app_id",
+    "tool_id",
+    "granted_operations",
+    "risk_ceiling",
+    "requires_approval",
+    "audit_required",
+    "issuer",
+    "issued_at",
+    "expires_at",
+    "signature_stub"
+  ],
+  "properties": {
+    "schema_version": { "const": "permission-token.v1" },
+    "token_id": { "type": "string", "minLength": 1 },
+    "trace_id": { "type": "string", "minLength": 1 },
+    "app_id": { "type": "string", "minLength": 1 },
+    "tool_id": { "type": "string", "minLength": 1 },
+    "granted_operations": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "risk_ceiling": {
+      "type": "string",
+      "enum": ["low", "medium", "high", "critical"]
+    },
+    "requires_approval": { "type": "boolean" },
+    "audit_required": { "type": "boolean" },
+    "issuer": { "type": "string", "minLength": 1 },
+    "issued_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": "string", "format": "date-time" },
+    "signature_stub": { "type": "string", "minLength": 1 }
+  }
+}
