@@ -8,6 +8,8 @@ import { getSchemaValidator, formatAjvErrors } from "../common/schemaValidator";
 import { writeAuditEvent } from "../audit/auditWriter";
 import { makeId } from "../common/ids";
 import { nowIso } from "../common/time";
+import { INVARIANTS } from "./invariants";
+import { REFUSAL_CODES } from "./refusalCodes";
 
 const actionSchemaValidator = getSchemaValidator("schemas/action/action.schema.json");
 
@@ -22,9 +24,9 @@ export function validateAction(
   if (!schemaOk) {
     const refusal = buildRefusal(
       "REFUSE_SCHEMA_INVALID",
-      "PW-SCHEMA-001",
+      REFUSAL_CODES.SCHEMA_INVALID,
       formatAjvErrors(actionSchemaValidator.errors),
-      "INV-004",
+      INVARIANTS.SCHEMA_VALIDATION,
       ["schema_invalid"]
     );
 
@@ -48,9 +50,9 @@ export function validateAction(
   if (!isActionAllowedInMode(mode, typedAction)) {
     const refusal = buildRefusal(
       "REFUSE_MODE_RESTRICTION",
-      "PW-MODE-001",
+      REFUSAL_CODES.MODE_RESTRICTION,
       "Action not allowed in current mode",
-      "INV-001",
+      INVARIANTS.MODE_RESTRICTION,
       triggerHits
     );
 
@@ -72,9 +74,9 @@ export function validateAction(
   if (confirmationNeeded && !confirmed) {
     const refusal = buildRefusal(
       "REFUSE_CONFIRMATION_REQUIRED",
-      "PW-CONFIRM-001",
+      REFUSAL_CODES.CONFIRMATION_REQUIRED,
       "Commit requires explicit confirmation",
-      "INV-003",
+      INVARIANTS.CONFIRMATION_REQUIRED,
       triggerHits
     );
 
@@ -96,9 +98,9 @@ export function validateAction(
   if (triggerHits.includes("protected_path_access")) {
     const refusal = buildRefusal(
       "REFUSE_PROTECTED_PATH",
-      "PW-PATH-001",
+      REFUSAL_CODES.PROTECTED_PATH,
       "Operation targets a protected path",
-      "INV-005",
+      INVARIANTS.PROTECTED_PATH,
       triggerHits
     );
 
@@ -139,3 +141,6 @@ export function validateAction(
 
   return decision;
 }
+
+
+
