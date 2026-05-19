@@ -2,6 +2,8 @@ import { loadConfigFile } from "../common/configLoader";
 import type { RiskLevel } from "./types";
 import type { PermissionToken } from "./permissionToken";
 import { mintPermissionToken } from "./permissionTokenBuilder";
+import type { DecisionLegitimacyArtifact } from "./legitimacyArtifact";
+import { buildDecisionLegitimacyArtifact } from "./legitimacyArtifactBuilder";
 
 type RegistryStatus = "enabled" | "disabled";
 
@@ -78,6 +80,7 @@ export type CapabilityGrantDecision =
       audit_required: boolean;
       grant_id: string;
       permission_token: PermissionToken;
+      legitimacy_artifact: DecisionLegitimacyArtifact;
     }
   | {
       ok: false;
@@ -223,8 +226,10 @@ export function validateCapabilityGrant(request: CapabilityGrantRequest): Capabi
   const auditRequired =
     tool.audit_required || grant.audit_required;
 
+  const traceId = `trace_capability_${Date.now()}`;
+
   const permissionToken = mintPermissionToken({
-    trace_id: `trace_capability_${Date.now()}`,
+    trace_id: traceId,
     app_id: request.app_id,
     tool_id: request.tool_id,
     granted_operations: [request.tool_id],
@@ -233,6 +238,24 @@ export function validateCapabilityGrant(request: CapabilityGrantRequest): Capabi
     audit_required: auditRequired,
     issuer: "pathwarden-kernel",
     expires_at: "2030-01-01T00:00:00.000Z"
+  });
+
+  const legitimacyArtifact = buildDecisionLegitimacyArtifact({
+    trace_id: traceId,
+    mode: "core",
+    decision_code: "ALLOW_CAPABILITY_GRANT",
+    invariant_checks: ["INV-006"],
+    trigger_hits: ["capability_grant_checked"],
+    approval_state: requiresApproval ? "required_pending" : "not_required",
+    authority_chain: [
+      "pathwarden-kernel",
+      grant.grant_id,
+      permissionToken.token_id,
+      "capability-grant-validator"
+    ],
+    capability_source: permissionToken.token_id,
+    risk_level: effectiveRisk,
+    audit_required: auditRequired
   });
 
   return {
@@ -244,9 +267,11 @@ export function validateCapabilityGrant(request: CapabilityGrantRequest): Capabi
     requires_approval: requiresApproval,
     audit_required: auditRequired,
     grant_id: grant.grant_id,
-    permission_token: permissionToken
+    permission_token: permissionToken,
+    legitimacy_artifact: legitimacyArtifact
   };
 }
+
 
 
 
