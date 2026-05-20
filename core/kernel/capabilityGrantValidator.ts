@@ -6,6 +6,7 @@ import type { DecisionLegitimacyArtifact } from "./legitimacyArtifact";
 import { buildDecisionLegitimacyArtifact } from "./legitimacyArtifactBuilder";
 import { writeAuthorityArtifact } from "../audit/authorityWriter";
 import { nowIso } from "../common/time";
+import { auditTriggerRegistryDrift } from "./triggerDriftAuditor";
 
 type RegistryStatus = "enabled" | "disabled";
 
@@ -262,6 +263,13 @@ export function validateCapabilityGrant(request: CapabilityGrantRequest): Capabi
 
   const authorityTimestamp = nowIso();
 
+  auditTriggerRegistryDrift(
+    traceId,
+    authorityTimestamp,
+    "core",
+    ["capability_grant_checked"]
+  );
+
   try {
     writeAuthorityArtifact({
       record_type: "permission_token",
@@ -295,6 +303,7 @@ export function validateCapabilityGrant(request: CapabilityGrantRequest): Capabi
     legitimacy_artifact: legitimacyArtifact
   };
 }
+
 
 
 
