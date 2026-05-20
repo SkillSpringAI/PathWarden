@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "pathwarden.trigger-registry.v1",
+  "title": "PathWarden Trigger Registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "triggers"],
+  "properties": {
+    "schema_version": { "const": "trigger-registry.v1" },
+    "triggers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["trigger_id", "name", "severity", "plane", "enabled", "description"],
+        "properties": {
+          "trigger_id": { "type": "string", "minLength": 1 },
+          "name": { "type": "string", "minLength": 1 },
+          "severity": { "type": "string", "enum": ["info", "warn", "block", "fatal"] },
+          "plane": { "type": "string", "enum": ["kernel", "policy", "execution", "audit", "authority"] },
+          "enabled": { "type": "boolean" },
+          "description": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}
