@@ -14,6 +14,16 @@ import { resolveRisk } from "../kernel/risk";
 import type { PermissionToken } from "../kernel/permissionToken";
 import { validatePermissionTokenForAction } from "../kernel/permissionTokenValidator";
 import { loadExecutionPolicy } from "../kernel/executionPolicy";
+import { auditTriggerRegistryDrift } from "../kernel/triggerDriftAuditor";
+
+function auditDrift(
+  traceId: string,
+  timestamp: string,
+  mode: PathwardenMode,
+  triggerHits: string[]
+): void {
+  auditTriggerRegistryDrift(traceId, timestamp, mode, triggerHits);
+}
 
 export function executeCommittedPlan(
   mode: PathwardenMode,
@@ -27,15 +37,20 @@ export function executeCommittedPlan(
   const executionPolicy = loadExecutionPolicy();
 
   if (!permissionToken && executionPolicy.mandatory_permission_tokens) {
+    const timestamp = nowIso();
+    const triggerHits = ["permission_token_missing", "mandatory_permission_tokens"];
+
+    auditDrift(executionTraceId, timestamp, mode, triggerHits);
+
     writeAuditEvent({
       trace_id: executionTraceId,
       event_id: makeId("audit"),
-      timestamp: nowIso(),
+      timestamp,
       mode,
       decision_code: "REFUSE_PERMISSION_TOKEN_MISSING",
       refusal_code: "PW-TOKEN-001",
       outcome: "refused",
-      trigger_hits: ["permission_token_missing", "mandatory_permission_tokens"],
+      trigger_hits: triggerHits,
       message: "Execution policy requires a permission token",
       plan_id: plan.plan_id
     });
@@ -51,15 +66,20 @@ export function executeCommittedPlan(
   }
 
   if (!permissionToken && !executionPolicy.allow_legacy_execution) {
+    const timestamp = nowIso();
+    const triggerHits = ["legacy_execution_disabled"];
+
+    auditDrift(executionTraceId, timestamp, mode, triggerHits);
+
     writeAuditEvent({
       trace_id: executionTraceId,
       event_id: makeId("audit"),
-      timestamp: nowIso(),
+      timestamp,
       mode,
       decision_code: "REFUSE_LEGACY_EXECUTION_DISABLED",
       refusal_code: "PW-TOKEN-001",
       outcome: "refused",
-      trigger_hits: ["legacy_execution_disabled"],
+      trigger_hits: triggerHits,
       message: "Execution policy disables legacy execution without a permission token",
       plan_id: plan.plan_id
     });
@@ -77,10 +97,14 @@ export function executeCommittedPlan(
   const commitCheck = validateCommit(commitInput);
 
   if (!commitCheck.ok) {
+    const timestamp = nowIso();
+
+    auditDrift(executionTraceId, timestamp, mode, commitCheck.refusal.trigger_hits);
+
     writeAuditEvent({
       trace_id: executionTraceId,
       event_id: makeId("audit"),
-      timestamp: nowIso(),
+      timestamp,
       mode,
       decision_code: commitCheck.refusal.decision_code,
       refusal_code: commitCheck.refusal.refusal_code,
@@ -103,15 +127,20 @@ export function executeCommittedPlan(
   const commit = commitCheck.commit;
 
   if (commit.plan_id !== plan.plan_id) {
+    const timestamp = nowIso();
+    const triggerHits = ["plan_commit_mismatch"];
+
+    auditDrift(executionTraceId, timestamp, mode, triggerHits);
+
     writeAuditEvent({
       trace_id: executionTraceId,
       event_id: makeId("audit"),
-      timestamp: nowIso(),
+      timestamp,
       mode,
       decision_code: "REFUSE_PLAN_COMMIT_MISMATCH",
       refusal_code: "PW-PLAN-001",
       outcome: "refused",
-      trigger_hits: ["plan_commit_mismatch"],
+      trigger_hits: triggerHits,
       message: "Commit plan_id does not match plan",
       plan_id: plan.plan_id,
       commit_id: commit.commit_id
@@ -174,6 +203,8 @@ function executeSingleAction(
     );
 
     if (!tokenCheck.ok) {
+
+      auditDrift(traceId, timestamp, mode, tokenCheck.trigger_hits);
 
       writeAuditEvent({
         trace_id: traceId,
@@ -290,6 +321,10 @@ function executeSingleAction(
       );
     }
 
+    const triggerHits = ["unimplemented_action"];
+
+    auditDrift(traceId, timestamp, mode, triggerHits);
+
     writeAuditEvent({
       trace_id: traceId,
       event_id: makeId("audit"),
@@ -298,7 +333,7 @@ function executeSingleAction(
       decision_code: "REFUSE_UNIMPLEMENTED_ACTION",
       refusal_code: "PW-MODE-001",
       outcome: "refused",
-      trigger_hits: ["unimplemented_action"],
+      trigger_hits: triggerHits,
       risk_level: riskLevel,
       message: `Operation not implemented in phase 1: ${action.operation}`,
       plan_id: plan.plan_id,
@@ -340,6 +375,8 @@ function executeSingleAction(
       isPolicyDenied
         ? `Access policy denied this action. ${rawMessage}`
         : rawMessage;
+
+    auditDrift(traceId, timestamp, mode, triggerHits);
 
     writeAuditEvent({
       trace_id: traceId,
@@ -391,6 +428,10 @@ function successWithJournalAndAudit(
     commit_id: commit.commit_id
   });
 
+  const triggerHits = ["mutation_requested"];
+
+  auditDrift(traceId, timestamp, mode, triggerHits);
+
   writeAuditEvent({
     trace_id: traceId,
     event_id: makeId("audit"),
@@ -398,7 +439,7 @@ function successWithJournalAndAudit(
     mode,
     decision_code: decisionCode,
     outcome: "executed",
-    trigger_hits: ["mutation_requested"],
+    trigger_hits: triggerHits,
     risk_level: riskLevel,
     message: `${operation} executed successfully`,
     plan_id: plan.plan_id,
@@ -414,6 +455,3 @@ function successWithJournalAndAudit(
     commit_id: commit.commit_id
   };
 }
-
-
-
