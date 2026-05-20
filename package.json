@@ -6,7 +6,7 @@
                     "check":  "tsc -p tsconfig.json --noEmit",
                     "test:path-guards":  "tsx scripts/dev/test-path-guards.ts",
                     "test:executor-policy":  "tsx scripts/dev/test-executor-policy-denial.ts",
-                    "diag":  "npm run test:path-guards \u0026\u0026 npm run test:executor-policy \u0026\u0026 npm run test:capability-grants \u0026\u0026 npm run test:safe-execution-approval \u0026\u0026 npm run test:kernel-hardening \u0026\u0026 npm run test:decision-trace \u0026\u0026 npm run test:task-trace-propagation \u0026\u0026 npm run test:audit-trace-persistence \u0026\u0026 npm run test:permission-token \u0026\u0026 npm run test:legitimacy-artifact \u0026\u0026 npm run test:authority-chain \u0026\u0026 npm run test:permission-token-issuance \u0026\u0026 npm run test:capability-legitimacy-artifact \u0026\u0026 npm run test:permission-token-validator \u0026\u0026 npm run test:permission-token-execution \u0026\u0026 npm run test:execution-policy \u0026\u0026 npm run test:execution-policy-enforcement \u0026\u0026 npm run test:authority-persistence \u0026\u0026 npm run test:capability-authority-persistence \u0026\u0026 npm run test:authority-replay",
+                    "diag":  "npm run test:path-guards \u0026\u0026 npm run test:executor-policy \u0026\u0026 npm run test:capability-grants \u0026\u0026 npm run test:safe-execution-approval \u0026\u0026 npm run test:kernel-hardening \u0026\u0026 npm run test:decision-trace \u0026\u0026 npm run test:task-trace-propagation \u0026\u0026 npm run test:audit-trace-persistence \u0026\u0026 npm run test:permission-token \u0026\u0026 npm run test:legitimacy-artifact \u0026\u0026 npm run test:authority-chain \u0026\u0026 npm run test:permission-token-issuance \u0026\u0026 npm run test:capability-legitimacy-artifact \u0026\u0026 npm run test:permission-token-validator \u0026\u0026 npm run test:permission-token-execution \u0026\u0026 npm run test:execution-policy \u0026\u0026 npm run test:execution-policy-enforcement \u0026\u0026 npm run test:authority-persistence \u0026\u0026 npm run test:capability-authority-persistence \u0026\u0026 npm run test:authority-replay \u0026\u0026 npm run test:execution-replay",
                     "test:capability-grants":  "tsx scripts/dev/test-capability-grants.ts",
                     "test:safe-execution-approval":  "tsx scripts/dev/test-safe-execution-approval-flow.ts",
                     "test:kernel-hardening":  "tsx scripts/dev/test-kernel-hardening.ts",
@@ -24,7 +24,8 @@
                     "test:execution-policy-enforcement":  "tsx scripts/dev/test-execution-policy-enforcement.ts",
                     "test:authority-persistence":  "tsx scripts/dev/test-authority-persistence.ts",
                     "test:capability-authority-persistence":  "tsx scripts/dev/test-capability-authority-persistence.ts",
-                    "test:authority-replay":  "tsx scripts/dev/test-authority-replay.ts"
+                    "test:authority-replay":  "tsx scripts/dev/test-authority-replay.ts",
+                    "test:execution-replay":  "tsx scripts/dev/test-execution-replay.ts"
                 },
     "devDependencies":  {
                             "@types/node":  "^20.11.30",
