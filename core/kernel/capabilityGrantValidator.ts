@@ -4,6 +4,8 @@ import type { PermissionToken } from "./permissionToken";
 import { mintPermissionToken } from "./permissionTokenBuilder";
 import type { DecisionLegitimacyArtifact } from "./legitimacyArtifact";
 import { buildDecisionLegitimacyArtifact } from "./legitimacyArtifactBuilder";
+import { writeAuthorityArtifact } from "../audit/authorityWriter";
+import { nowIso } from "../common/time";
 
 type RegistryStatus = "enabled" | "disabled";
 
@@ -258,6 +260,28 @@ export function validateCapabilityGrant(request: CapabilityGrantRequest): Capabi
     audit_required: auditRequired
   });
 
+  const authorityTimestamp = nowIso();
+
+  try {
+    writeAuthorityArtifact({
+      record_type: "permission_token",
+      trace_id: traceId,
+      timestamp: authorityTimestamp,
+      token: permissionToken
+    });
+
+    writeAuthorityArtifact({
+      record_type: "legitimacy_artifact",
+      trace_id: traceId,
+      timestamp: authorityTimestamp,
+      artifact: legitimacyArtifact
+    });
+  }
+  catch {
+    // v1: authority persistence failures are non-fatal.
+    // Future policy may promote this to fail-closed behaviour.
+  }
+
   return {
     ok: true,
     decision_code: "ALLOW_CAPABILITY_GRANT",
@@ -271,6 +295,7 @@ export function validateCapabilityGrant(request: CapabilityGrantRequest): Capabi
     legitimacy_artifact: legitimacyArtifact
   };
 }
+
 
 
 

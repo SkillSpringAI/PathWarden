@@ -54,3 +54,5 @@ tmp/
 /tasks/history/*.json
 /tasks/queue/*.json
 /tasks/drafts/*.json
+
+audit/
