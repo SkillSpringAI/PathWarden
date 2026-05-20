@@ -14,14 +14,14 @@ diagnostics/reports/
 journal/events/
 runtime/locks/
 runtime/state/
-audit/exports/
+/audit/exports/
 
 **/node_modules/
 diagnostics/reports/
 journal/events/
 runtime/locks/
 runtime/state/
-audit/exports/
+/audit/exports/
 *.bak.*
 
 **/node_modules/
@@ -29,11 +29,11 @@ diagnostics/reports/
 journal/events/
 runtime/locks/
 runtime/state/
-audit/exports/
+/audit/exports/
 *.bak.*
 
 # Runtime event logs
-audit/events/*.jsonl
+/audit/events/*.jsonl
 journal/events/*.jsonl
 tasks/history/*.jsonl
 runtime/locks/*.json
@@ -55,4 +55,5 @@ tmp/
 /tasks/queue/*.json
 /tasks/drafts/*.json
 
-audit/
+/audit/
+
