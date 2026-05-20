@@ -1,61 +1,69 @@
 {
-  "schema_version": "trigger-registry.v1",
-  "triggers": [
-    {
-      "trigger_id": "schema_invalid",
-      "name": "Schema Invalid",
-      "severity": "block",
-      "plane": "kernel",
-      "enabled": true,
-      "description": "Input failed schema validation."
-    },
-    {
-      "trigger_id": "protected_path_access",
-      "name": "Protected Path Access",
-      "severity": "block",
-      "plane": "policy",
-      "enabled": true,
-      "description": "Action attempted to access a protected filesystem path."
-    },
-    {
-      "trigger_id": "permission_token_missing",
-      "name": "Permission Token Missing",
-      "severity": "block",
-      "plane": "authority",
-      "enabled": true,
-      "description": "Execution required a permission token but none was supplied."
-    },
-    {
-      "trigger_id": "permission_token_scope_denied",
-      "name": "Permission Token Scope Denied",
-      "severity": "block",
-      "plane": "authority",
-      "enabled": true,
-      "description": "Permission token did not grant the requested operation."
-    },
-    {
-      "trigger_id": "execution_failure",
-      "name": "Execution Failure",
-      "severity": "warn",
-      "plane": "execution",
-      "enabled": true,
-      "description": "An execution path failed unexpectedly."
-    },
-    {
-      "trigger_id": "mutation_requested",
-      "name": "Mutation Requested",
-      "severity": "info",
-      "plane": "execution",
-      "enabled": true,
-      "description": "A filesystem mutation was requested or executed."
-    },
-    {
-      "trigger_id": "capability_grant_checked",
-      "name": "Capability Grant Checked",
-      "severity": "info",
-      "plane": "authority",
-      "enabled": true,
-      "description": "Capability grant validation was performed."
-    }
-  ]
+    "schema_version":  "trigger-registry.v1",
+    "triggers":  [
+                     {
+                         "trigger_id":  "schema_invalid",
+                         "name":  "Schema Invalid",
+                         "severity":  "block",
+                         "plane":  "kernel",
+                         "enabled":  true,
+                         "description":  "Input failed schema validation."
+                     },
+                     {
+                         "trigger_id":  "protected_path_access",
+                         "name":  "Protected Path Access",
+                         "severity":  "block",
+                         "plane":  "policy",
+                         "enabled":  true,
+                         "description":  "Action attempted to access a protected filesystem path."
+                     },
+                     {
+                         "trigger_id":  "permission_token_missing",
+                         "name":  "Permission Token Missing",
+                         "severity":  "block",
+                         "plane":  "authority",
+                         "enabled":  true,
+                         "description":  "Execution required a permission token but none was supplied."
+                     },
+                     {
+                         "trigger_id":  "permission_token_scope_denied",
+                         "name":  "Permission Token Scope Denied",
+                         "severity":  "block",
+                         "plane":  "authority",
+                         "enabled":  true,
+                         "description":  "Permission token did not grant the requested operation."
+                     },
+                     {
+                         "trigger_id":  "execution_failure",
+                         "name":  "Execution Failure",
+                         "severity":  "warn",
+                         "plane":  "execution",
+                         "enabled":  true,
+                         "description":  "An execution path failed unexpectedly."
+                     },
+                     {
+                         "trigger_id":  "mutation_requested",
+                         "name":  "Mutation Requested",
+                         "severity":  "info",
+                         "plane":  "execution",
+                         "enabled":  true,
+                         "description":  "A filesystem mutation was requested or executed."
+                     },
+                     {
+                         "trigger_id":  "capability_grant_checked",
+                         "name":  "Capability Grant Checked",
+                         "severity":  "info",
+                         "plane":  "authority",
+                         "enabled":  true,
+                         "description":  "Capability grant validation was performed."
+                     },
+                     {
+                         "trigger_id":  "trigger_registry_drift",
+                         "name":  "Trigger Registry Drift",
+                         "severity":  "warn",
+                         "plane":  "audit",
+                         "enabled":  true,
+                         "description":  "Runtime emitted a trigger hit that is unknown or disabled in the trigger registry."
+                     }
+                 ]
 }

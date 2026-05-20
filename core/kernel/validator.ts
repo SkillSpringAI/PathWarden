@@ -10,8 +10,37 @@ import { makeId } from "../common/ids";
 import { nowIso } from "../common/time";
 import { INVARIANTS } from "./invariants";
 import { REFUSAL_CODES } from "./refusalCodes";
+import { validateTriggerHits } from "./triggerHitValidator";
 
 const actionSchemaValidator = getSchemaValidator("schemas/action/action.schema.json");
+
+function auditTriggerDrift(
+  traceId: string,
+  timestamp: string,
+  mode: PathwardenMode,
+  triggerHits: string[]
+): void {
+  const validation = validateTriggerHits(triggerHits);
+
+  if (validation.ok) {
+    return;
+  }
+
+  writeAuditEvent({
+    trace_id: traceId,
+    event_id: makeId("audit"),
+    timestamp,
+    mode,
+    decision_code: "WARN_TRIGGER_REGISTRY_DRIFT",
+    outcome: "allowed",
+    trigger_hits: [
+      "trigger_registry_drift",
+      ...validation.unknown_triggers,
+      ...validation.disabled_triggers
+    ],
+    message: `Trigger registry drift detected. Unknown: ${validation.unknown_triggers.join(", ") || "none"}. Disabled: ${validation.disabled_triggers.join(", ") || "none"}.`
+  });
+}
 
 export function validateAction(
   mode: PathwardenMode,
@@ -31,6 +60,8 @@ export function validateAction(
       ["schema_invalid"]
     );
 
+    auditTriggerDrift(traceId, timestamp, mode, refusal.trigger_hits);
+
     writeAuditEvent({
       trace_id: traceId,
       event_id: makeId("audit"),
@@ -48,6 +79,8 @@ export function validateAction(
 
   const typedAction = action as PathwardenAction;
   const triggerHits = detectTriggers(mode, typedAction, confirmed);
+
+  auditTriggerDrift(traceId, timestamp, mode, triggerHits);
 
   if (!isActionAllowedInMode(mode, typedAction)) {
     const refusal = buildRefusal(
