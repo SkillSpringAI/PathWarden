@@ -1,6 +1,7 @@
 import type { PathwardenAction, RiskLevel } from "./types";
 import type { PermissionToken } from "./permissionToken";
 import { resolveRisk } from "./risk";
+import { isPermissionTokenRevoked } from "./permissionTokenRevocation";
 
 export type PermissionTokenValidationDecision =
   | {
@@ -15,7 +16,8 @@ export type PermissionTokenValidationDecision =
         | "REFUSE_PERMISSION_TOKEN_SCOPE"
         | "REFUSE_PERMISSION_TOKEN_RISK"
         | "REFUSE_PERMISSION_TOKEN_TRACE"
-        | "REFUSE_PERMISSION_TOKEN_AUDIT";
+        | "REFUSE_PERMISSION_TOKEN_AUDIT"
+        | "REFUSE_PERMISSION_TOKEN_REVOKED";
       refusal_code: "PW-TOKEN-001";
       message: string;
       trigger_hits: string[];
@@ -80,6 +82,14 @@ export function validatePermissionTokenForAction(
     );
   }
 
+  if (isPermissionTokenRevoked(token.token_id)) {
+    return deny(
+      "REFUSE_PERMISSION_TOKEN_REVOKED",
+      "Permission token has been revoked",
+      ["permission_token_revoked"]
+    );
+  }
+
   const expiresAt = Date.parse(token.expires_at);
   if (!Number.isFinite(expiresAt) || expiresAt <= Date.now()) {
     return deny(
@@ -122,3 +132,4 @@ export function validatePermissionTokenForAction(
     decision_code: "ALLOW_PERMISSION_TOKEN"
   };
 }
+

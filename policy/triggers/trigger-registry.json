@@ -64,6 +64,14 @@
                          "plane":  "audit",
                          "enabled":  true,
                          "description":  "Runtime emitted a trigger hit that is unknown or disabled in the trigger registry."
+                     },
+                     {
+                         "trigger_id":  "permission_token_revoked",
+                         "name":  "Permission Token Revoked",
+                         "severity":  "block",
+                         "plane":  "authority",
+                         "enabled":  true,
+                         "description":  "Permission token was found in the revocation list."
                      }
                  ]
 }
