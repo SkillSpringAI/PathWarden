@@ -3,12 +3,14 @@ import { resolve } from "node:path";
 import type { AuditEvent } from "./auditTypes";
 import { readAuthorityRecordsByTraceId } from "./authorityReader";
 import type { AuthorityReplayResult } from "./authorityReader";
+import { loadPermissionTokenRevocations } from "../kernel/permissionTokenRevocation";
 
 export interface ExecutionReplayResult {
   trace_id: string;
   authority: AuthorityReplayResult;
   audit_events: AuditEvent[];
   reconstructed_chain: string[];
+  revoked_token_ids: string[];
 }
 
 function auditEventsDir(): string {
@@ -45,11 +47,27 @@ function readAuditEventsByTraceId(traceId: string): AuditEvent[] {
   return events;
 }
 
+function findRevokedTokenIds(authority: AuthorityReplayResult): string[] {
+  const revocations = loadPermissionTokenRevocations();
+  const revokedIds = new Set(
+    revocations.revoked_tokens.map((entry) => entry.token_id)
+  );
+
+  return authority.permission_token_records
+    .map((record) => record.token.token_id)
+    .filter((tokenId) => revokedIds.has(tokenId));
+}
+
 function buildReconstructedChain(
   authority: AuthorityReplayResult,
-  auditEvents: AuditEvent[]
+  auditEvents: AuditEvent[],
+  revokedTokenIds: string[]
 ): string[] {
   const chain: string[] = [];
+
+  for (const tokenId of revokedTokenIds) {
+    chain.push(`revoked_permission_token:${tokenId}`);
+  }
 
   for (const tokenRecord of authority.permission_token_records) {
     chain.push(`permission_token:${tokenRecord.token.token_id}`);
@@ -93,7 +111,9 @@ export function replayExecutionByTraceId(traceId: string): ExecutionReplayResult
     trace_id: traceId,
     authority,
     audit_events: auditEvents,
-    reconstructed_chain: buildReconstructedChain(authority, auditEvents)
+    reconstructed_chain: buildReconstructedChain(authority, auditEvents, findRevokedTokenIds(authority)),
+    revoked_token_ids: findRevokedTokenIds(authority)
   };
 }
+
 
