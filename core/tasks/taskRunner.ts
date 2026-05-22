@@ -212,6 +212,7 @@ export function runTask(task: PathwardenTask): TaskResult {
 
       const plan = task.payload?.plan;
       const commit = task.payload?.commit;
+      const permissionToken = task.payload?.permission_token;
 
       if (!plan || !commit) {
 
@@ -243,7 +244,8 @@ export function runTask(task: PathwardenTask): TaskResult {
         task.mode,
         plan,
         commit,
-        traceId
+        traceId,
+        permissionToken
       );
 
       const auditRef = auditTaskEvent(
@@ -330,4 +332,5 @@ export function runTask(task: PathwardenTask): TaskResult {
     releaseTaskLock(task.task_id);
   }
 }
+
 

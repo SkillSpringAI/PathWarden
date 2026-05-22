@@ -1,4 +1,5 @@
 import type { PathwardenMode, PathwardenPlan, PathwardenCommit } from "../kernel/types";
+import type { PermissionToken } from "../kernel/permissionToken";
 
 export type TaskStatus =
   | "pending"
@@ -42,6 +43,7 @@ export interface PathwardenTask {
   payload?: {
     plan?: PathwardenPlan;
     commit?: PathwardenCommit;
+    permission_token?: PermissionToken;
     notes?: string;
   };
 }
@@ -54,4 +56,5 @@ export interface TaskResult {
   message: string;
   audit_refs?: string[];
 }
+
 
