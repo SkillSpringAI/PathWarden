@@ -15,5 +15,9 @@ export interface AuditEvent {
   message?: string;
   plan_id?: string;
   commit_id?: string;
+  permission_token_id?: string;
+  legitimacy_artifact_id?: string;
+  authority_chain?: string[];
 }
+
 

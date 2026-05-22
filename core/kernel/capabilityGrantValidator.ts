@@ -7,6 +7,8 @@ import { buildDecisionLegitimacyArtifact } from "./legitimacyArtifactBuilder";
 import { writeAuthorityArtifact } from "../audit/authorityWriter";
 import { nowIso } from "../common/time";
 import { auditTriggerRegistryDrift } from "./triggerDriftAuditor";
+import { writeAuditEvent } from "../audit/auditWriter";
+import { makeId } from "../common/ids";
 
 type RegistryStatus = "enabled" | "disabled";
 
@@ -270,6 +272,20 @@ export function validateCapabilityGrant(request: CapabilityGrantRequest): Capabi
     ["capability_grant_checked"]
   );
 
+  writeAuditEvent({
+    trace_id: traceId,
+    event_id: makeId("audit"),
+    timestamp: authorityTimestamp,
+    mode: "core",
+    decision_code: "ALLOW_CAPABILITY_GRANT",
+    outcome: "allowed",
+    trigger_hits: ["capability_grant_checked"],
+    message: "Capability grant validated and authority artifacts issued",
+    permission_token_id: permissionToken.token_id,
+    legitimacy_artifact_id: legitimacyArtifact.artifact_id,
+    authority_chain: legitimacyArtifact.authority_chain
+  });
+
   try {
     writeAuthorityArtifact({
       record_type: "permission_token",
@@ -303,6 +319,7 @@ export function validateCapabilityGrant(request: CapabilityGrantRequest): Capabi
     legitimacy_artifact: legitimacyArtifact
   };
 }
+
 
 
 

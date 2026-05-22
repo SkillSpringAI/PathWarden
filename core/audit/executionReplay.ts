@@ -64,7 +64,22 @@ function buildReconstructedChain(
   }
 
   for (const event of auditEvents) {
+
     chain.push(`audit_event:${event.decision_code}`);
+
+    if (event.permission_token_id) {
+      chain.push(`audit_permission_token:${event.permission_token_id}`);
+    }
+
+    if (event.legitimacy_artifact_id) {
+      chain.push(`audit_legitimacy_artifact:${event.legitimacy_artifact_id}`);
+    }
+
+    if (event.authority_chain) {
+      for (const authorityStep of event.authority_chain) {
+        chain.push(`audit_authority_step:${authorityStep}`);
+      }
+    }
   }
 
   return chain;
@@ -81,3 +96,4 @@ export function replayExecutionByTraceId(traceId: string): ExecutionReplayResult
     reconstructed_chain: buildReconstructedChain(authority, auditEvents)
   };
 }
+
