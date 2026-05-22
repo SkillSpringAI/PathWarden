@@ -23,8 +23,17 @@ export function auditTaskEvent(
     trigger_hits: ["task_event"],
     message,
     plan_id: task.payload?.plan?.plan_id,
-    commit_id: task.payload?.commit?.commit_id
+    commit_id: task.payload?.commit?.commit_id,
+    permission_token_id: task.payload?.permission_token?.token_id,
+    authority_chain: task.payload?.permission_token
+      ? [
+          "task",
+          task.task_id,
+          task.payload.permission_token.token_id
+        ]
+      : undefined
   });
 
   return eventId;
 }
+
