@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "pathwarden.permission-token-revocations.v1",
+  "title": "PathWarden Permission Token Revocation List",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "revoked_tokens"],
+  "properties": {
+    "schema_version": { "const": "permission-token-revocations.v1" },
+    "revoked_tokens": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["token_id", "revoked_at", "reason"],
+        "properties": {
+          "token_id": { "type": "string", "minLength": 1 },
+          "revoked_at": { "type": "string", "format": "date-time" },
+          "reason": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}
