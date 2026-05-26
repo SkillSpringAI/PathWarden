@@ -2,6 +2,36 @@ import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { verify } from "node:crypto";
 import { sha256 } from "../common/hash";
+import {
+  getSchemaValidator,
+  formatAjvErrors
+} from "../common/schemaValidator";
+
+interface TraceManifestSignatureEnvelope {
+  schema_version: "trace-manifest-signature.v1";
+  trace_id: string;
+  signed_at: string;
+  signer: string;
+  signer_public_key_fingerprint: string;
+  signer_public_key_fingerprint_algorithm: "sha256";
+  signature_algorithm: "ed25519";
+  manifest_path: string;
+  signature_base64: string;
+}
+
+interface GovernanceTrustSigner {
+  signer_id: string;
+  public_key_fingerprint: string;
+  fingerprint_algorithm: "sha256";
+  signature_algorithm: "ed25519";
+  status: "trusted" | "revoked" | "suspended";
+}
+
+interface GovernanceTrustManifest {
+  schema_version: "governance-trust-manifest.v1";
+  generated_at: string;
+  trusted_signers: GovernanceTrustSigner[];
+}
 
 export interface GovernanceSignatureVerificationResult {
   ok: boolean;
@@ -11,7 +41,16 @@ export interface GovernanceSignatureVerificationResult {
   signature_algorithm?: string;
   signer_public_key_fingerprint?: string;
   reason?: string;
+  validation_error?: string;
 }
+
+const signatureEnvelopeValidator = getSchemaValidator(
+  "schemas/trust/trace-manifest-signature.schema.json"
+);
+
+const trustManifestValidator = getSchemaValidator(
+  "schemas/trust/governance-trust-manifest.schema.json"
+);
 
 export function verifyGovernanceManifestSignature(
   traceId: string
@@ -65,9 +104,33 @@ export function verifyGovernanceManifestSignature(
   const publicKey = readFileSync(publicKeyPath, "utf8");
   const trustManifest = JSON.parse(readFileSync(trustManifestPath, "utf8"));
 
+  if (!signatureEnvelopeValidator(signatureEnvelope)) {
+    return {
+      ok: false,
+      trace_id: traceId,
+      reason: "invalid_signature_envelope_schema",
+      validation_error: formatAjvErrors(signatureEnvelopeValidator.errors)
+    };
+  }
+
+  if (!trustManifestValidator(trustManifest)) {
+    return {
+      ok: false,
+      trace_id: traceId,
+      reason: "invalid_trust_manifest_schema",
+      validation_error: formatAjvErrors(trustManifestValidator.errors)
+    };
+  }
+
+  const validatedSignatureEnvelope =
+    signatureEnvelope as TraceManifestSignatureEnvelope;
+
+  const validatedTrustManifest =
+    trustManifest as GovernanceTrustManifest;
+
   const publicKeyFingerprint = sha256(publicKey);
 
-  if (signatureEnvelope.signature_algorithm !== "ed25519") {
+  if (validatedSignatureEnvelope.signature_algorithm !== "ed25519") {
     return {
       ok: false,
       trace_id: traceId,
@@ -76,28 +139,28 @@ export function verifyGovernanceManifestSignature(
   }
 
   if (
-    signatureEnvelope.signer_public_key_fingerprint_algorithm !== "sha256" ||
-    signatureEnvelope.signer_public_key_fingerprint !== publicKeyFingerprint
+    validatedSignatureEnvelope.signer_public_key_fingerprint_algorithm !== "sha256" ||
+    validatedSignatureEnvelope.signer_public_key_fingerprint !== publicKeyFingerprint
   ) {
     return {
       ok: false,
       trace_id: traceId,
       reason: "signer_public_key_fingerprint_mismatch",
-      signer: signatureEnvelope.signer,
+      signer: validatedSignatureEnvelope.signer,
       signer_public_key_fingerprint: publicKeyFingerprint
     };
   }
 
-  const trustedSigner = trustManifest.trusted_signers?.find(
+  const trustedSigner = validatedTrustManifest.trusted_signers.find(
     (signer: {
-      signer_id?: string;
-      public_key_fingerprint?: string;
-      fingerprint_algorithm?: string;
-      signature_algorithm?: string;
-      status?: string;
+      signer_id: string;
+      public_key_fingerprint: string;
+      fingerprint_algorithm: string;
+      signature_algorithm: string;
+      status: string;
     }) =>
-      signer.signer_id === signatureEnvelope.signer &&
-      signer.public_key_fingerprint === signatureEnvelope.signer_public_key_fingerprint &&
+      signer.signer_id === validatedSignatureEnvelope.signer &&
+      signer.public_key_fingerprint === validatedSignatureEnvelope.signer_public_key_fingerprint &&
       signer.fingerprint_algorithm === "sha256" &&
       signer.signature_algorithm === "ed25519" &&
       signer.status === "trusted"
@@ -108,9 +171,9 @@ export function verifyGovernanceManifestSignature(
       ok: false,
       trace_id: traceId,
       reason: "signer_not_trusted",
-      signer: signatureEnvelope.signer,
+      signer: validatedSignatureEnvelope.signer,
       signer_public_key_fingerprint:
-        signatureEnvelope.signer_public_key_fingerprint
+        validatedSignatureEnvelope.signer_public_key_fingerprint
     };
   }
 
@@ -118,7 +181,7 @@ export function verifyGovernanceManifestSignature(
     null,
     Buffer.from(manifestContent, "utf8"),
     publicKey,
-    Buffer.from(signatureEnvelope.signature_base64, "base64")
+    Buffer.from(validatedSignatureEnvelope.signature_base64, "base64")
   );
 
   if (!verified) {
@@ -126,7 +189,7 @@ export function verifyGovernanceManifestSignature(
       ok: false,
       trace_id: traceId,
       reason: "signature_invalid",
-      signer: signatureEnvelope.signer,
+      signer: validatedSignatureEnvelope.signer,
       signer_public_key_fingerprint: publicKeyFingerprint
     };
   }
@@ -134,7 +197,7 @@ export function verifyGovernanceManifestSignature(
   return {
     ok: true,
     trace_id: traceId,
-    signer: signatureEnvelope.signer,
+    signer: validatedSignatureEnvelope.signer,
     trust_status: trustedSigner.status,
     signature_algorithm: "ed25519",
     signer_public_key_fingerprint: publicKeyFingerprint

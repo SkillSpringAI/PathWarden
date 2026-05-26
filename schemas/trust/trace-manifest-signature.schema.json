@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "pathwarden.trace-manifest-signature.v1",
+  "title": "PathWarden Trace Manifest Signature Envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "trace_id",
+    "signed_at",
+    "signer",
+    "signer_public_key_fingerprint",
+    "signer_public_key_fingerprint_algorithm",
+    "signature_algorithm",
+    "manifest_path",
+    "signature_base64"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "trace-manifest-signature.v1"
+    },
+    "trace_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "signed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "signer": {
+      "type": "string",
+      "minLength": 1
+    },
+    "signer_public_key_fingerprint": {
+      "type": "string",
+      "minLength": 64,
+      "maxLength": 64
+    },
+    "signer_public_key_fingerprint_algorithm": {
+      "type": "string",
+      "enum": ["sha256"]
+    },
+    "signature_algorithm": {
+      "type": "string",
+      "enum": ["ed25519"]
+    },
+    "manifest_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "signature_base64": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}
