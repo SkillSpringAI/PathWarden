@@ -57,7 +57,9 @@
                     "test:trace-manifest-signature-tamper":  "tsx scripts/dev/test-trace-manifest-signature-tamper.ts",
                     "test:trace-manifest-fingerprint-mismatch":  "tsx scripts/dev/test-trace-manifest-fingerprint-mismatch.ts",
                     "test:governance-trust-rejection":  "tsx scripts/dev/test-governance-trust-rejection.ts",
-                    "test:governance-trust-statuses":  "tsx scripts/dev/test-governance-trust-statuses.ts"
+                    "test:governance-trust-statuses":  "tsx scripts/dev/test-governance-trust-statuses.ts",
+                    "test:governance-trust-schema-rejection":  "tsx scripts/dev/test-governance-trust-schema-rejection.ts",
+                    "test:trace-signature-envelope-schema-rejection":  "tsx scripts/dev/test-trace-signature-envelope-schema-rejection.ts"
                 },
     "devDependencies":  {
                             "@types/node":  "^20.11.30",
