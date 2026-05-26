@@ -19,6 +19,12 @@ const summary = {
     (record) => record.artifact.artifact_id
   ),
   revoked_token_ids: replay.revoked_token_ids,
+  authority_chain_hash_mismatches:
+    replay.authority_chain_hash_mismatches,
+  authority_record_hash_mismatches:
+    replay.authority_record_hash_mismatches,
+  authority_chain_continuity_breaks:
+    replay.authority_chain_continuity_breaks,
   audit_event_count: replay.audit_events.length,
   audit_decision_codes: replay.audit_events.map(
     (event) => event.decision_code

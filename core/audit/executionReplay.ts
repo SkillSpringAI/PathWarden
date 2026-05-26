@@ -4,7 +4,7 @@ import type { AuditEvent } from "./auditTypes";
 import { readAuthorityRecordsByTraceId } from "./authorityReader";
 import type { AuthorityReplayResult } from "./authorityReader";
 import { loadPermissionTokenRevocations } from "../kernel/permissionTokenRevocation";
-import { hashAuthorityChain } from "../common/hash";
+import { hashAuthorityChain, sha256 } from "../common/hash";
 
 export interface ExecutionReplayResult {
   trace_id: string;
@@ -13,6 +13,8 @@ export interface ExecutionReplayResult {
   reconstructed_chain: string[];
   revoked_token_ids: string[];
   authority_chain_hash_mismatches: string[];
+  authority_record_hash_mismatches: string[];
+  authority_chain_continuity_breaks: string[];
 }
 
 function auditEventsDir(): string {
@@ -80,16 +82,95 @@ function findAuthorityChainHashMismatches(
   return mismatches;
 }
 
+function recordIdentity(record: { record_type: string; timestamp: string }): string {
+  return `${record.record_type}:${record.timestamp}`;
+}
+
+function recomputeAuthorityRecordHash(record: Record<string, unknown>): string {
+  const {
+    record_hash,
+    record_hash_algorithm,
+    ...hashInput
+  } = record;
+
+  void record_hash;
+  void record_hash_algorithm;
+
+  return sha256(JSON.stringify(hashInput));
+}
+
+function findAuthorityRecordHashMismatches(
+  authority: AuthorityReplayResult
+): string[] {
+  const mismatches: string[] = [];
+
+  for (const record of authority.records) {
+    const recordWithHash = record as unknown as Record<string, unknown>;
+    const storedHash = recordWithHash.record_hash;
+
+    if (typeof storedHash !== "string") {
+      continue;
+    }
+
+    const recomputedHash = recomputeAuthorityRecordHash(recordWithHash);
+
+    if (recomputedHash !== storedHash) {
+      mismatches.push(recordIdentity(record));
+    }
+  }
+
+  return mismatches;
+}
+
+function findAuthorityChainContinuityBreaks(
+  authority: AuthorityReplayResult
+): string[] {
+  const breaks: string[] = [];
+  let previousHash: string | undefined;
+
+  for (const record of authority.records) {
+    const recordWithHash = record as unknown as Record<string, unknown>;
+    const storedHash = recordWithHash.record_hash;
+    const declaredPreviousHash = recordWithHash.previous_authority_hash;
+
+    if (typeof storedHash !== "string") {
+      previousHash = undefined;
+      continue;
+    }
+
+    if (
+      previousHash &&
+      declaredPreviousHash !== previousHash
+    ) {
+      breaks.push(recordIdentity(record));
+    }
+
+    previousHash = storedHash;
+  }
+
+  return breaks;
+}
+
 function buildReconstructedChain(
   authority: AuthorityReplayResult,
   auditEvents: AuditEvent[],
   revokedTokenIds: string[],
-  authorityChainHashMismatches: string[]
+  authorityChainHashMismatches: string[],
+  authorityRecordHashMismatches: string[],
+  authorityChainContinuityBreaks: string[]
 ): string[] {
   const chain: string[] = [];
 
   for (const artifactId of authorityChainHashMismatches) {
     chain.push(`authority_chain_hash_mismatch:${artifactId}`);
+  }
+
+  for (const recordId of authorityRecordHashMismatches) {
+    chain.push(`authority_record_hash_mismatch:${recordId}`);
+  }
+
+  for (const recordId of authorityChainContinuityBreaks) {
+    chain.push(`authority_chain_continuity_break:${recordId}`);
   }
 
   for (const tokenId of revokedTokenIds) {
@@ -135,6 +216,10 @@ export function replayExecutionByTraceId(traceId: string): ExecutionReplayResult
   const revokedTokenIds = findRevokedTokenIds(authority);
   const authorityChainHashMismatches =
     findAuthorityChainHashMismatches(authority);
+  const authorityRecordHashMismatches =
+    findAuthorityRecordHashMismatches(authority);
+  const authorityChainContinuityBreaks =
+    findAuthorityChainContinuityBreaks(authority);
 
   return {
     trace_id: traceId,
@@ -144,9 +229,13 @@ export function replayExecutionByTraceId(traceId: string): ExecutionReplayResult
       authority,
       auditEvents,
       revokedTokenIds,
-      authorityChainHashMismatches
+      authorityChainHashMismatches,
+      authorityRecordHashMismatches,
+      authorityChainContinuityBreaks
     ),
     revoked_token_ids: revokedTokenIds,
-    authority_chain_hash_mismatches: authorityChainHashMismatches
+    authority_chain_hash_mismatches: authorityChainHashMismatches,
+    authority_record_hash_mismatches: authorityRecordHashMismatches,
+    authority_chain_continuity_breaks: authorityChainContinuityBreaks
   };
 }
