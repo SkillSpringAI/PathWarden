@@ -53,7 +53,8 @@
                     "export:trace-manifest":  "tsx scripts/dev/export-trace-manifest.ts",
                     "verify:trace-manifest":  "tsx scripts/dev/verify-trace-manifest.ts",
                     "sign:trace-manifest":  "tsx scripts/dev/sign-trace-manifest.ts",
-                    "verify:trace-manifest-signature":  "tsx scripts/dev/verify-trace-manifest-signature.ts"
+                    "verify:trace-manifest-signature":  "tsx scripts/dev/verify-trace-manifest-signature.ts",
+                    "test:trace-manifest-signature-tamper":  "tsx scripts/dev/test-trace-manifest-signature-tamper.ts"
                 },
     "devDependencies":  {
                             "@types/node":  "^20.11.30",
