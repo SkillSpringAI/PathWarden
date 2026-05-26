@@ -1,0 +1,13 @@
+{
+  "schema_version": "governance-trust-manifest.v1",
+  "generated_at": "2026-05-26T03:41:29.767Z",
+  "trusted_signers": [
+    {
+      "signer_id": "pathwarden-dev-governance-key",
+      "public_key_fingerprint": "23971ea86c1da8191b30128876a07c40d1fb5aedb517434ee8222095624542fe",
+      "fingerprint_algorithm": "sha256",
+      "signature_algorithm": "ed25519",
+      "status": "trusted"
+    }
+  ]
+}

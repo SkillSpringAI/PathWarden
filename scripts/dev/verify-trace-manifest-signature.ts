@@ -31,26 +31,30 @@ const publicKeyPath = resolve(
   "dev-governance-public.pem"
 );
 
-if (!existsSync(manifestPath)) {
-  console.error(`Manifest not found: ${manifestPath}`);
-  process.exit(1);
-}
+const trustManifestPath = resolve(
+  process.cwd(),
+  "policy",
+  "trust",
+  "governance-trust-manifest.json"
+);
 
-if (!existsSync(signaturePath)) {
-  console.error(`Signature envelope not found: ${signaturePath}`);
-  process.exit(1);
-}
-
-if (!existsSync(publicKeyPath)) {
-  console.error(`Public key not found: ${publicKeyPath}`);
-  process.exit(1);
+for (const requiredPath of [
+  manifestPath,
+  signaturePath,
+  publicKeyPath,
+  trustManifestPath
+]) {
+  if (!existsSync(requiredPath)) {
+    console.error(`Required file not found: ${requiredPath}`);
+    process.exit(1);
+  }
 }
 
 const manifestContent = readFileSync(manifestPath, "utf8");
-const signatureEnvelope = JSON.parse(
-  readFileSync(signaturePath, "utf8")
-);
+const signatureEnvelope = JSON.parse(readFileSync(signaturePath, "utf8"));
 const publicKey = readFileSync(publicKeyPath, "utf8");
+const trustManifest = JSON.parse(readFileSync(trustManifestPath, "utf8"));
+
 const publicKeyFingerprint = sha256(publicKey);
 
 if (signatureEnvelope.signature_algorithm !== "ed25519") {
@@ -67,12 +71,35 @@ if (
     diagnostic: "trace-manifest-signature-verification",
     trace_id: traceId,
     verified: false,
-    reason: "signer_public_key_fingerprint_mismatch",
-    expected_fingerprint: publicKeyFingerprint,
-    envelope_fingerprint:
-      signatureEnvelope.signer_public_key_fingerprint
+    reason: "signer_public_key_fingerprint_mismatch"
   }, null, 2));
+  process.exit(1);
+}
 
+const trustedSigner = trustManifest.trusted_signers?.find(
+  (signer: {
+    signer_id?: string;
+    public_key_fingerprint?: string;
+    fingerprint_algorithm?: string;
+    signature_algorithm?: string;
+    status?: string;
+  }) =>
+    signer.signer_id === signatureEnvelope.signer &&
+    signer.public_key_fingerprint === signatureEnvelope.signer_public_key_fingerprint &&
+    signer.fingerprint_algorithm === "sha256" &&
+    signer.signature_algorithm === "ed25519" &&
+    signer.status === "trusted"
+);
+
+if (!trustedSigner) {
+  console.error(JSON.stringify({
+    ok: false,
+    diagnostic: "trace-manifest-signature-verification",
+    trace_id: traceId,
+    verified: false,
+    reason: "signer_not_trusted",
+    signer: signatureEnvelope.signer
+  }, null, 2));
   process.exit(1);
 }
 
@@ -91,7 +118,6 @@ if (!verified) {
     verified: false,
     reason: "signature_invalid"
   }, null, 2));
-
   process.exit(1);
 }
 
@@ -100,6 +126,8 @@ console.log(JSON.stringify({
   diagnostic: "trace-manifest-signature-verification",
   trace_id: traceId,
   verified: true,
+  signer: signatureEnvelope.signer,
+  trust_status: trustedSigner.status,
   signature_algorithm: "ed25519",
   signer_public_key_fingerprint: publicKeyFingerprint
 }, null, 2));
