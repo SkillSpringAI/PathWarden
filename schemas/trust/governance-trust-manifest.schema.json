@@ -28,7 +28,10 @@
           "public_key_fingerprint",
           "fingerprint_algorithm",
           "signature_algorithm",
-          "status"
+          "status",
+          "created_at",
+          "valid_from",
+          "purpose"
         ],
         "properties": {
           "signer_id": {
@@ -51,6 +54,22 @@
           "status": {
             "type": "string",
             "enum": ["trusted", "revoked", "suspended"]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "valid_from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "valid_until": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "purpose": {
+            "type": "string",
+            "enum": ["governance_manifest_signing"]
           }
         }
       }

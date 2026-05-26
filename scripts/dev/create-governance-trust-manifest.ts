@@ -32,16 +32,21 @@ if (!existsSync(trustDir)) {
 const publicKey = readFileSync(publicKeyPath, "utf8");
 const fingerprint = sha256(publicKey);
 
+const generatedAt = new Date().toISOString();
+
 const manifest = {
   schema_version: "governance-trust-manifest.v1",
-  generated_at: new Date().toISOString(),
+  generated_at: generatedAt,
   trusted_signers: [
     {
       signer_id: "pathwarden-dev-governance-key",
       public_key_fingerprint: fingerprint,
       fingerprint_algorithm: "sha256",
       signature_algorithm: "ed25519",
-      status: "trusted"
+      status: "trusted",
+      created_at: generatedAt,
+      valid_from: generatedAt,
+      purpose: "governance_manifest_signing"
     }
   ]
 };
