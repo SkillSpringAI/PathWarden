@@ -40,6 +40,7 @@ const manifest = {
   trusted_signers: [
     {
       signer_id: "pathwarden-dev-governance-key",
+      public_key_path: "config/keys/dev-governance-public.pem",
       public_key_fingerprint: fingerprint,
       fingerprint_algorithm: "sha256",
       signature_algorithm: "ed25519",

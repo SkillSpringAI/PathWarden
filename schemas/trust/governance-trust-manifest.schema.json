@@ -25,6 +25,7 @@
         "additionalProperties": false,
         "required": [
           "signer_id",
+          "public_key_path",
           "public_key_fingerprint",
           "fingerprint_algorithm",
           "signature_algorithm",
@@ -35,6 +36,10 @@
         ],
         "properties": {
           "signer_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "public_key_path": {
             "type": "string",
             "minLength": 1
           },

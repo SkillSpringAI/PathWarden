@@ -21,6 +21,7 @@ interface TraceManifestSignatureEnvelope {
 
 interface GovernanceTrustSigner {
   signer_id: string;
+  public_key_path: string;
   public_key_fingerprint: string;
   fingerprint_algorithm: "sha256";
   signature_algorithm: "ed25519";
@@ -59,7 +60,6 @@ const trustManifestValidator = getSchemaValidator(
 export function verifyGovernanceManifestSignature(
   traceId: string
 ): GovernanceSignatureVerificationResult {
-
   const manifestPath = resolve(
     process.cwd(),
     "exports",
@@ -74,13 +74,6 @@ export function verifyGovernanceManifestSignature(
     `${traceId}.manifest.sig.json`
   );
 
-  const publicKeyPath = resolve(
-    process.cwd(),
-    "config",
-    "keys",
-    "dev-governance-public.pem"
-  );
-
   const trustManifestPath = resolve(
     process.cwd(),
     "policy",
@@ -91,7 +84,6 @@ export function verifyGovernanceManifestSignature(
   for (const requiredPath of [
     manifestPath,
     signaturePath,
-    publicKeyPath,
     trustManifestPath
   ]) {
     if (!existsSync(requiredPath)) {
@@ -104,9 +96,12 @@ export function verifyGovernanceManifestSignature(
   }
 
   const manifestContent = readFileSync(manifestPath, "utf8");
-  const signatureEnvelope = JSON.parse(readFileSync(signaturePath, "utf8"));
-  const publicKey = readFileSync(publicKeyPath, "utf8");
-  const trustManifest = JSON.parse(readFileSync(trustManifestPath, "utf8"));
+  const signatureEnvelope = JSON.parse(
+    readFileSync(signaturePath, "utf8")
+  );
+  const trustManifest = JSON.parse(
+    readFileSync(trustManifestPath, "utf8")
+  );
 
   if (!signatureEnvelopeValidator(signatureEnvelope)) {
     return {
@@ -132,8 +127,6 @@ export function verifyGovernanceManifestSignature(
   const validatedTrustManifest =
     trustManifest as GovernanceTrustManifest;
 
-  const publicKeyFingerprint = sha256(publicKey);
-
   if (validatedSignatureEnvelope.signature_algorithm !== "ed25519") {
     return {
       ok: false,
@@ -143,32 +136,22 @@ export function verifyGovernanceManifestSignature(
   }
 
   if (
-    validatedSignatureEnvelope.signer_public_key_fingerprint_algorithm !== "sha256" ||
-    validatedSignatureEnvelope.signer_public_key_fingerprint !== publicKeyFingerprint
+    validatedSignatureEnvelope.signer_public_key_fingerprint_algorithm !==
+    "sha256"
   ) {
     return {
       ok: false,
       trace_id: traceId,
-      reason: "signer_public_key_fingerprint_mismatch",
-      signer: validatedSignatureEnvelope.signer,
-      signer_public_key_fingerprint: publicKeyFingerprint
+      reason: "unsupported_fingerprint_algorithm",
+      signer: validatedSignatureEnvelope.signer
     };
   }
 
   const trustedSigner = validatedTrustManifest.trusted_signers.find(
-    (signer: {
-      signer_id: string;
-      public_key_fingerprint: string;
-      fingerprint_algorithm: string;
-      signature_algorithm: string;
-      status: string;
-      created_at: string;
-      valid_from: string;
-      valid_until?: string;
-      purpose: string;
-    }) =>
+    (signer) =>
       signer.signer_id === validatedSignatureEnvelope.signer &&
-      signer.public_key_fingerprint === validatedSignatureEnvelope.signer_public_key_fingerprint &&
+      signer.public_key_fingerprint ===
+        validatedSignatureEnvelope.signer_public_key_fingerprint &&
       signer.fingerprint_algorithm === "sha256" &&
       signer.signature_algorithm === "ed25519" &&
       signer.status === "trusted" &&
@@ -187,7 +170,11 @@ export function verifyGovernanceManifestSignature(
   }
 
   const now = Date.now();
-  const validFrom = Date.parse(trustedSigner.valid_from);
+
+  const validFrom = Date.parse(
+    trustedSigner.valid_from
+  );
+
   const validUntil = trustedSigner.valid_until
     ? Date.parse(trustedSigner.valid_until)
     : undefined;
@@ -223,10 +210,45 @@ export function verifyGovernanceManifestSignature(
     };
   }
 
+  const resolvedPublicKeyPath = resolve(
+    process.cwd(),
+    trustedSigner.public_key_path
+  );
+
+  if (!existsSync(resolvedPublicKeyPath)) {
+    return {
+      ok: false,
+      trace_id: traceId,
+      reason: "trusted_signer_public_key_missing",
+      signer: validatedSignatureEnvelope.signer
+    };
+  }
+
+  const trustedPublicKey = readFileSync(
+    resolvedPublicKeyPath,
+    "utf8"
+  );
+
+  const trustedPublicKeyFingerprint =
+    sha256(trustedPublicKey);
+
+  if (
+    trustedPublicKeyFingerprint !==
+    trustedSigner.public_key_fingerprint
+  ) {
+    return {
+      ok: false,
+      trace_id: traceId,
+      reason:
+        "trusted_signer_public_key_fingerprint_mismatch",
+      signer: validatedSignatureEnvelope.signer
+    };
+  }
+
   const verified = verify(
     null,
     Buffer.from(manifestContent, "utf8"),
-    publicKey,
+    trustedPublicKey,
     Buffer.from(validatedSignatureEnvelope.signature_base64, "base64")
   );
 
@@ -236,7 +258,7 @@ export function verifyGovernanceManifestSignature(
       trace_id: traceId,
       reason: "signature_invalid",
       signer: validatedSignatureEnvelope.signer,
-      signer_public_key_fingerprint: publicKeyFingerprint
+      signer_public_key_fingerprint: trustedPublicKeyFingerprint
     };
   }
 
@@ -246,6 +268,6 @@ export function verifyGovernanceManifestSignature(
     signer: validatedSignatureEnvelope.signer,
     trust_status: trustedSigner.status,
     signature_algorithm: "ed25519",
-    signer_public_key_fingerprint: publicKeyFingerprint
+    signer_public_key_fingerprint: trustedPublicKeyFingerprint
   };
 }
