@@ -11,22 +11,14 @@
     "trigger_hits"
   ],
   "properties": {
-    "event_id": {
-      "type": "string",
-      "minLength": 3
-    },
-    "timestamp": {
-      "type": "string",
-      "minLength": 10
-    },
+    "trace_id": { "type": "string" },
+    "event_id": { "type": "string", "minLength": 3 },
+    "timestamp": { "type": "string", "minLength": 10 },
     "mode": {
       "type": "string",
       "enum": ["core", "connect", "assistant", "locked_down"]
     },
-    "decision_code": {
-      "type": "string",
-      "minLength": 3
-    },
+    "decision_code": { "type": "string", "minLength": 3 },
     "refusal_code": {
       "type": "string",
       "pattern": "^PW-[A-Z]+-[0-9]{3}$"
@@ -37,15 +29,25 @@
     },
     "trigger_hits": {
       "type": "array",
-      "items": {
-        "type": "string"
-      }
+      "items": { "type": "string" }
     },
-    "plan_id": {
-      "type": "string"
+    "risk_level": {
+      "type": "string",
+      "enum": ["low", "medium", "high", "critical"]
     },
-    "commit_id": {
-      "type": "string"
+    "message": { "type": "string" },
+    "plan_id": { "type": "string" },
+    "commit_id": { "type": "string" },
+    "permission_token_id": { "type": "string" },
+    "legitimacy_artifact_id": { "type": "string" },
+    "authority_chain": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "authority_chain_hash": { "type": "string", "minLength": 64, "maxLength": 64 },
+    "authority_chain_hash_algorithm": {
+      "type": "string",
+      "enum": ["sha256"]
     }
   },
   "additionalProperties": false

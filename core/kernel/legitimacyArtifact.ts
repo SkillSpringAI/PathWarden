@@ -1,4 +1,4 @@
-import type { PathwardenMode, RiskLevel } from "./types";
+﻿import type { PathwardenMode, RiskLevel } from "./types";
 
 export type ApprovalState =
   | "not_required"
@@ -21,4 +21,7 @@ export interface DecisionLegitimacyArtifact {
   audit_required: boolean;
   timestamp: string;
   authority_chain: string[];
+  authority_chain_hash: string;
+  authority_chain_hash_algorithm: "sha256";
 }
+

@@ -1,5 +1,6 @@
-import { makeId } from "../common/ids";
+﻿import { makeId } from "../common/ids";
 import { nowIso } from "../common/time";
+import { hashAuthorityChain } from "../common/hash";
 import type { DecisionLegitimacyArtifact, ApprovalState } from "./legitimacyArtifact";
 import type { PathwardenMode, RiskLevel } from "./types";
 
@@ -33,6 +34,9 @@ export function buildDecisionLegitimacyArtifact(
     capability_source: input.capability_source,
     audit_required: input.audit_required ?? true,
     timestamp: nowIso(),
-    authority_chain: input.authority_chain
+    authority_chain: input.authority_chain,
+    authority_chain_hash: hashAuthorityChain(input.authority_chain),
+    authority_chain_hash_algorithm: "sha256"
   };
 }
+

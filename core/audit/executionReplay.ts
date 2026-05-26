@@ -4,6 +4,7 @@ import type { AuditEvent } from "./auditTypes";
 import { readAuthorityRecordsByTraceId } from "./authorityReader";
 import type { AuthorityReplayResult } from "./authorityReader";
 import { loadPermissionTokenRevocations } from "../kernel/permissionTokenRevocation";
+import { hashAuthorityChain } from "../common/hash";
 
 export interface ExecutionReplayResult {
   trace_id: string;
@@ -11,6 +12,7 @@ export interface ExecutionReplayResult {
   audit_events: AuditEvent[];
   reconstructed_chain: string[];
   revoked_token_ids: string[];
+  authority_chain_hash_mismatches: string[];
 }
 
 function auditEventsDir(): string {
@@ -58,12 +60,37 @@ function findRevokedTokenIds(authority: AuthorityReplayResult): string[] {
     .filter((tokenId) => revokedIds.has(tokenId));
 }
 
+function findAuthorityChainHashMismatches(
+  authority: AuthorityReplayResult
+): string[] {
+  const mismatches: string[] = [];
+
+  for (const artifactRecord of authority.legitimacy_artifact_records) {
+    const artifact = artifactRecord.artifact;
+
+    const recomputedHash = hashAuthorityChain(
+      artifact.authority_chain
+    );
+
+    if (recomputedHash !== artifact.authority_chain_hash) {
+      mismatches.push(artifact.artifact_id);
+    }
+  }
+
+  return mismatches;
+}
+
 function buildReconstructedChain(
   authority: AuthorityReplayResult,
   auditEvents: AuditEvent[],
-  revokedTokenIds: string[]
+  revokedTokenIds: string[],
+  authorityChainHashMismatches: string[]
 ): string[] {
   const chain: string[] = [];
+
+  for (const artifactId of authorityChainHashMismatches) {
+    chain.push(`authority_chain_hash_mismatch:${artifactId}`);
+  }
 
   for (const tokenId of revokedTokenIds) {
     chain.push(`revoked_permission_token:${tokenId}`);
@@ -82,7 +109,6 @@ function buildReconstructedChain(
   }
 
   for (const event of auditEvents) {
-
     chain.push(`audit_event:${event.decision_code}`);
 
     if (event.permission_token_id) {
@@ -106,14 +132,21 @@ function buildReconstructedChain(
 export function replayExecutionByTraceId(traceId: string): ExecutionReplayResult {
   const authority = readAuthorityRecordsByTraceId(traceId);
   const auditEvents = readAuditEventsByTraceId(traceId);
+  const revokedTokenIds = findRevokedTokenIds(authority);
+  const authorityChainHashMismatches =
+    findAuthorityChainHashMismatches(authority);
 
   return {
     trace_id: traceId,
     authority,
     audit_events: auditEvents,
-    reconstructed_chain: buildReconstructedChain(authority, auditEvents, findRevokedTokenIds(authority)),
-    revoked_token_ids: findRevokedTokenIds(authority)
+    reconstructed_chain: buildReconstructedChain(
+      authority,
+      auditEvents,
+      revokedTokenIds,
+      authorityChainHashMismatches
+    ),
+    revoked_token_ids: revokedTokenIds,
+    authority_chain_hash_mismatches: authorityChainHashMismatches
   };
 }
-
-

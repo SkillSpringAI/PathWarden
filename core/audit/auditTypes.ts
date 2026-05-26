@@ -1,4 +1,4 @@
-export type AuditOutcome = "allowed" | "refused" | "executed" | "failed";
+﻿export type AuditOutcome = "allowed" | "refused" | "executed" | "failed";
 export type AuditMode = "core" | "connect" | "assistant" | "locked_down";
 export type AuditRisk = "low" | "medium" | "high" | "critical";
 
@@ -18,6 +18,9 @@ export interface AuditEvent {
   permission_token_id?: string;
   legitimacy_artifact_id?: string;
   authority_chain?: string[];
+  authority_chain_hash?: string;
+  authority_chain_hash_algorithm?: "sha256";
 }
+
 
 

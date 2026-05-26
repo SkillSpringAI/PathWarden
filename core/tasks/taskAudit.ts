@@ -1,6 +1,7 @@
-import { writeAuditEvent } from "../audit/auditWriter";
+﻿import { writeAuditEvent } from "../audit/auditWriter";
 import { makeId } from "../common/ids";
 import { nowIso } from "../common/time";
+import { hashAuthorityChain } from "../common/hash";
 import type { PathwardenTask } from "./taskTypes";
 
 export function auditTaskEvent(
@@ -11,6 +12,13 @@ export function auditTaskEvent(
   refusalCode?: string
 ): string {
   const eventId = makeId("audit");
+  const authorityChain = task.payload?.permission_token
+    ? [
+        "task",
+        task.task_id,
+        task.payload.permission_token.token_id
+      ]
+    : undefined;
 
   writeAuditEvent({
     trace_id: task.trace_id,
@@ -25,15 +33,12 @@ export function auditTaskEvent(
     plan_id: task.payload?.plan?.plan_id,
     commit_id: task.payload?.commit?.commit_id,
     permission_token_id: task.payload?.permission_token?.token_id,
-    authority_chain: task.payload?.permission_token
-      ? [
-          "task",
-          task.task_id,
-          task.payload.permission_token.token_id
-        ]
-      : undefined
+    authority_chain: authorityChain,
+    authority_chain_hash: authorityChain ? hashAuthorityChain(authorityChain) : undefined,
+    authority_chain_hash_algorithm: authorityChain ? "sha256" : undefined
   });
 
   return eventId;
 }
+
 
