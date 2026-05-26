@@ -59,3 +59,8 @@ tmp/
 
 
 /exports/
+
+# Local governance signing keys
+/config/keys/*.pem
+/config/keys/*.key
+
