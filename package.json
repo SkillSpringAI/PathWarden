@@ -61,7 +61,8 @@
                     "test:governance-trust-schema-rejection":  "tsx scripts/dev/test-governance-trust-schema-rejection.ts",
                     "test:trace-signature-envelope-schema-rejection":  "tsx scripts/dev/test-trace-signature-envelope-schema-rejection.ts",
                     "test:governance-signer-expiry":  "tsx scripts/dev/test-governance-signer-expiry.ts",
-                    "test:governance-signer-not-yet-valid":  "tsx scripts/dev/test-governance-signer-not-yet-valid.ts"
+                    "test:governance-signer-not-yet-valid":  "tsx scripts/dev/test-governance-signer-not-yet-valid.ts",
+                    "test:governance-signer-purpose":  "tsx scripts/dev/test-governance-signer-purpose.ts"
                 },
     "devDependencies":  {
                             "@types/node":  "^20.11.30",
