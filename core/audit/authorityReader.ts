@@ -1,6 +1,10 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import type { AuthorityArtifactRecord } from "./authorityWriter";
+import {
+  getSchemaValidator,
+  formatAjvErrors
+} from "../common/schemaValidator";
 
 export interface AuthorityReplayResult {
   trace_id: string;
@@ -11,6 +15,52 @@ export interface AuthorityReplayResult {
 
 function authorityDir(): string {
   return resolve(process.cwd(), "audit", "authority");
+}
+
+const permissionTokenValidator = getSchemaValidator(
+  "schemas/authority/permission-token.schema.json"
+);
+
+const legitimacyArtifactValidator = getSchemaValidator(
+  "schemas/authority/decision-legitimacy-artifact.schema.json"
+);
+
+function validateAuthorityRecord(
+  record: AuthorityArtifactRecord,
+  sourceFile: string
+): void {
+
+  if (record.record_type === "permission_token") {
+
+    const valid = permissionTokenValidator(record.token);
+
+    if (!valid) {
+      throw new Error(
+        `Invalid permission token record in ${sourceFile}: ` +
+        formatAjvErrors(permissionTokenValidator.errors)
+      );
+    }
+
+    return;
+  }
+
+  if (record.record_type === "legitimacy_artifact") {
+
+    const valid = legitimacyArtifactValidator(record.artifact);
+
+    if (!valid) {
+      throw new Error(
+        `Invalid legitimacy artifact record in ${sourceFile}: ` +
+        formatAjvErrors(legitimacyArtifactValidator.errors)
+      );
+    }
+
+    return;
+  }
+
+  throw new Error(
+    `Unknown authority record type in ${sourceFile}`
+  );
 }
 
 export function readAuthorityRecordsByTraceId(traceId: string): AuthorityReplayResult {
@@ -32,14 +82,17 @@ export function readAuthorityRecordsByTraceId(traceId: string): AuthorityReplayR
   const records: AuthorityArtifactRecord[] = [];
 
   for (const file of files) {
+
     const lines = readFileSync(file, "utf8")
       .split("\n")
       .filter(Boolean);
 
     for (const line of lines) {
+
       const record = JSON.parse(line) as AuthorityArtifactRecord;
 
       if (record.trace_id === traceId) {
+        validateAuthorityRecord(record, file);
         records.push(record);
       }
     }
