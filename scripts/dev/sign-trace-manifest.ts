@@ -1,6 +1,7 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { sign } from "node:crypto";
+import { sha256 } from "../../core/common/hash";
 
 const traceId = process.argv[2];
 
@@ -23,6 +24,13 @@ const privateKeyPath = resolve(
   "dev-governance-private.pem"
 );
 
+const publicKeyPath = resolve(
+  process.cwd(),
+  "config",
+  "keys",
+  "dev-governance-public.pem"
+);
+
 if (!existsSync(manifestPath)) {
   console.error(`Manifest not found: ${manifestPath}`);
   process.exit(1);
@@ -33,8 +41,16 @@ if (!existsSync(privateKeyPath)) {
   process.exit(1);
 }
 
+if (!existsSync(publicKeyPath)) {
+  console.error(`Public key not found: ${publicKeyPath}`);
+  process.exit(1);
+}
+
 const manifestContent = readFileSync(manifestPath, "utf8");
 const privateKey = readFileSync(privateKeyPath, "utf8");
+const publicKey = readFileSync(publicKeyPath, "utf8");
+
+const publicKeyFingerprint = sha256(publicKey);
 
 const signature = sign(
   null,
@@ -47,6 +63,8 @@ const signatureEnvelope = {
   trace_id: traceId,
   signed_at: new Date().toISOString(),
   signer: "pathwarden-dev-governance-key",
+  signer_public_key_fingerprint: publicKeyFingerprint,
+  signer_public_key_fingerprint_algorithm: "sha256",
   signature_algorithm: "ed25519",
   manifest_path: manifestPath,
   signature_base64: signature
@@ -70,5 +88,6 @@ console.log(JSON.stringify({
   diagnostic: "trace-manifest-signature",
   trace_id: traceId,
   signature_path: signaturePath,
-  signature_algorithm: "ed25519"
+  signature_algorithm: "ed25519",
+  signer_public_key_fingerprint: publicKeyFingerprint
 }, null, 2));

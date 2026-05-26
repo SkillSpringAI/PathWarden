@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { verify } from "node:crypto";
+import { sha256 } from "../../core/common/hash";
 
 const traceId = process.argv[2];
 
@@ -50,9 +51,28 @@ const signatureEnvelope = JSON.parse(
   readFileSync(signaturePath, "utf8")
 );
 const publicKey = readFileSync(publicKeyPath, "utf8");
+const publicKeyFingerprint = sha256(publicKey);
 
 if (signatureEnvelope.signature_algorithm !== "ed25519") {
   console.error("Unsupported signature algorithm.");
+  process.exit(1);
+}
+
+if (
+  signatureEnvelope.signer_public_key_fingerprint_algorithm !== "sha256" ||
+  signatureEnvelope.signer_public_key_fingerprint !== publicKeyFingerprint
+) {
+  console.error(JSON.stringify({
+    ok: false,
+    diagnostic: "trace-manifest-signature-verification",
+    trace_id: traceId,
+    verified: false,
+    reason: "signer_public_key_fingerprint_mismatch",
+    expected_fingerprint: publicKeyFingerprint,
+    envelope_fingerprint:
+      signatureEnvelope.signer_public_key_fingerprint
+  }, null, 2));
+
   process.exit(1);
 }
 
@@ -68,7 +88,8 @@ if (!verified) {
     ok: false,
     diagnostic: "trace-manifest-signature-verification",
     trace_id: traceId,
-    verified: false
+    verified: false,
+    reason: "signature_invalid"
   }, null, 2));
 
   process.exit(1);
@@ -79,5 +100,6 @@ console.log(JSON.stringify({
   diagnostic: "trace-manifest-signature-verification",
   trace_id: traceId,
   verified: true,
-  signature_algorithm: "ed25519"
+  signature_algorithm: "ed25519",
+  signer_public_key_fingerprint: publicKeyFingerprint
 }, null, 2));
