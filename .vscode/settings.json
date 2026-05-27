@@ -1,0 +1,8 @@
+{
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "editor.formatOnSave": false,
+  "json.validate.enable": true,
+  "terminal.integrated.defaultProfile.windows": "PowerShell"
+}
