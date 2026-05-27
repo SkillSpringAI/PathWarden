@@ -4,9 +4,15 @@ import { sign } from "node:crypto";
 import { sha256 } from "../../core/common/hash";
 
 const traceId = process.argv[2];
+const signerId = process.argv[3] ?? "pathwarden-dev-governance-key";
 
 if (!traceId) {
-  console.error("Usage: tsx scripts/dev/sign-trace-manifest.ts <trace_id>");
+  console.error("Usage: tsx scripts/dev/sign-trace-manifest.ts <trace_id> [signer_id]");
+  process.exit(1);
+}
+
+if (!/^[a-z0-9-]+$/.test(signerId)) {
+  console.error("Signer ID must contain only lowercase letters, numbers, and hyphens.");
   process.exit(1);
 }
 
@@ -21,14 +27,14 @@ const privateKeyPath = resolve(
   process.cwd(),
   "config",
   "keys",
-  "dev-governance-private.pem"
+  `${signerId}-private.pem`
 );
 
 const publicKeyPath = resolve(
   process.cwd(),
   "config",
   "keys",
-  "dev-governance-public.pem"
+  `${signerId}-public.pem`
 );
 
 if (!existsSync(manifestPath)) {
@@ -62,7 +68,7 @@ const signatureEnvelope = {
   schema_version: "trace-manifest-signature.v1",
   trace_id: traceId,
   signed_at: new Date().toISOString(),
-  signer: "pathwarden-dev-governance-key",
+  signer: signerId,
   signer_public_key_fingerprint: publicKeyFingerprint,
   signer_public_key_fingerprint_algorithm: "sha256",
   signature_algorithm: "ed25519",
@@ -87,6 +93,7 @@ console.log(JSON.stringify({
   ok: true,
   diagnostic: "trace-manifest-signature",
   trace_id: traceId,
+  signer: signerId,
   signature_path: signaturePath,
   signature_algorithm: "ed25519",
   signer_public_key_fingerprint: publicKeyFingerprint
