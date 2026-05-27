@@ -64,7 +64,8 @@
                     "test:governance-signer-not-yet-valid":  "tsx scripts/dev/test-governance-signer-not-yet-valid.ts",
                     "test:governance-signer-purpose":  "tsx scripts/dev/test-governance-signer-purpose.ts",
                     "test:governance-multi-signer":  "tsx scripts/dev/test-governance-multi-signer.ts",
-                    "test:governance-unknown-signer":  "tsx scripts/dev/test-governance-unknown-signer.ts"
+                    "test:governance-unknown-signer":  "tsx scripts/dev/test-governance-unknown-signer.ts",
+                    "test:governance-historical-trust":  "tsx scripts/dev/test-governance-historical-trust.ts"
                 },
     "devDependencies":  {
                             "@types/node":  "^20.11.30",

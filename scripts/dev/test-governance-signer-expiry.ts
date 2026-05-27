@@ -19,7 +19,16 @@ const originalTrustManifest = readFileSync(
 try {
   const manifest = JSON.parse(originalTrustManifest);
 
-  manifest.trusted_signers[0].valid_until =
+  const signer = manifest.trusted_signers.find(
+    (entry: { signer_id?: string }) =>
+      entry.signer_id === "pathwarden-rotation-governance-key"
+  );
+
+  if (!signer) {
+    throw new Error("Rotation signer not found in trust manifest.");
+  }
+
+  signer.valid_until =
     "2000-01-01T00:00:00.000Z";
 
   writeFileSync(

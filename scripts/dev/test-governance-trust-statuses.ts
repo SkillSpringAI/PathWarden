@@ -43,7 +43,16 @@ function runVerifier(): {
 
 function setSignerStatus(status: string): void {
   const manifest = JSON.parse(originalTrustManifest);
-  manifest.trusted_signers[0].status = status;
+  const signer = manifest.trusted_signers.find(
+    (entry: { signer_id?: string }) =>
+      entry.signer_id === "pathwarden-rotation-governance-key"
+  );
+
+  if (!signer) {
+    throw new Error("Rotation signer not found in trust manifest.");
+  }
+
+  signer.status = status;
 
   writeFileSync(
     trustManifestPath,

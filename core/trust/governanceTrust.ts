@@ -49,6 +49,10 @@ export interface GovernanceSignatureVerificationResult {
   validation_error?: string;
 }
 
+export interface GovernanceVerificationOptions {
+  mode?: "current" | "historical";
+}
+
 const signatureEnvelopeValidator = getSchemaValidator(
   "schemas/trust/trace-manifest-signature.schema.json"
 );
@@ -58,8 +62,11 @@ const trustManifestValidator = getSchemaValidator(
 );
 
 export function verifyGovernanceManifestSignature(
-  traceId: string
+  traceId: string,
+  options: GovernanceVerificationOptions = {}
 ): GovernanceSignatureVerificationResult {
+  const verificationMode =
+    options.mode ?? "current";
   const manifestPath = resolve(
     process.cwd(),
     "exports",
@@ -127,6 +134,18 @@ export function verifyGovernanceManifestSignature(
   const validatedTrustManifest =
     trustManifest as GovernanceTrustManifest;
 
+  const signedAt = Date.parse(
+    validatedSignatureEnvelope.signed_at
+  );
+
+  if (Number.isNaN(signedAt)) {
+    return {
+      ok: false,
+      trace_id: traceId,
+      reason: "invalid_signed_at"
+    };
+  }
+
   if (validatedSignatureEnvelope.signature_algorithm !== "ed25519") {
     return {
       ok: false,
@@ -154,7 +173,11 @@ export function verifyGovernanceManifestSignature(
         validatedSignatureEnvelope.signer_public_key_fingerprint &&
       signer.fingerprint_algorithm === "sha256" &&
       signer.signature_algorithm === "ed25519" &&
-      signer.status === "trusted" &&
+      (
+        verificationMode === "historical"
+          ? signer.status !== "suspended"
+          : signer.status === "trusted"
+      ) &&
       signer.purpose === "governance_manifest_signing"
   );
 
@@ -169,7 +192,10 @@ export function verifyGovernanceManifestSignature(
     };
   }
 
-  const now = Date.now();
+  const evaluationTime =
+    verificationMode === "historical"
+      ? signedAt
+      : Date.now();
 
   const validFrom = Date.parse(
     trustedSigner.valid_from
@@ -188,7 +214,7 @@ export function verifyGovernanceManifestSignature(
     };
   }
 
-  if (now < validFrom) {
+  if (evaluationTime < validFrom) {
     return {
       ok: false,
       trace_id: traceId,
@@ -200,7 +226,7 @@ export function verifyGovernanceManifestSignature(
   if (
     validUntil !== undefined &&
     !Number.isNaN(validUntil) &&
-    now > validUntil
+    evaluationTime > validUntil
   ) {
     return {
       ok: false,
