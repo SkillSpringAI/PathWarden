@@ -38,6 +38,8 @@ const severityRank: Record<TriggerSeverity, number> = {
   block: 3,
   fatal: 4
 };
+// Trigger registries define recognised governance activation conditions.
+// Stable ordering preserves deterministic replay and diagnostics.
 
 export function loadTriggerRegistry(): TriggerRegistry {
 
@@ -66,6 +68,7 @@ export function loadTriggerRegistry(): TriggerRegistry {
 
   return registry;
 }
+// Unknown triggers resolve to undefined rather than implicit acceptance.
 
 export function getTriggerDefinition(
   triggerId: string
