@@ -1,4 +1,8 @@
+// Modes define the runtime authority posture.
+// Higher-restriction modes should never be bypassed by execution logic.
+
 export type PathwardenMode = "core" | "connect" | "assistant" | "locked_down";
+// Risk levels bound capability, approval, and execution-policy decisions.
 
 export type RiskLevel = "low" | "medium" | "high" | "critical";
 
@@ -50,6 +54,8 @@ export interface ValidationRefusal {
   trigger_hits: string[];
   audit_required: boolean;
 }
+// Validation results are the kernel boundary output.
+// Every action must resolve to either an allowed decision or a governed refusal.
 
 export type ValidationResult = ValidationSuccess | ValidationRefusal;
 
