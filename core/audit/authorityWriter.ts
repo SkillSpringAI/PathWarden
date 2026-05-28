@@ -3,6 +3,8 @@ import { resolve } from "node:path";
 import type { PermissionToken } from "../kernel/permissionToken";
 import type { DecisionLegitimacyArtifact } from "../kernel/legitimacyArtifact";
 import { sha256 } from "../common/hash";
+// Authority records persist governance evidence to disk.
+// They are later replayed to reconstruct permission and legitimacy lineage.
 
 export type BaseAuthorityArtifactRecord =
   | {
@@ -32,6 +34,8 @@ function authorityFilePath(timestamp: string): string {
   const date = timestamp.slice(0, 10);
   return resolve(authorityDir(), `${date}.jsonl`);
 }
+// Record hashes bind persisted authority data to its replay identity.
+// Any mutation after write should be detectable during replay.
 
 function hashAuthorityRecord(
   record: BaseAuthorityArtifactRecord & {
@@ -67,6 +71,8 @@ function readExistingAuthorityRecords(): AuthorityArtifactRecord[] {
 
   return records;
 }
+// Previous authority hashes create per-trace continuity.
+// Chaining is trace-local so exports and replay remain portable.
 
 function findPreviousAuthorityHash(traceId: string): string | undefined {
   const matchingRecords = readExistingAuthorityRecords()
@@ -79,6 +85,8 @@ function findPreviousAuthorityHash(traceId: string): string | undefined {
 
   return matchingRecords[matchingRecords.length - 1].record_hash;
 }
+// Writing authority artifacts is part of the governance evidence boundary.
+// Each write appends a hash-linked record rather than mutable state.
 
 export function writeAuthorityArtifact(
   record: BaseAuthorityArtifactRecord
