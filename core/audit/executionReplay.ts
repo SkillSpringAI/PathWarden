@@ -16,6 +16,9 @@ export interface ExecutionReplayResult {
   authority_record_hash_mismatches: string[];
   authority_chain_continuity_breaks: string[];
 }
+// Replay reconstructs authority and audit state from persisted records.
+// The replay chain is treated as governance evidence, not just runtime history.
+// Corruption, continuity breaks, or hash mismatches must fail closed.
 
 function auditEventsDir(): string {
   return resolve(process.cwd(), "audit", "events");
@@ -81,6 +84,8 @@ function findAuthorityChainHashMismatches(
 
   return mismatches;
 }
+// Record hashes bind replay state to persisted evidence.
+// A mismatch indicates corruption, tampering, or replay inconsistency.
 
 function recordIdentity(record: { record_type: string; timestamp: string }): string {
   return `${record.record_type}:${record.timestamp}`;
@@ -121,6 +126,8 @@ function findAuthorityRecordHashMismatches(
 
   return mismatches;
 }
+// Continuity validation ensures authority history remains linked.
+// Missing or broken previous hashes invalidate replay trust.
 
 function findAuthorityChainContinuityBreaks(
   authority: AuthorityReplayResult
@@ -150,6 +157,12 @@ function findAuthorityChainContinuityBreaks(
 
   return breaks;
 }
+// Reconstructed chains provide deterministic replay provenance.
+// These chains allow downstream diagnostics to verify:
+// - authority continuity
+// - issuance order
+// - replay completeness
+// - tamper detection
 
 function buildReconstructedChain(
   authority: AuthorityReplayResult,
@@ -209,6 +222,8 @@ function buildReconstructedChain(
 
   return chain;
 }
+// Replay output becomes downstream governance evidence.
+// Diagnostics and export verification rely on this structure remaining stable.
 
 export function replayExecutionByTraceId(traceId: string): ExecutionReplayResult {
   const authority = readAuthorityRecordsByTraceId(traceId);
