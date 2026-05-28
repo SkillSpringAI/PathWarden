@@ -1,6 +1,8 @@
 import { appendFileSync, mkdirSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
 import type { AuditEvent } from "./auditTypes";
+// Audit events are append-only operational evidence records.
+// Writes intentionally avoid mutation or overwrite semantics.
 
 export function writeAuditEvent(event: AuditEvent): void {
   const dir = resolve(process.cwd(), "audit", "events");
