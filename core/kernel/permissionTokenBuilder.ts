@@ -14,6 +14,8 @@ export interface MintPermissionTokenInput {
   issuer: string;
   expires_at: string;
 }
+// Minting creates replayable execution authority scoped to a trace,
+// tool, operation set, and governance risk boundary.
 
 export function mintPermissionToken(
   input: MintPermissionTokenInput
