@@ -41,6 +41,9 @@ if (missing.length > 0) {
 } else {
   results.push(makeResult("DIAG-001", "Folder Structure Check", "fatal", "pass", "All required paths are present"));
 }
+// This runner intentionally executes diagnostics deterministically.
+// Replay, governance validation, and future federation diagnostics
+// depend on stable execution ordering and reproducible reporting.
 
 try {
   JSON.parse(readFileSync(resolve(process.cwd(), "Pathwarden/policy/invariants/invariants.json"), "utf8"));
