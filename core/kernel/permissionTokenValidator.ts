@@ -3,6 +3,9 @@ import type { PermissionToken } from "./permissionToken";
 import { resolveRisk } from "./risk";
 import { isPermissionTokenRevoked } from "./permissionTokenRevocation";
 
+// Permission token validation is a governance boundary.
+// Tokens are treated as authority artifacts, not convenience metadata.
+
 export type PermissionTokenValidationDecision =
   | {
       ok: true;
@@ -51,6 +54,8 @@ function deny(
     trigger_hits: triggerHits
   };
 }
+// Reject malformed tokens before authority evaluation.
+// Governance decisions must never rely on partially valid token structures.
 
 export function validatePermissionTokenForAction(
   token: PermissionToken | undefined,
@@ -80,7 +85,10 @@ export function validatePermissionTokenForAction(
       "Permission token trace_id does not match execution trace_id",
       ["permission_token_trace_mismatch"]
     );
+
   }
+// Revoked tokens invalidate downstream execution authority.
+// Replay and execution must both respect revocation state.
 
   if (isPermissionTokenRevoked(token.token_id)) {
     return deny(
@@ -89,6 +97,8 @@ export function validatePermissionTokenForAction(
       ["permission_token_revoked"]
     );
   }
+// Expired tokens cannot retain execution authority.
+// Time-bound governance prevents indefinite capability reuse.
 
   const expiresAt = Date.parse(token.expires_at);
   if (!Number.isFinite(expiresAt) || expiresAt <= Date.now()) {
@@ -98,6 +108,8 @@ export function validatePermissionTokenForAction(
       ["permission_token_expired"]
     );
   }
+// Token issuer validation preserves authority lineage.
+// Execution authority must originate from recognised governance issuers.
 
   const aliases = operationAliases(action);
   const hasScope = aliases.some((alias) => token.granted_operations.includes(alias));
@@ -132,4 +144,10 @@ export function validatePermissionTokenForAction(
     decision_code: "ALLOW_PERMISSION_TOKEN"
   };
 }
+// Validation success means the token passed:
+// - schema validation
+// - issuer validation
+// - revocation checks
+// - expiry checks
+// - governance constraints
 
