@@ -16,6 +16,9 @@ export interface AuthorityReplayResult {
 function authorityDir(): string {
   return resolve(process.cwd(), "audit", "authority");
 }
+// Authority replay must validate persisted records before use.
+// Replay should never trust JSONL authority artifacts just because
+// they exist on disk.
 
 const permissionTokenValidator = getSchemaValidator(
   "schemas/authority/permission-token.schema.json"
@@ -24,6 +27,8 @@ const permissionTokenValidator = getSchemaValidator(
 const legitimacyArtifactValidator = getSchemaValidator(
   "schemas/authority/decision-legitimacy-artifact.schema.json"
 );
+// Fail closed on malformed authority records.
+// A corrupted permission token or legitimacy artifact must not enter replay state.
 
 function validateAuthorityRecord(
   record: AuthorityArtifactRecord,
@@ -62,6 +67,9 @@ function validateAuthorityRecord(
     `Unknown authority record type in ${sourceFile}`
   );
 }
+// Validate only records belonging to the requested trace.
+// This preserves backward compatibility with older unrelated records
+// while still enforcing strict validation for the replayed trace.
 
 export function readAuthorityRecordsByTraceId(traceId: string): AuthorityReplayResult {
   const dir = authorityDir();
@@ -96,6 +104,9 @@ export function readAuthorityRecordsByTraceId(traceId: string): AuthorityReplayR
         records.push(record);
       }
     }
+// Grouped records provide replay consumers with typed authority views:
+// raw records, permission token records, and legitimacy artifact records.
+
   }
 
   return {
