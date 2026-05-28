@@ -104,10 +104,9 @@ export function readAuthorityRecordsByTraceId(traceId: string): AuthorityReplayR
         records.push(record);
       }
     }
+  }
 // Grouped records provide replay consumers with typed authority views:
 // raw records, permission token records, and legitimacy artifact records.
-
-  }
 
   return {
     trace_id: traceId,
