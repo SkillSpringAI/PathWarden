@@ -6,6 +6,9 @@ import {
   getSchemaValidator,
   formatAjvErrors
 } from "../common/schemaValidator";
+// Signature envelopes prove that a manifest was signed by a declared signer.
+// They do not, by themselves, prove the signer is trusted.
+// Trust is resolved separately through the governance trust manifest.
 
 interface TraceManifestSignatureEnvelope {
   schema_version: "trace-manifest-signature.v1";
@@ -18,6 +21,9 @@ interface TraceManifestSignatureEnvelope {
   manifest_path: string;
   signature_base64: string;
 }
+// Trust signers are policy entries, not just public keys.
+// The verifier checks signer identity, key fingerprint, lifecycle window,
+// allowed purpose, and trust status before accepting a signature.
 
 interface GovernanceTrustSigner {
   signer_id: string;
@@ -48,6 +54,10 @@ export interface GovernanceSignatureVerificationResult {
   reason?: string;
   validation_error?: string;
 }
+// current mode answers: "Is this signer trusted now?"
+// historical mode answers: "Was this signer valid when the manifest was signed?"
+// Revoked signers may remain historically valid.
+// Suspended signers remain invalid in both modes.
 
 export interface GovernanceVerificationOptions {
   mode?: "current" | "historical";
@@ -60,6 +70,13 @@ const signatureEnvelopeValidator = getSchemaValidator(
 const trustManifestValidator = getSchemaValidator(
   "schemas/trust/governance-trust-manifest.schema.json"
 );
+// Main governance trust gate for signed trace manifests.
+// This function intentionally separates:
+// 1. schema validity
+// 2. signer policy trust
+// 3. key fingerprint binding
+// 4. signer lifecycle validity
+// 5. cryptographic signature verification
 
 export function verifyGovernanceManifestSignature(
   traceId: string,
@@ -165,6 +182,9 @@ export function verifyGovernanceManifestSignature(
       signer: validatedSignatureEnvelope.signer
     };
   }
+// Resolve the signer through policy, not through local key presence.
+// This is what enables multi-signer rotation and future federation.
+// The signer must match by ID, fingerprint, algorithm, purpose, and trust mode.
 
   const trustedSigner = validatedTrustManifest.trusted_signers.find(
     (signer) =>
@@ -191,6 +211,9 @@ export function verifyGovernanceManifestSignature(
         validatedSignatureEnvelope.signer_public_key_fingerprint
     };
   }
+// Current verification evaluates validity against the present time.
+// Historical verification evaluates validity against the signature timestamp,
+// preserving old evidence after signer rotation or revocation.
 
   const evaluationTime =
     verificationMode === "historical"
@@ -270,6 +293,8 @@ export function verifyGovernanceManifestSignature(
       signer: validatedSignatureEnvelope.signer
     };
   }
+// Cryptographic verification happens only after trust-policy checks pass.
+// A valid signature from an untrusted signer must still be rejected.
 
   const verified = verify(
     null,
