@@ -4,6 +4,9 @@ import { hashAuthorityChain } from "../common/hash";
 import type { DecisionLegitimacyArtifact, ApprovalState } from "./legitimacyArtifact";
 import type { PathwardenMode, RiskLevel } from "./types";
 
+// Legitimacy artifacts capture why a governance decision was allowed or refused.
+// They are replay evidence, not just runtime metadata.
+
 export interface BuildLegitimacyArtifactInput {
   trace_id: string;
   mode: PathwardenMode;
@@ -20,6 +23,8 @@ export interface BuildLegitimacyArtifactInput {
 export function buildDecisionLegitimacyArtifact(
   input: BuildLegitimacyArtifactInput
 ): DecisionLegitimacyArtifact {
+// The artifact binds decision context, invariant checks, triggers,
+// approval state, authority chain, and timestamp into one evidence record.
 
   return {
     schema_version: "decision-legitimacy-artifact.v1",
@@ -35,6 +40,8 @@ export function buildDecisionLegitimacyArtifact(
     audit_required: input.audit_required ?? true,
     timestamp: nowIso(),
     authority_chain: input.authority_chain,
+    // Hashing the authority chain makes lineage tamper-evident during replay.
+
     authority_chain_hash: hashAuthorityChain(input.authority_chain),
     authority_chain_hash_algorithm: "sha256"
   };
