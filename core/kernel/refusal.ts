@@ -1,4 +1,6 @@
 import type { ValidationRefusal } from "./types";
+// Refusals are structured governance outcomes, not generic errors.
+// The envelope keeps failure decisions replayable, auditable, and machine-readable.
 
 export function buildRefusal(
   decisionCode: string,
