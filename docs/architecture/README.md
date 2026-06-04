@@ -314,3 +314,86 @@ replayable distributed execution
 authority-chain integrity
 bounded orchestration
 governance-first local automation
+
+Governance trust layer
+
+Location:
+
+```text
+core/trust/
+policy/trust/
+
+The governance trust layer validates the authenticity and validity of governance evidence.
+
+Current capabilities include:
+
+multi-signer trust
+signer lifecycle validation
+fingerprint validation
+purpose enforcement
+historical trust verification
+trust-manifest validation
+signature-envelope validation
+
+The trust layer allows replay and audit systems to distinguish:
+
+trusted authority
+revoked authority
+suspended authority
+historically valid authority
+
+Replay integrity layer
+
+Replay is no longer treated solely as a debugging capability.
+
+Replay now acts as a governance evidence reconstruction system.
+
+Current replay integrity validation includes:
+
+authority-chain hash validation
+authority-record hash validation
+continuity-break detection
+revocation awareness
+authority reconstruction
+audit reconstruction
+
+Replay outputs are consumed by diagnostics and trace export tooling.
+
+Diagnostic layer
+
+Location:
+
+scripts/dev/
+diagnostics/
+
+Diagnostics continuously verify:
+
+governance integrity
+trust integrity
+replay integrity
+authority continuity
+schema validity
+execution correctness
+
+The diagnostic system intentionally executes deterministically so results remain reproducible across runs.
+
+Federation readiness
+
+Federation is not currently implemented.
+
+However several subsystems have been designed with federation compatibility in mind:
+
+authority artifacts
+permission tokens
+legitimacy artifacts
+replay bundles
+trust manifests
+
+The current architecture is intended to support future:
+
+portable authority
+cross-runtime verification
+delegated authority
+replayable federation
+
+without requiring redesign of the local governance model.
