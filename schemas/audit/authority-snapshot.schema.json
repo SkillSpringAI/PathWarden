@@ -1,0 +1,169 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PathWarden Authority Snapshot Schema",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "snapshot_id",
+    "created_at",
+    "source",
+    "authority",
+    "trust",
+    "revocation",
+    "governance",
+    "replay"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": ["authority-snapshot.v1"]
+    },
+    "snapshot_id": {
+      "type": "string",
+      "minLength": 10
+    },
+    "created_at": {
+      "type": "string",
+      "minLength": 10
+    },
+    "source": {
+      "type": "object",
+      "required": ["runtime", "environment"],
+      "properties": {
+        "runtime": {
+          "type": "string",
+          "enum": ["pathwarden"]
+        },
+        "environment": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "authority": {
+      "type": "object",
+      "required": ["record_count", "records"],
+      "properties": {
+        "record_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "records": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "record_type",
+              "trace_id",
+              "timestamp",
+              "record_hash",
+              "record_hash_algorithm"
+            ],
+            "properties": {
+              "record_type": {
+                "type": "string",
+                "enum": ["permission_token", "legitimacy_artifact"]
+              },
+              "trace_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "timestamp": {
+                "type": "string",
+                "minLength": 10
+              },
+              "record_hash": {
+                "type": "string",
+                "minLength": 64,
+                "maxLength": 64
+              },
+              "record_hash_algorithm": {
+                "type": "string",
+                "enum": ["sha256"]
+              },
+              "previous_authority_hash": {
+                "type": "string",
+                "minLength": 64,
+                "maxLength": 64
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "trust": {
+      "type": "object",
+      "required": ["manifest_id", "signers"],
+      "properties": {
+        "manifest_id": {
+          "type": ["string", "null"]
+        },
+        "signers": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "revocation": {
+      "type": "object",
+      "required": ["checked", "revoked_signers"],
+      "properties": {
+        "checked": {
+          "type": "boolean"
+        },
+        "revoked_signers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "governance": {
+      "type": "object",
+      "required": ["policy_refs", "trigger_refs"],
+      "properties": {
+        "policy_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "trigger_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "replay": {
+      "type": "object",
+      "required": ["replay_safe", "baseline_eligible", "notes"],
+      "properties": {
+        "replay_safe": {
+          "type": "boolean"
+        },
+        "baseline_eligible": {
+          "type": "boolean"
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
