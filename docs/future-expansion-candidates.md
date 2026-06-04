@@ -40,3 +40,29 @@ drift comparison against previous diagnostic baselines
 Activation threshold:
 
 Introduce this structure only when diagnostic count, federation complexity, or CI requirements justify the extra abstraction.
+## Execution Replay System
+
+Future candidates:
+
+```text
+core/audit/replayDiff.ts
+core/audit/replaySnapshot.ts
+core/audit/replayBaseline.ts
+core/audit/replayDriftDetector.ts
+core/audit/replayExportVerifier.ts
+
+Expected refinements:
+
+deterministic replay comparison
+replay divergence detection
+baseline snapshots
+governance drift analysis
+replay provenance verification
+export consistency validation
+historical trust snapshots
+policy-version-aware replay
+federation-compatible replay bundles
+
+Activation threshold:
+
+Introduce this structure when replay becomes a primary governance artifact rather than a debugging utility.
