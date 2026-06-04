@@ -231,3 +231,78 @@ revocable
 auditable
 
 even as automation complexity increases.
+
+Authority record security
+
+Authority records are persisted governance evidence.
+
+Current protections include:
+
+```text
+record hashing
+authority continuity validation
+authority replay verification
+hash mismatch detection
+continuity-break detection
+
+Authority records are treated as replay evidence rather than temporary runtime state.
+
+Trust manifest security
+
+Governance trust is controlled through:
+
+policy/trust/governance-trust-manifest.json
+
+Trust manifests currently define:
+
+trusted signers
+signer status
+signer validity windows
+signer purpose restrictions
+public-key fingerprints
+
+Trust manifests act as the local source of governance trust.
+
+Signer lifecycle security
+
+Signer validation currently supports:
+
+trusted
+revoked
+suspended
+
+Historical verification supports:
+
+historically valid signatures
+revoked historical signers
+historical replay continuity
+
+Suspended signers are treated as invalid during both current and historical evaluation.
+
+Diagnostic security
+
+Security assumptions are continuously verified through diagnostics.
+
+Current diagnostic coverage includes:
+
+trust validation
+signer lifecycle validation
+historical trust validation
+authority replay validation
+manifest verification
+governance validation
+
+Diagnostics help detect governance drift before execution behaviour changes.
+
+Future cryptographic security
+
+Future security enhancements may include:
+
+signed authority records
+signed legitimacy artifacts
+signed governance exports
+tamper-evident replay bundles
+cryptographic authority chains
+portable trust verification
+
+These capabilities should only be introduced after governance semantics are fully stable.
