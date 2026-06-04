@@ -29,19 +29,44 @@ Each item should be designed before implementation.
 
 ### Milestone 1: Authority Snapshot Design
 
+Status:
+
+```text
+design drafted
+implementation not started
+
+Design document:
+
+docs/governance/AUTHORITY_SNAPSHOT_DESIGN.md
+
 Goal:
 
 Define how PathWarden captures authority-state snapshots for governance, replay, audit, and future federation use.
 
 Potential future files:
 
-```text
 core/audit/authoritySnapshot.ts
 schemas/audit/authority-snapshot.schema.json
 scripts/dev/export-authority-snapshot.ts
 
 Implementation must not begin until the requirements and design boundaries are documented.
 
+Next Milestone
+Milestone 2: Replay Baseline Design
+
+Status:
+
+not started
+
+Goal:
+
+Define how PathWarden stores replay baselines for deterministic comparison, replay drift detection, and future provenance reporting.
+
+Potential future files:
+
+core/audit/replayBaseline.ts
+schemas/audit/replay-baseline.schema.json
+scripts/dev/export-replay-baseline.ts
 Pacing Principle
 
 Do not expand the system merely because an abstraction is interesting.
