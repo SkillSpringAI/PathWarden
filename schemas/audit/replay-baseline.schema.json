@@ -1,0 +1,233 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PathWarden Replay Baseline Schema",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "baseline_id",
+    "created_at",
+    "source",
+    "authority",
+    "execution",
+    "trust",
+    "revocation",
+    "governance",
+    "replay"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": ["replay-baseline.v1"]
+    },
+    "baseline_id": {
+      "type": "string",
+      "minLength": 10
+    },
+    "created_at": {
+      "type": "string",
+      "minLength": 10
+    },
+    "source": {
+      "type": "object",
+      "required": ["runtime", "environment"],
+      "properties": {
+        "runtime": {
+          "type": "string",
+          "enum": ["pathwarden"]
+        },
+        "environment": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "authority": {
+      "type": "object",
+      "required": ["snapshot_id", "record_count", "record_refs"],
+      "properties": {
+        "snapshot_id": {
+          "type": ["string", "null"]
+        },
+        "record_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "record_refs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["record_type", "trace_id", "timestamp", "record_hash", "record_hash_algorithm"],
+            "properties": {
+              "record_type": {
+                "type": "string",
+                "enum": ["permission_token", "legitimacy_artifact"]
+              },
+              "trace_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "timestamp": {
+                "type": "string",
+                "minLength": 10
+              },
+              "record_hash": {
+                "type": "string",
+                "minLength": 64,
+                "maxLength": 64
+              },
+              "record_hash_algorithm": {
+                "type": "string",
+                "enum": ["sha256"]
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "execution": {
+      "type": "object",
+      "required": ["trace_id", "record_count", "record_refs", "reconstructed_chain_hash", "reconstructed_chain_hash_algorithm"],
+      "properties": {
+        "trace_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "record_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "record_refs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["event_id", "timestamp", "decision_code"],
+            "properties": {
+              "event_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "timestamp": {
+                "type": "string",
+                "minLength": 10
+              },
+              "decision_code": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "reconstructed_chain_hash": {
+          "type": "string",
+          "minLength": 64,
+          "maxLength": 64
+        },
+        "reconstructed_chain_hash_algorithm": {
+          "type": "string",
+          "enum": ["sha256"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "trust": {
+      "type": "object",
+      "required": ["manifest_id", "signer_refs"],
+      "properties": {
+        "manifest_id": {
+          "type": ["string", "null"]
+        },
+        "signer_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "revocation": {
+      "type": "object",
+      "required": ["checked", "summary"],
+      "properties": {
+        "checked": {
+          "type": "boolean"
+        },
+        "summary": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "governance": {
+      "type": "object",
+      "required": ["policy_refs", "trigger_refs"],
+      "properties": {
+        "policy_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "trigger_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "replay": {
+      "type": "object",
+      "required": [
+        "baseline_safe",
+        "diff_eligible",
+        "authority_chain_hash_mismatches",
+        "authority_record_hash_mismatches",
+        "authority_chain_continuity_breaks",
+        "notes"
+      ],
+      "properties": {
+        "baseline_safe": {
+          "type": "boolean"
+        },
+        "diff_eligible": {
+          "type": "boolean"
+        },
+        "authority_chain_hash_mismatches": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "authority_record_hash_mismatches": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "authority_chain_continuity_breaks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
