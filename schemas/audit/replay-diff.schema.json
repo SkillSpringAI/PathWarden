@@ -1,0 +1,172 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PathWarden Replay Diff Schema",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "diff_id",
+    "created_at",
+    "baseline",
+    "candidate",
+    "authority",
+    "execution",
+    "trust",
+    "revocation",
+    "governance",
+    "summary"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": ["replay-diff.v1"]
+    },
+    "diff_id": {
+      "type": "string",
+      "minLength": 10
+    },
+    "created_at": {
+      "type": "string",
+      "minLength": 10
+    },
+    "baseline": {
+      "type": "object",
+      "required": ["baseline_id", "source"],
+      "properties": {
+        "baseline_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": ["string", "null"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "candidate": {
+      "type": "object",
+      "required": ["replay_id", "source"],
+      "properties": {
+        "replay_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": ["string", "null"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "authority": {
+      "type": "object",
+      "required": ["changed", "added", "removed", "modified"],
+      "properties": {
+        "changed": { "type": "boolean" },
+        "added": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "removed": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "modified": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "execution": {
+      "type": "object",
+      "required": ["changed", "added", "removed", "modified"],
+      "properties": {
+        "changed": { "type": "boolean" },
+        "added": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "removed": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "modified": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "trust": {
+      "type": "object",
+      "required": ["changed", "details"],
+      "properties": {
+        "changed": { "type": "boolean" },
+        "details": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "revocation": {
+      "type": "object",
+      "required": ["changed", "details"],
+      "properties": {
+        "changed": { "type": "boolean" },
+        "details": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "governance": {
+      "type": "object",
+      "required": ["changed", "policy_ref_changes", "trigger_ref_changes"],
+      "properties": {
+        "changed": { "type": "boolean" },
+        "policy_ref_changes": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "trigger_ref_changes": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "object",
+      "required": ["status", "severity", "admissible", "notes"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "no_divergence",
+            "expected_divergence",
+            "unexpected_divergence",
+            "governance_divergence",
+            "trust_divergence",
+            "revocation_divergence",
+            "policy_divergence",
+            "invalid_diff"
+          ]
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["none", "info", "warning", "critical"]
+        },
+        "admissible": {
+          "type": "boolean"
+        },
+        "notes": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
