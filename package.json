@@ -42,6 +42,7 @@
                     "test:task-authority-audit-enrichment":  "tsx scripts/dev/test-task-authority-audit-enrichment.ts",
                     "replay:trace":  "tsx scripts/dev/replay-trace.ts",
                     "export:replay-baseline": "tsx scripts/dev/export-replay-baseline.ts",
+                    "export:replay-diff": "tsx scripts/dev/export-replay-diff.ts",
                     "test:replay-trace-cli":  "tsx scripts/dev/test-replay-trace-cli.ts",
                     "test:replay-trace-cli-execution":  "tsx scripts/dev/test-replay-trace-cli-execution.ts",
                     "export:trace":  "tsx scripts/dev/export-trace.ts",
