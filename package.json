@@ -56,6 +56,7 @@
                     "test:authority-record-corruption":  "tsx scripts/dev/test-authority-record-corruption.ts",
                     "test:authority-continuity-break":  "tsx scripts/dev/test-authority-continuity-break.ts",
                     "hash:policy-manifest": "tsx scripts/dev/hash-policy-manifest.ts",
+                    "verify:policy-hashes": "tsx scripts/dev/verify-policy-hashes.ts",
                     "export:trace-manifest":  "tsx scripts/dev/export-trace-manifest.ts",
                     "verify:trace-manifest":  "tsx scripts/dev/verify-trace-manifest.ts",
                     "sign:trace-manifest":  "tsx scripts/dev/sign-trace-manifest.ts",
