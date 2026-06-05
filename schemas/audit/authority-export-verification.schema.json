@@ -1,0 +1,122 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PathWarden Authority Export Verification Schema",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "verification_id",
+    "created_at",
+    "target",
+    "checks",
+    "summary"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": ["authority-export-verification.v1"]
+    },
+    "verification_id": {
+      "type": "string",
+      "minLength": 10
+    },
+    "created_at": {
+      "type": "string",
+      "minLength": 10
+    },
+    "target": {
+      "type": "object",
+      "required": ["artifact_type", "artifact_id", "source"],
+      "properties": {
+        "artifact_type": {
+          "type": "string",
+          "enum": ["authority_snapshot"]
+        },
+        "artifact_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": ["string", "null"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "checks": {
+      "type": "object",
+      "required": [
+        "schema_valid",
+        "required_fields_present",
+        "record_count_valid",
+        "record_refs_valid",
+        "deterministic_ordering",
+        "trust_context_present",
+        "revocation_context_checked",
+        "replay_safe",
+        "secret_leakage_detected"
+      ],
+      "properties": {
+        "schema_valid": {
+          "type": "boolean"
+        },
+        "required_fields_present": {
+          "type": "boolean"
+        },
+        "record_count_valid": {
+          "type": "boolean"
+        },
+        "record_refs_valid": {
+          "type": "boolean"
+        },
+        "deterministic_ordering": {
+          "type": "boolean"
+        },
+        "trust_context_present": {
+          "type": "boolean"
+        },
+        "revocation_context_checked": {
+          "type": "boolean"
+        },
+        "replay_safe": {
+          "type": "boolean"
+        },
+        "secret_leakage_detected": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "object",
+      "required": ["status", "severity", "admissible", "notes"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "verified",
+            "verified_with_warnings",
+            "failed",
+            "invalid_target",
+            "incomplete_context",
+            "not_replay_safe",
+            "not_admissible"
+          ]
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["none", "info", "warning", "critical"]
+        },
+        "admissible": {
+          "type": "boolean"
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
