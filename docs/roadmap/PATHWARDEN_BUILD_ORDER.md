@@ -298,21 +298,49 @@ scripts/dev/verify-authority-export.ts
 
 Status:
 
-not started
+```text
+implementation complete
+schema complete
+export script complete
+checks passing
 
-Start next.
-
-Implementation should follow:
-
-docs/governance/POLICY_MANIFEST_DESIGN.md
-
-Expected first files:
+Implemented files:
 
 schemas/policy/policy-manifest.schema.json
 core/policy/policyManifest.ts
 scripts/dev/export-policy-manifest.ts
-design complete
-implementation not started
+
+Package script:
+
+npm run export:policy-manifest
+
+Current behavior:
+
+exports schema-valid policy manifests
+records repository-relative policy file references
+records governance design document references
+records trigger schema references when present
+records trust manifest schema references
+records schema file references
+preserves deterministic file ordering by kind and path
+includes hash-ready fields with hashes_available false
+writes generated manifests under exports/policy
+generated exports remain out of git
+
+Validation result:
+
+npm run check passed
+npm run diag passed
+npm run export:policy-manifest passed
+
+Implementation remains conservative:
+
+no hashing yet
+no signing
+no federation semantics
+no executable behavior
+no policy mutation
+hash fields remain null pending Policy Hashing implementation
 
 Design document:
 
@@ -323,10 +351,28 @@ Likely implementation files:
 core/policy/policyManifest.ts
 schemas/policy/policy-manifest.schema.json
 scripts/dev/export-policy-manifest.ts
-6. Policy Hashing
+### Milestone 6: Policy Hashing Implementation
 
 Status:
 
+```text
+not started
+
+Start next.
+
+Implementation should follow:
+
+docs/governance/POLICY_HASHING_DESIGN.md
+
+Expected first files:
+
+core/policy/policyHasher.ts
+scripts/dev/hash-policy-manifest.ts
+scripts/dev/verify-policy-hashes.ts
+
+Potential schema update:
+
+schemas/policy/policy-manifest.schema.json
 design complete
 implementation not started
 
