@@ -100,11 +100,7 @@ Likely implementation files:
 core/audit/authoritySnapshot.ts
 schemas/audit/authority-snapshot.schema.json
 scripts/dev/export-authority-snapshot.ts
-2. Replay Baseline Design
 
-Status:
-
-design complete
 ### Milestone 2: Replay Baseline Implementation
 
 Status:
@@ -176,7 +172,62 @@ Likely implementation files:
 core/audit/replayBaseline.ts
 schemas/audit/replay-baseline.schema.json
 scripts/dev/export-replay-baseline.ts
+
 ### Milestone 3: Replay Diff Implementation
+
+Status:
+
+```text
+implementation complete
+schema complete
+export script complete
+checks passing
+
+Implemented files:
+
+schemas/audit/replay-diff.schema.json
+core/audit/replayDiff.ts
+scripts/dev/export-replay-diff.ts
+
+Package script:
+
+npm run export:replay-diff -- <baseline_json_path> <trace_id>
+
+Current behavior:
+
+exports schema-valid replay diffs
+compares exported replay baseline against current replay state
+compares deterministic authority record references
+compares deterministic execution event references
+detects trust, revocation, and governance reference divergence
+classifies no_divergence, unexpected_divergence, trust_divergence, revocation_divergence, governance_divergence, and invalid_diff
+writes generated diffs under exports/replay
+generated exports remain out of git
+
+Validation result:
+
+npm run check passed
+npm run diag passed
+npm run export:replay-diff passed
+
+Implementation remains conservative:
+
+no automatic remediation
+no signing
+no federation semantics
+no executable behavior
+no mutation of replay baseline artifacts
+policy divergence remains placeholder-level until policy manifests and hashing exist
+Design document:
+
+docs/replay/REPLAY_DIFF_DESIGN.md
+
+Likely implementation files:
+
+core/audit/replayDiff.ts
+schemas/audit/replay-diff.schema.json
+scripts/dev/export-replay-diff.ts
+### Milestone 4: Authority Export Verification Implementation
 
 Status:
 
@@ -187,27 +238,13 @@ Start next.
 
 Implementation should follow:
 
-docs/replay/REPLAY_DIFF_DESIGN.md
+docs/governance/AUTHORITY_EXPORT_VERIFICATION_DESIGN.md
 
 Expected first files:
 
-schemas/audit/replay-diff.schema.json
-core/audit/replayDiff.ts
-scripts/dev/export-replay-diff.ts
-
-Design document:
-
-docs/replay/REPLAY_DIFF_DESIGN.md
-
-Likely implementation files:
-
-core/audit/replayDiff.ts
-schemas/audit/replay-diff.schema.json
-scripts/dev/export-replay-diff.ts
-4. Authority Export Verification
-
-Status:
-
+schemas/audit/authority-export-verification.schema.json
+core/audit/authorityExportVerifier.ts
+scripts/dev/verify-authority-export.ts
 design complete
 implementation not started
 
