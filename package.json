@@ -44,6 +44,7 @@
                     "test:replay-trace-cli":  "tsx scripts/dev/test-replay-trace-cli.ts",
                     "test:replay-trace-cli-execution":  "tsx scripts/dev/test-replay-trace-cli-execution.ts",
                     "export:trace":  "tsx scripts/dev/export-trace.ts",
+                    "export:authority-snapshot": "tsx scripts/dev/export-authority-snapshot.ts",
                     "test:trace-export":  "tsx scripts/dev/test-trace-export.ts",
                     "test:authority-chain-hash-verification":  "tsx scripts/dev/test-authority-chain-hash-verification.ts",
                     "verify:trace-export":  "tsx scripts/dev/verify-trace-export.ts",
@@ -67,6 +68,7 @@
                     "test:governance-unknown-signer":  "tsx scripts/dev/test-governance-unknown-signer.ts",
                     "test:governance-historical-trust":  "tsx scripts/dev/test-governance-historical-trust.ts",
                     "test:governance-historical-suspension":  "tsx scripts/dev/test-governance-historical-suspension.ts"
+
                 },
     "devDependencies":  {
                             "@types/node":  "^20.11.30",

@@ -1,6 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import type { AuthorityArtifactRecord } from "./authorityWriter";
+import { sha256 } from "../common/hash";
 import {
   formatAjvErrors,
   getSchemaValidator
@@ -77,20 +78,39 @@ function readAllAuthorityRecords(): AuthorityArtifactRecord[] {
   return records;
 }
 
+function legacySnapshotHash(record: AuthorityArtifactRecord): string {
+  return sha256(JSON.stringify({
+    record_type: record.record_type,
+    trace_id: record.trace_id,
+    timestamp: record.timestamp
+  }));
+}
+
 function toSnapshotRecord(
   record: AuthorityArtifactRecord
 ): AuthoritySnapshotRecord {
+  const recordHash = typeof record.record_hash === "string"
+    ? record.record_hash
+    : legacySnapshotHash(record);
+
+  const recordHashAlgorithm = record.record_hash_algorithm === "sha256"
+    ? record.record_hash_algorithm
+    : "sha256";
+
   const snapshotRecord: AuthoritySnapshotRecord = {
     record_type: record.record_type,
     trace_id: record.trace_id,
     timestamp: record.timestamp,
-    record_hash: record.record_hash,
-    record_hash_algorithm: record.record_hash_algorithm
+    record_hash: recordHash,
+    record_hash_algorithm: recordHashAlgorithm
   };
 
-  if (record.previous_authority_hash) {
-    snapshotRecord.previous_authority_hash = record.previous_authority_hash;
-  }
+  if (
+  typeof record.previous_authority_hash === "string" &&
+  record.previous_authority_hash.length === 64
+) {
+  snapshotRecord.previous_authority_hash = record.previous_authority_hash;
+}
 
   return snapshotRecord;
 }
@@ -151,7 +171,8 @@ export function buildAuthoritySnapshot(
       baseline_eligible: true,
       notes: [
         "Initial authority snapshot implementation uses authority metadata only.",
-        "Trust and governance references are placeholders pending later milestones."
+        "Trust and governance references are placeholders pending later milestones.",
+        "Legacy authority records without persisted record_hash receive deterministic snapshot-only hashes."
       ]
     }
   };
