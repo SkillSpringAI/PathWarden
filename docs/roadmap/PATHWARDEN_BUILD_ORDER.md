@@ -110,11 +110,54 @@ design complete
 Status:
 
 ```text
-not started
+implementation complete
+schema complete
+export script complete
+checks passing
 
-Start next.
+Implemented files:
 
-Implementation should follow:
+schemas/audit/replay-baseline.schema.json
+core/audit/replayBaseline.ts
+scripts/dev/export-replay-baseline.ts
+
+Package script:
+
+npm run export:replay-baseline -- <trace_id>
+
+Current behavior:
+
+exports schema-valid replay baselines
+uses trace replay as source evidence
+captures deterministic authority record references
+captures deterministic execution event references
+hashes reconstructed replay chain
+records replay safety status
+supports legacy authority records without persisted record_hash
+writes generated baselines under exports/replay
+generated exports remain out of git
+
+Validation result:
+
+npm run check passed
+npm run diag passed
+npm run export:replay-baseline passed
+
+Export test result:
+
+Trace id: trace_capability_1780619880414
+Authority records: 2
+Execution records: 1
+Baseline safe: true
+
+Implementation remains conservative:
+
+no replay diffing
+no signing
+no federation semantics
+no executable behavior
+no authority record mutation
+authority snapshot, trust, and governance references remain placeholders pending later milestones
 
 docs/replay/REPLAY_BASELINE_DESIGN.md
 
@@ -133,12 +176,24 @@ Likely implementation files:
 core/audit/replayBaseline.ts
 schemas/audit/replay-baseline.schema.json
 scripts/dev/export-replay-baseline.ts
-3. Replay Diff Design
+### Milestone 3: Replay Diff Implementation
 
 Status:
 
-design complete
-implementation not started
+```text
+not started
+
+Start next.
+
+Implementation should follow:
+
+docs/replay/REPLAY_DIFF_DESIGN.md
+
+Expected first files:
+
+schemas/audit/replay-diff.schema.json
+core/audit/replayDiff.ts
+scripts/dev/export-replay-diff.ts
 
 Design document:
 
