@@ -50,6 +50,7 @@
                     "test:trace-export":  "tsx scripts/dev/test-trace-export.ts",
                     "test:authority-chain-hash-verification":  "tsx scripts/dev/test-authority-chain-hash-verification.ts",
                     "verify:trace-export":  "tsx scripts/dev/verify-trace-export.ts",
+                    "verify:authority-export": "tsx scripts/dev/verify-authority-export.ts",
                     "test:trace-export-tamper-detection":  "tsx scripts/dev/test-trace-export-tamper-detection.ts",
                     "test:authority-record-corruption":  "tsx scripts/dev/test-authority-record-corruption.ts",
                     "test:authority-continuity-break":  "tsx scripts/dev/test-authority-continuity-break.ts",

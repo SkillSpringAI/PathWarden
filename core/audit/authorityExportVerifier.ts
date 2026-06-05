@@ -42,14 +42,16 @@ export interface AuthorityExportVerification {
   };
 }
 
-const SECRET_PATTERNS = [
+const SECRET_KEY_PATTERNS = [
   "private_key",
   "secret",
-  "token",
   "password",
   "seed",
   "mnemonic",
-  "api_key"
+  "api_key",
+  "access_token",
+  "refresh_token",
+  "bearer_token"
 ];
 
 function createVerificationId(
@@ -108,11 +110,26 @@ function hasValidRecordRefs(records: AuthoritySnapshotRecord[]): boolean {
 }
 
 function detectSecretLeakage(value: unknown): boolean {
-  const serialized = JSON.stringify(value).toLowerCase();
+  if (Array.isArray(value)) {
+    return value.some((item) => detectSecretLeakage(item));
+  }
 
-  return SECRET_PATTERNS.some((pattern) =>
-    serialized.includes(pattern)
-  );
+  if (value && typeof value === "object") {
+    return Object.entries(value as Record<string, unknown>).some(
+      ([key, nestedValue]) => {
+        const normalizedKey = key.toLowerCase();
+
+        return (
+          SECRET_KEY_PATTERNS.some((pattern) =>
+            normalizedKey.includes(pattern)
+          ) ||
+          detectSecretLeakage(nestedValue)
+        );
+      }
+    );
+  }
+
+  return false;
 }
 
 function validateSnapshotSchema(snapshot: AuthoritySnapshot): boolean {
