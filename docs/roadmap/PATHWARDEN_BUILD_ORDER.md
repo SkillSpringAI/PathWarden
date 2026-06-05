@@ -43,7 +43,53 @@ Completed Design Milestones
 Status:
 
 design complete
-implementation not started
+### Milestone 1: Authority Snapshot Implementation
+
+Status:
+
+```text
+implementation complete
+schema complete
+export script complete
+checks passing
+
+Implemented files:
+
+schemas/audit/authority-snapshot.schema.json
+core/audit/authoritySnapshot.ts
+scripts/dev/export-authority-snapshot.ts
+
+Package script:
+
+npm run export:authority-snapshot
+
+Current behavior:
+
+exports schema-valid authority snapshots
+reads authority records without mutating them
+sorts records deterministically
+supports legacy records without persisted record_hash
+omits invalid legacy previous_authority_hash values from snapshot output
+writes generated snapshots under exports/authority
+generated exports remain out of git
+
+Validation result:
+
+npm run check passed
+npm run diag passed
+npm run export:authority-snapshot passed
+
+Export test result:
+
+Authority records: 6044
+
+Implementation remains conservative:
+
+no signing
+no federation semantics
+no executable behavior
+no authority record mutation
+trust and governance references remain placeholders pending later milestone
 
 Design document:
 
@@ -59,7 +105,24 @@ scripts/dev/export-authority-snapshot.ts
 Status:
 
 design complete
-implementation not started
+### Milestone 2: Replay Baseline Implementation
+
+Status:
+
+```text
+not started
+
+Start next.
+
+Implementation should follow:
+
+docs/replay/REPLAY_BASELINE_DESIGN.md
+
+Expected first files:
+
+schemas/audit/replay-baseline.schema.json
+core/audit/replayBaseline.ts
+scripts/dev/export-replay-baseline.ts
 
 Design document:
 
