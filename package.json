@@ -47,6 +47,7 @@
                     "test:replay-trace-cli-execution":  "tsx scripts/dev/test-replay-trace-cli-execution.ts",
                     "export:trace":  "tsx scripts/dev/export-trace.ts",
                     "export:authority-snapshot": "tsx scripts/dev/export-authority-snapshot.ts",
+                    "export:policy-manifest": "tsx scripts/dev/export-policy-manifest.ts",
                     "test:trace-export":  "tsx scripts/dev/test-trace-export.ts",
                     "test:authority-chain-hash-verification":  "tsx scripts/dev/test-authority-chain-hash-verification.ts",
                     "verify:trace-export":  "tsx scripts/dev/verify-trace-export.ts",
