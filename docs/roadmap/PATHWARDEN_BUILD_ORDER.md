@@ -232,21 +232,58 @@ scripts/dev/export-replay-diff.ts
 Status:
 
 ```text
-not started
+implementation complete
+schema complete
+verification CLI complete
+checks passing
 
-Start next.
-
-Implementation should follow:
-
-docs/governance/AUTHORITY_EXPORT_VERIFICATION_DESIGN.md
-
-Expected first files:
+Implemented files:
 
 schemas/audit/authority-export-verification.schema.json
 core/audit/authorityExportVerifier.ts
 scripts/dev/verify-authority-export.ts
-design complete
-implementation not started
+
+Package script:
+
+npm run verify:authority-export -- <authority_snapshot_json_path>
+
+Current behavior:
+
+verifies exported authority snapshot artifacts
+validates authority snapshot schema
+checks required fields
+checks record count consistency
+checks authority record references
+checks deterministic ordering
+checks trust context presence
+checks revocation context declaration
+checks replay safety
+checks secret-like key leakage without falsely flagging permission_token values
+returns structured JSON verification output
+fails closed when export is not admissible
+
+Validation result:
+
+npm run check passed
+npm run diag passed
+npm run verify:authority-export passed
+
+Verification test result:
+
+Target: authsnap_20260605T001035442Z
+Status: verified
+Severity: none
+Admissible: true
+Secret leakage detected: false
+
+Implementation remains conservative:
+
+authority snapshots only
+no automatic repair
+no signing
+no federation semantics
+no executable behavior
+no authority record mutation
 
 Design document:
 
@@ -257,10 +294,23 @@ Likely implementation files:
 core/audit/authorityExportVerifier.ts
 schemas/audit/authority-export-verification.schema.json
 scripts/dev/verify-authority-export.ts
-5. Policy Manifest Design
+### Milestone 5: Policy Manifest Implementation
 
 Status:
 
+not started
+
+Start next.
+
+Implementation should follow:
+
+docs/governance/POLICY_MANIFEST_DESIGN.md
+
+Expected first files:
+
+schemas/policy/policy-manifest.schema.json
+core/policy/policyManifest.ts
+scripts/dev/export-policy-manifest.ts
 design complete
 implementation not started
 
