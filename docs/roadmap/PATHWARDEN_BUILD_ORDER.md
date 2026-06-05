@@ -356,25 +356,54 @@ scripts/dev/export-policy-manifest.ts
 Status:
 
 ```text
-not started
+implementation complete
+hashing CLI complete
+verification CLI complete
+checks passing
 
-Start next.
-
-Implementation should follow:
-
-docs/governance/POLICY_HASHING_DESIGN.md
-
-Expected first files:
+Implemented files:
 
 core/policy/policyHasher.ts
 scripts/dev/hash-policy-manifest.ts
 scripts/dev/verify-policy-hashes.ts
 
-Potential schema update:
+Package scripts:
 
-schemas/policy/policy-manifest.schema.json
-design complete
-implementation not started
+npm run hash:policy-manifest
+npm run verify:policy-hashes -- <policy_manifest_json_path>
+
+Current behavior:
+
+generates SHA-256 hashes for files listed in the policy manifest
+uses repository-relative paths
+preserves deterministic hash ordering by kind and path
+exports hashed policy manifests under exports/policy
+verifies hashed manifests against current repository files
+reports match, mismatch, missing_required, missing_optional, not_checked, and invalid_entry statuses
+does not print file contents
+generated exports remain out of git
+
+Validation result:
+
+npm run check passed
+npm run diag passed
+npm run hash:policy-manifest passed
+npm run verify:policy-hashes passed
+
+Hashing test result:
+
+Hashes available: true
+Hash algorithm: sha256
+File hashes: 30
+
+Implementation remains conservative:
+
+file-level hashes only
+no manifest-level hash yet
+no signing
+no federation semantics
+no executable behavior
+no policy mutation
 
 Design document:
 
@@ -385,9 +414,24 @@ Likely implementation files:
 core/policy/policyHasher.ts
 scripts/dev/hash-policy-manifest.ts
 scripts/dev/verify-policy-hashes.ts
-7. Diagnostic Metadata
+### Milestone 7: Diagnostic Metadata Implementation
 
 Status:
+
+```text
+not started
+
+Start next session.
+
+Implementation should follow:
+
+docs/diagnostics/DIAGNOSTIC_METADATA_DESIGN.md
+
+Expected first files:
+
+core/common/diagnostics/diagnosticMetadata.ts
+core/common/diagnostics/diagnosticRegistry.ts
+schemas/diagnostics/diagnostic-metadata.schema.json
 
 design complete
 implementation not started
