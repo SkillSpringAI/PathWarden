@@ -1,0 +1,183 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PathWarden Policy Manifest Schema",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "manifest_id",
+    "created_at",
+    "source",
+    "policy",
+    "governance",
+    "triggers",
+    "trust",
+    "schemas",
+    "hashing",
+    "diagnostics"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": ["policy-manifest.v1"]
+    },
+    "manifest_id": {
+      "type": "string",
+      "minLength": 10
+    },
+    "created_at": {
+      "type": "string",
+      "minLength": 10
+    },
+    "source": {
+      "type": "object",
+      "required": ["runtime", "environment"],
+      "properties": {
+        "runtime": {
+          "type": "string",
+          "enum": ["pathwarden"]
+        },
+        "environment": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "policy": {
+      "type": "object",
+      "required": ["files"],
+      "properties": {
+        "files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/file_ref"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "governance": {
+      "type": "object",
+      "required": ["files"],
+      "properties": {
+        "files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/file_ref"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "triggers": {
+      "type": "object",
+      "required": ["files"],
+      "properties": {
+        "files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/file_ref"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "trust": {
+      "type": "object",
+      "required": ["manifest_refs"],
+      "properties": {
+        "manifest_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/file_ref"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "schemas": {
+      "type": "object",
+      "required": ["files"],
+      "properties": {
+        "files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/file_ref"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "hashing": {
+      "type": "object",
+      "required": [
+        "hash_algorithm",
+        "hashes_available",
+        "file_hashes"
+      ],
+      "properties": {
+        "hash_algorithm": {
+          "type": ["string", "null"],
+          "enum": ["sha256", null]
+        },
+        "hashes_available": {
+          "type": "boolean"
+        },
+        "file_hashes": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "diagnostics": {
+      "type": "object",
+      "required": ["drift_check_eligible", "notes"],
+      "properties": {
+        "drift_check_eligible": {
+          "type": "boolean"
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "definitions": {
+    "file_ref": {
+      "type": "object",
+      "required": ["path", "kind", "required", "hash"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "policy",
+            "governance",
+            "trigger",
+            "trust",
+            "schema",
+            "diagnostic"
+          ]
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "hash": {
+          "type": ["string", "null"]
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
