@@ -59,6 +59,7 @@
                     "verify:policy-hashes": "tsx scripts/dev/verify-policy-hashes.ts",
                     "verify:diagnostic-metadata": "tsx scripts/dev/verify-diagnostic-metadata.ts",
                     "export:trace-manifest":  "tsx scripts/dev/export-trace-manifest.ts",
+                    "export:governance-report": "tsx scripts/dev/export-governance-report.ts",
                     "verify:trace-manifest":  "tsx scripts/dev/verify-trace-manifest.ts",
                     "sign:trace-manifest":  "tsx scripts/dev/sign-trace-manifest.ts",
                     "verify:trace-manifest-signature":  "tsx scripts/dev/verify-trace-manifest-signature.ts",
