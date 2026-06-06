@@ -1,0 +1,221 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PathWarden Governance Report Schema",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "report_id",
+    "created_at",
+    "source",
+    "authority",
+    "trust",
+    "revocation",
+    "policy",
+    "replay",
+    "diagnostics",
+    "summary",
+    "artifacts"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": ["governance-report.v1"]
+    },
+    "report_id": {
+      "type": "string",
+      "minLength": 10
+    },
+    "created_at": {
+      "type": "string",
+      "minLength": 10
+    },
+    "source": {
+      "type": "object",
+      "required": ["runtime", "environment"],
+      "properties": {
+        "runtime": {
+          "type": "string",
+          "enum": ["pathwarden"]
+        },
+        "environment": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "authority": {
+      "type": "object",
+      "required": ["snapshot_id", "record_count", "status"],
+      "properties": {
+        "snapshot_id": {
+          "type": ["string", "null"]
+        },
+        "record_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "status": {
+          "$ref": "#/definitions/status"
+        }
+      },
+      "additionalProperties": false
+    },
+    "trust": {
+      "type": "object",
+      "required": ["status", "warnings", "critical_failures"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/status"
+        },
+        "warnings": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "critical_failures": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "revocation": {
+      "type": "object",
+      "required": ["checked", "status", "warnings", "critical_failures"],
+      "properties": {
+        "checked": { "type": "boolean" },
+        "status": {
+          "$ref": "#/definitions/status"
+        },
+        "warnings": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "critical_failures": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "policy": {
+      "type": "object",
+      "required": ["manifest_id", "hashes_available", "status"],
+      "properties": {
+        "manifest_id": {
+          "type": ["string", "null"]
+        },
+        "hashes_available": {
+          "type": "boolean"
+        },
+        "status": {
+          "$ref": "#/definitions/status"
+        }
+      },
+      "additionalProperties": false
+    },
+    "replay": {
+      "type": "object",
+      "required": ["baseline_id", "diff_id", "status"],
+      "properties": {
+        "baseline_id": {
+          "type": ["string", "null"]
+        },
+        "diff_id": {
+          "type": ["string", "null"]
+        },
+        "status": {
+          "$ref": "#/definitions/status"
+        }
+      },
+      "additionalProperties": false
+    },
+    "diagnostics": {
+      "type": "object",
+      "required": ["overall_status", "passed", "failed", "warnings"],
+      "properties": {
+        "overall_status": {
+          "$ref": "#/definitions/status"
+        },
+        "passed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "warnings": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "object",
+      "required": ["release_safe", "status", "severity", "recommendation", "notes"],
+      "properties": {
+        "release_safe": {
+          "type": "boolean"
+        },
+        "status": {
+          "$ref": "#/definitions/status"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["none", "info", "warning", "critical"]
+        },
+        "recommendation": {
+          "type": "string",
+          "minLength": 1
+        },
+        "notes": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["kind", "id", "path", "required"],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "authority_snapshot",
+              "policy_manifest",
+              "diagnostic_metadata_registry"
+            ]
+          },
+          "id": {
+            "type": ["string", "null"]
+          },
+          "path": {
+            "type": ["string", "null"]
+          },
+          "required": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "definitions": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "verified",
+        "verified_with_warnings",
+        "incomplete",
+        "failed",
+        "not_checked"
+      ]
+    }
+  },
+  "additionalProperties": false
+}
