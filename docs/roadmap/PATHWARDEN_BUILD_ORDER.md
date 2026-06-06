@@ -479,22 +479,58 @@ schemas/diagnostics/diagnostic-metadata.schema.json
 Status:
 
 ```text
-not started
+implementation complete
+schema complete
+report builder complete
+export script complete
+checks passing
 
-Start next.
-
-Implementation should follow:
-
-docs/governance/GOVERNANCE_REPORTING_DESIGN.md
-
-Expected first files:
+Implemented files:
 
 schemas/audit/governance-report.schema.json
 core/audit/governanceReport.ts
 scripts/dev/export-governance-report.ts
-design complete
-implementation not started
 
+Package script:
+
+npm run export:governance-report
+
+Current behavior:
+
+exports schema-valid governance reports
+summarizes authority snapshot evidence
+summarizes authority export verification status
+summarizes policy manifest and policy hash evidence
+summarizes diagnostic metadata registry status
+marks replay evidence as incomplete until replay baseline and replay diff inputs are supplied
+preserves deterministic artifact ordering
+writes generated reports under exports/governance
+generated exports remain out of git
+
+Validation result:
+
+npm run check passed
+npm run diag passed
+npm run export:governance-report passed
+
+Expected first-pass report posture:
+
+Authority status: verified
+Policy status: verified
+Replay status: incomplete
+Diagnostics status: verified
+Summary status: incomplete
+Release safe: false
+
+Implementation remains conservative:
+
+on-demand report generation only
+no signing
+no federation semantics
+no executable behavior
+no audit log mutation
+no diagnostic runner replacement
+no fake replay confidence
 Design document:
 
 docs/governance/GOVERNANCE_REPORTING_DESIGN.md
@@ -504,12 +540,25 @@ Likely implementation files:
 core/audit/governanceReport.ts
 schemas/audit/governance-report.schema.json
 scripts/dev/export-governance-report.ts
-9. Replay Provenance Reports
+### Milestone 9: Replay Provenance Reporting Implementation
+Status
 
-Status:
+not started
+
+Start next.
+
+Implementation should follow:
+
+docs/replay/REPLAY_PROVENANCE_REPORTING_DESIGN.md
+
+Expected first files:
+
+schemas/audit/replay-provenance-report.schema.json
+core/audit/replayProvenanceReport.ts
+scripts/dev/export-replay-provenance-report.ts
 
 design complete
-implementation not started
+implementation not yet started
 
 Design document:
 
