@@ -541,24 +541,71 @@ core/audit/governanceReport.ts
 schemas/audit/governance-report.schema.json
 scripts/dev/export-governance-report.ts
 ### Milestone 9: Replay Provenance Reporting Implementation
-Status
 
-not started
+Status:
 
-Start next.
+```text
+implementation complete
+schema complete
+report builder complete
+export script complete
+checks passing
 
-Implementation should follow:
-
-docs/replay/REPLAY_PROVENANCE_REPORTING_DESIGN.md
-
-Expected first files:
+Implemented files:
 
 schemas/audit/replay-provenance-report.schema.json
 core/audit/replayProvenanceReport.ts
 scripts/dev/export-replay-provenance-report.ts
 
+Package script:
+
+npm run export:replay-provenance-report
+
+Current behavior:
+
+exports schema-valid replay provenance reports
+supports advisory mode with no replay baseline or replay diff arguments
+supports fuller mode with supplied replay baseline and replay diff JSON paths
+summarizes authority snapshot reference
+summarizes replay baseline reference
+summarizes replay diff reference
+summarizes execution replay references from baseline evidence
+summarizes trust and revocation context from replay baseline evidence
+summarizes policy manifest and policy hash status
+declares missing replay baseline and replay diff as lineage gaps
+preserves deterministic artifact ordering
+preserves deterministic lineage gap ordering
+writes generated reports under exports/replay
+generated exports remain out of git
+
+Validation result:
+
+npm run check passed
+npm run diag passed
+npm run export:replay-provenance-report passed
+
+Expected first-pass advisory posture:
+
+Replay status: incomplete
+Baseline id: null
+Diff id: null
+Lineage complete: false
+Lineage explainable: false
+Summary status: incomplete
+Admissible: false
+
+Implementation remains conservative:
+
+on-demand report generation only
+no signing
+no federation semantics
+no executable behavior
+no replay artifact mutation
+no audit log mutation
+no fake replay lineage confidence
+
 design complete
-implementation not yet started
+implementation complete
 
 Design document:
 
@@ -569,9 +616,24 @@ Likely implementation files:
 core/audit/replayProvenanceReport.ts
 schemas/audit/replay-provenance-report.schema.json
 scripts/dev/export-replay-provenance-report.ts
-10. Federation Readiness Audit
+### Milestone 10: Federation Readiness Audit Implementation
 
 Status:
+
+```text
+not started
+
+Start next.
+
+Implementation should follow:
+
+docs/federation/FEDERATION_READINESS_AUDIT_DESIGN.md
+
+Expected first files:
+
+schemas/audit/federation-readiness-audit.schema.json
+core/audit/federationReadinessAudit.ts
+scripts/dev/export-federation-readiness-audit.ts
 
 design complete
 implementation not started
