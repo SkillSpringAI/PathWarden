@@ -61,6 +61,7 @@
                     "export:trace-manifest":  "tsx scripts/dev/export-trace-manifest.ts",
                     "export:governance-report": "tsx scripts/dev/export-governance-report.ts",
                     "export:replay-provenance-report": "tsx scripts/dev/export-replay-provenance-report.ts",
+                    "export:federation-readiness-audit": "tsx scripts/dev/export-federation-readiness-audit.ts",
                     "verify:trace-manifest":  "tsx scripts/dev/verify-trace-manifest.ts",
                     "sign:trace-manifest":  "tsx scripts/dev/sign-trace-manifest.ts",
                     "verify:trace-manifest-signature":  "tsx scripts/dev/verify-trace-manifest-signature.ts",
