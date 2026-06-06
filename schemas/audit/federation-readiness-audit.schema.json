@@ -1,0 +1,220 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PathWarden Federation Readiness Audit Schema",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "audit_id",
+    "created_at",
+    "source",
+    "governance",
+    "replay_provenance",
+    "policy",
+    "diagnostics",
+    "federation",
+    "summary",
+    "artifacts"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": ["federation-readiness-audit.v1"]
+    },
+    "audit_id": {
+      "type": "string",
+      "minLength": 10
+    },
+    "created_at": {
+      "type": "string",
+      "minLength": 10
+    },
+    "source": {
+      "type": "object",
+      "required": ["runtime", "environment"],
+      "properties": {
+        "runtime": {
+          "type": "string",
+          "enum": ["pathwarden"]
+        },
+        "environment": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "governance": {
+      "type": "object",
+      "required": ["report_id", "status", "release_safe"],
+      "properties": {
+        "report_id": {
+          "type": ["string", "null"]
+        },
+        "status": {
+          "$ref": "#/definitions/status"
+        },
+        "release_safe": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "replay_provenance": {
+      "type": "object",
+      "required": ["report_id", "status", "admissible", "lineage_complete"],
+      "properties": {
+        "report_id": {
+          "type": ["string", "null"]
+        },
+        "status": {
+          "$ref": "#/definitions/status"
+        },
+        "admissible": {
+          "type": "boolean"
+        },
+        "lineage_complete": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "policy": {
+      "type": "object",
+      "required": ["manifest_id", "hashes_available", "status"],
+      "properties": {
+        "manifest_id": {
+          "type": ["string", "null"]
+        },
+        "hashes_available": {
+          "type": "boolean"
+        },
+        "status": {
+          "$ref": "#/definitions/status"
+        }
+      },
+      "additionalProperties": false
+    },
+    "diagnostics": {
+      "type": "object",
+      "required": ["registered", "blocking", "ci_compatible", "status"],
+      "properties": {
+        "registered": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "blocking": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ci_compatible": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "status": {
+          "$ref": "#/definitions/status"
+        }
+      },
+      "additionalProperties": false
+    },
+    "federation": {
+      "type": "object",
+      "required": [
+        "ready",
+        "status",
+        "warnings",
+        "critical_failures",
+        "missing_requirements"
+      ],
+      "properties": {
+        "ready": {
+          "type": "boolean"
+        },
+        "status": {
+          "$ref": "#/definitions/status"
+        },
+        "warnings": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "critical_failures": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "missing_requirements": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "object",
+      "required": ["status", "severity", "ready_for_federation", "recommendation", "notes"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/status"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["none", "info", "warning", "critical"]
+        },
+        "ready_for_federation": {
+          "type": "boolean"
+        },
+        "recommendation": {
+          "type": "string",
+          "minLength": 1
+        },
+        "notes": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/artifact_ref"
+      }
+    }
+  },
+  "definitions": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "verified",
+        "verified_with_warnings",
+        "incomplete",
+        "failed",
+        "not_checked"
+      ]
+    },
+    "artifact_ref": {
+      "type": "object",
+      "required": ["kind", "id", "path", "required"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "governance_report",
+            "replay_provenance_report",
+            "policy_manifest",
+            "diagnostic_metadata_registry"
+          ]
+        },
+        "id": {
+          "type": ["string", "null"]
+        },
+        "path": {
+          "type": ["string", "null"]
+        },
+        "required": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
