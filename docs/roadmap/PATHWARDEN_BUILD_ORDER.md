@@ -621,22 +621,61 @@ scripts/dev/export-replay-provenance-report.ts
 Status:
 
 ```text
-not started
+implementation complete
+schema complete
+audit builder complete
+export script complete
+checks passing
 
-Start next.
-
-Implementation should follow:
-
-docs/federation/FEDERATION_READINESS_AUDIT_DESIGN.md
-
-Expected first files:
+Implemented files:
 
 schemas/audit/federation-readiness-audit.schema.json
 core/audit/federationReadinessAudit.ts
 scripts/dev/export-federation-readiness-audit.ts
 
+Package script:
+
+npm run export:federation-readiness-audit
+
+Current behavior:
+
+exports schema-valid federation readiness audits
+summarizes governance report readiness
+summarizes replay provenance readiness
+summarizes policy manifest and policy hash readiness
+summarizes diagnostic metadata readiness
+declares missing requirements explicitly
+marks federation as not ready until governance and replay provenance are complete/admissible
+writes generated audits under exports/federation
+generated exports remain out of git
+
+Expected first-pass advisory posture:
+
+Governance status: incomplete
+Governance release safe: false
+Replay provenance status: incomplete
+Replay provenance admissible: false
+Replay lineage complete: false
+Policy status: verified
+Diagnostics status: verified
+Federation status: incomplete
+Federation ready: false
+Summary status: incomplete
+Ready for federation: false
+
+Implementation remains conservative:
+
+readiness audit only
+no federation runtime behavior
+no delegated authority
+no cross-runtime trust negotiation
+no signing
+no network behavior
+no executable federation actions
+no fake readiness confidence
+
 design complete
-implementation not started
+implementation complete
 
 Design document:
 
@@ -648,44 +687,31 @@ core/audit/federationReadinessAudit.ts
 schemas/audit/federation-readiness-audit.schema.json
 scripts/dev/export-federation-readiness-audit.ts
 Next Implementation Pass
+## Evidence and Reporting Foundation Status
+
+Status:
+
+```text
+complete for current pass
+
+Completed implementation pass:
+
 Milestone 1: Authority Snapshot Implementation
+Milestone 2: Replay Baseline Implementation
+Milestone 3: Replay Diff Implementation
+Milestone 4: Authority Export Verification Implementation
+Milestone 5: Policy Manifest Implementation
+Milestone 6: Policy Hashing Implementation
+Milestone 7: Diagnostic Metadata Implementation
+Milestone 8: Governance Reporting Implementation
+Milestone 9: Replay Provenance Reporting Implementation
+Milestone 10: Federation Readiness Audit Implementation
 
-Start here.
+Current posture:
 
-Implementation should follow:
-
-docs/governance/AUTHORITY_SNAPSHOT_DESIGN.md
-
-Initial conservative implementation target:
-
-schema-valid authority snapshot export
-deterministic authority record ordering
-repository-safe output
-trust context placeholder or reference
-revocation context declaration
-no secrets
-no signing
-no federation semantics
-no executable behavior
-
-Expected first files:
-
-schemas/audit/authority-snapshot.schema.json
-core/audit/authoritySnapshot.ts
-scripts/dev/export-authority-snapshot.ts
-Pacing Principle
-
-Do not expand the system merely because an abstraction is interesting.
-
-Expansion is justified only when:
-
-current code becomes hard to reason about
-diagnostics require the abstraction
-replay requires the abstraction
-federation requires the abstraction
-external audit requires the abstraction
-Current State
-design foundation complete
-implementation pass ready
-working tree expected clean
-
+PathWarden now has a local evidence/reporting foundation.
+Artifacts are generated on demand.
+Reports are schema-valid.
+Missing evidence is declared rather than hidden.
+Generated exports remain outside git.
+Federation readiness remains advisory and non-executable.
