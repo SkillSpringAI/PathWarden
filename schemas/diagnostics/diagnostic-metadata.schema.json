@@ -1,0 +1,116 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PathWarden Diagnostic Metadata Schema",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "description",
+    "category",
+    "subsystem",
+    "severity",
+    "blocking",
+    "ci_compatible",
+    "requires",
+    "dependencies",
+    "tags",
+    "status"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^diag\\.[a-z0-9_-]+\\.[a-z0-9_.-]+$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 3
+    },
+    "description": {
+      "type": "string",
+      "minLength": 10
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "governance",
+        "authority",
+        "trust",
+        "replay",
+        "policy",
+        "diagnostics",
+        "tasks",
+        "exports",
+        "federation"
+      ]
+    },
+    "subsystem": {
+      "type": "string",
+      "enum": [
+        "kernel",
+        "audit",
+        "trust",
+        "replay",
+        "policy",
+        "diagnostics",
+        "executor",
+        "tasks",
+        "federation"
+      ]
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["info", "warning", "critical"]
+    },
+    "blocking": {
+      "type": "boolean"
+    },
+    "ci_compatible": {
+      "type": "boolean"
+    },
+    "requires": {
+      "type": "object",
+      "required": [
+        "filesystem",
+        "authority_records",
+        "trust_manifest",
+        "replay_artifacts",
+        "policy_manifest",
+        "policy_hashes",
+        "execution_records",
+        "network",
+        "manual_approval"
+      ],
+      "properties": {
+        "filesystem": { "type": "boolean" },
+        "authority_records": { "type": "boolean" },
+        "trust_manifest": { "type": "boolean" },
+        "replay_artifacts": { "type": "boolean" },
+        "policy_manifest": { "type": "boolean" },
+        "policy_hashes": { "type": "boolean" },
+        "execution_records": { "type": "boolean" },
+        "network": { "type": "boolean" },
+        "manual_approval": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^diag\\.[a-z0-9_-]+\\.[a-z0-9_.-]+$"
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "planned", "deprecated", "disabled"]
+    }
+  },
+  "additionalProperties": false
+}
