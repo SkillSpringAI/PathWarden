@@ -419,22 +419,51 @@ scripts/dev/verify-policy-hashes.ts
 Status:
 
 ```text
-not started
+implementation complete
+schema complete
+metadata types complete
+passive registry complete
+verification CLI complete
+checks passing
 
-Start next session.
+Implemented files:
 
-Implementation should follow:
-
-docs/diagnostics/DIAGNOSTIC_METADATA_DESIGN.md
-
-Expected first files:
-
+schemas/diagnostics/diagnostic-metadata.schema.json
 core/common/diagnostics/diagnosticMetadata.ts
 core/common/diagnostics/diagnosticRegistry.ts
-schemas/diagnostics/diagnostic-metadata.schema.json
+scripts/dev/verify-diagnostic-metadata.ts
 
-design complete
-implementation not started
+Package script:
+
+npm run verify:diagnostic-metadata
+
+Current behavior:
+
+defines diagnostic metadata schema
+defines diagnostic metadata TypeScript types
+defines passive diagnostic metadata registry
+validates diagnostic metadata shape
+checks duplicate diagnostic IDs
+checks missing diagnostic dependencies
+reports active, blocking, and CI-compatible diagnostic counts
+does not alter npm run diag behavior
+does not execute diagnostics
+does not introduce grouped execution
+
+Validation result:
+
+npm run check passed
+npm run diag passed
+npm run verify:diagnostic-metadata passed
+
+Implementation remains conservative:
+
+passive metadata only
+no diagnostic runner rewiring
+no grouped execution
+no dependency-based execution ordering
+no federation diagnostics
+no replacement of existing diagnostic scripts
 
 Design document:
 
@@ -445,10 +474,24 @@ Likely implementation files:
 core/common/diagnostics/diagnosticMetadata.ts
 core/common/diagnostics/diagnosticRegistry.ts
 schemas/diagnostics/diagnostic-metadata.schema.json
-8. Governance Reporting
+### Milestone 8: Governance Reporting Implementation
 
 Status:
 
+```text
+not started
+
+Start next.
+
+Implementation should follow:
+
+docs/governance/GOVERNANCE_REPORTING_DESIGN.md
+
+Expected first files:
+
+schemas/audit/governance-report.schema.json
+core/audit/governanceReport.ts
+scripts/dev/export-governance-report.ts
 design complete
 implementation not started
 
