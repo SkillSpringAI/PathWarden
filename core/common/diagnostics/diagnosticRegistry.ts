@@ -128,7 +128,55 @@ export const DIAGNOSTIC_METADATA_REGISTRY: DiagnosticMetadata[] = [
     dependencies: [],
     tags: ["policy", "hashing", "verification"],
     status: "active"
-  }
+  },
+  {
+    id: "diag.governance.report_verification",
+    name: "Governance Report Verification Diagnostic",
+    description: "Registers governance report verification metadata without wiring it into diagnostic execution.",
+    category: "exports",
+    subsystem: "audit",
+    severity: "warning",
+    blocking: false,
+    ci_compatible: true,
+    requires: withFilesystemRequirements(),
+    dependencies: ["diag.exports.authority", "diag.policy.hashes"],
+    tags: ["governance", "reporting", "verification"],
+    status: "planned"
+  },
+  {
+    id: "diag.replay.provenance_verification",
+    name: "Replay Provenance Verification Diagnostic",
+    description: "Registers replay provenance report verification metadata without wiring it into diagnostic execution.",
+    category: "replay",
+    subsystem: "replay",
+    severity: "warning",
+    blocking: false,
+    ci_compatible: true,
+    requires: withFilesystemRequirements({
+      replay_artifacts: true
+    }),
+    dependencies: ["diag.replay.execution", "diag.policy.hashes"],
+    tags: ["replay", "provenance", "verification"],
+    status: "planned"
+  },
+  {
+    id: "diag.federation.readiness_verification",
+    name: "Federation Readiness Verification Diagnostic",
+    description: "Registers federation readiness audit verification metadata without introducing federation runtime behavior.",
+    category: "federation",
+    subsystem: "federation",
+    severity: "warning",
+    blocking: false,
+    ci_compatible: true,
+    requires: withFilesystemRequirements(),
+    dependencies: [
+      "diag.governance.report_verification",
+      "diag.replay.provenance_verification",
+      "diag.policy.hashes"
+    ],
+    tags: ["federation", "readiness", "verification"],
+    status: "planned"
+  },
 ];
 
 export function getDiagnosticMetadataRegistry(): DiagnosticMetadata[] {
