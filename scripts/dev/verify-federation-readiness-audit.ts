@@ -1,10 +1,13 @@
-import fs from "node:fs";
-import path from "node:path";
-
-type VerificationFailure = {
-  code: string;
-  message: string;
-};
+import {
+  SECRET_KEY_PATTERN,
+  hasObject,
+  isDeterministicArtifactRef as isSharedDeterministicArtifactRef,
+  isIncompleteStatus,
+  isStatusString,
+  readJsonFile,
+  type VerificationFailure,
+  printVerificationFailuresAndExit
+} from "./lib/reportVerifierUtils";
 
 type StatusSection = {
   status?: string;
@@ -62,30 +65,10 @@ type FederationReadinessAudit = {
   [key: string]: unknown;
 };
 
-const SECRET_KEY_PATTERN =
-  /(api[_-]?key|secret|token|password|private[_-]?key|client[_-]?secret|credential)/i;
 
 const FORBIDDEN_RUNTIME_FIELD_PATTERN =
   /(network|endpoint|url|webhook|socket|remote|runtime_delegate|delegated_authority|signing_key|private_key|cross_runtime_session|trust_negotiation)/i;
 
-function readJson(filePath: string): FederationReadinessAudit {
-  const absolutePath = path.resolve(filePath);
-
-  if (!fs.existsSync(absolutePath)) {
-    throw new Error(`File does not exist: ${absolutePath}`);
-  }
-
-  const raw = fs.readFileSync(absolutePath, "utf8");
-  return JSON.parse(raw) as FederationReadinessAudit;
-}
-
-function hasObject(value: unknown): value is Record<string, unknown> {
-  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
-}
-
-function isStatusString(value: unknown): value is string {
-  return typeof value === "string" && value.trim().length > 0;
-}
 
 function hasStatusSection(value: unknown): value is StatusSection {
   return hasObject(value) && isStatusString(value.status);
@@ -126,38 +109,11 @@ function walkForForbiddenKeys(
   }
 }
 
-function isIncompleteStatus(status: unknown): boolean {
-  return [
-    "incomplete",
-    "missing",
-    "failed",
-    "not_ready",
-    "not-ready",
-    "invalid",
-    "unverified",
-  ].includes(String(status));
-}
-
 function isDeterministicArtifactRef(ref: unknown): boolean {
-  if (!hasObject(ref)) return false;
-
-  const kind = ref.kind;
-  const id = ref.id;
-  const pathValue = ref.path;
-  const required = ref.required;
-
-  const hasKind = typeof kind === "string" && kind.trim().length > 0;
-
-  const hasStableId =
-    id === null || (typeof id === "string" && id.trim().length > 0);
-
-  const hasStablePath =
-    pathValue === null ||
-    (typeof pathValue === "string" && pathValue.trim().length > 0);
-
-  const hasRequiredFlag = typeof required === "boolean";
-
-  return hasKind && hasStableId && hasStablePath && hasRequiredFlag;
+  return isSharedDeterministicArtifactRef(ref, {
+    requireKind: true,
+    allowNullId: true
+  });
 }
 
 function hasMissingRequirement(
@@ -470,15 +426,14 @@ function main(): void {
   }
 
   try {
-    const audit = readJson(auditPath);
+    const audit = readJsonFile<FederationReadinessAudit>(auditPath);
     const failures = verifyFederationReadinessAudit(audit);
 
     if (failures.length > 0) {
-      console.error("Federation readiness audit verification failed:");
-      for (const failure of failures) {
-        console.error(`- ${failure.code}: ${failure.message}`);
-      }
-      process.exit(1);
+      printVerificationFailuresAndExit(
+        "Federation readiness audit verification failed:",
+        failures
+      );
     }
 
     console.log("Federation readiness audit verification passed.");

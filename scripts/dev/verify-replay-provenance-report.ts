@@ -1,10 +1,13 @@
-import fs from "node:fs";
-import path from "node:path";
-
-type VerificationFailure = {
-  code: string;
-  message: string;
-};
+import {
+  hasObject,
+  isDeterministicArtifactRef as isSharedDeterministicArtifactRef,
+  isIncompleteStatus,
+  isStatusString,
+  readJsonFile,
+  type VerificationFailure,
+  walkForSecretLikeKeys,
+  printVerificationFailuresAndExit
+} from "./lib/reportVerifierUtils";
 
 type StatusSection = {
   status?: string;
@@ -65,92 +68,17 @@ type ReplayProvenanceReport = {
   [key: string]: unknown;
 };
 
-const SECRET_KEY_PATTERN =
-  /(api[_-]?key|secret|token|password|private[_-]?key|client[_-]?secret|credential)/i;
 
-function readJson(filePath: string): ReplayProvenanceReport {
-  const absolutePath = path.resolve(filePath);
-
-  if (!fs.existsSync(absolutePath)) {
-    throw new Error(`File does not exist: ${absolutePath}`);
-  }
-
-  const raw = fs.readFileSync(absolutePath, "utf8");
-  return JSON.parse(raw) as ReplayProvenanceReport;
-}
-
-function hasObject(value: unknown): value is Record<string, unknown> {
-  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
-}
-
-function walkForSecretLikeKeys(
-  value: unknown,
-  failures: VerificationFailure[],
-  currentPath = "$",
-): void {
-  if (Array.isArray(value)) {
-    value.forEach((entry, index) =>
-      walkForSecretLikeKeys(entry, failures, `${currentPath}[${index}]`),
-    );
-    return;
-  }
-
-  if (value && typeof value === "object") {
-    for (const [key, nestedValue] of Object.entries(value)) {
-      const nextPath = `${currentPath}.${key}`;
-
-      if (SECRET_KEY_PATTERN.test(key)) {
-        failures.push({
-          code: "SECRET_LIKE_KEY",
-          message: `Secret-like key detected at ${nextPath}`,
-        });
-      }
-
-      walkForSecretLikeKeys(nestedValue, failures, nextPath);
-    }
-  }
-}
-
-function isIncompleteStatus(status: unknown): boolean {
-  return [
-    "incomplete",
-    "missing",
-    "failed",
-    "not_ready",
-    "not-ready",
-    "invalid",
-    "unverified",
-  ].includes(String(status));
-}
-
-function isStatusString(value: unknown): value is string {
-  return typeof value === "string" && value.trim().length > 0;
-}
 
 function hasStatusSection(value: unknown): value is StatusSection {
   return hasObject(value) && isStatusString(value.status);
 }
 
 function isDeterministicArtifactRef(ref: unknown): boolean {
-  if (!hasObject(ref)) return false;
-
-  const kind = ref.kind;
-  const id = ref.id;
-  const pathValue = ref.path;
-  const required = ref.required;
-
-  const hasKind = typeof kind === "string" && kind.trim().length > 0;
-
-  const hasStableId =
-    id === null || (typeof id === "string" && id.trim().length > 0);
-
-  const hasStablePath =
-    pathValue === null ||
-    (typeof pathValue === "string" && pathValue.trim().length > 0);
-
-  const hasRequiredFlag = typeof required === "boolean";
-
-  return hasKind && hasStableId && hasStablePath && hasRequiredFlag;
+  return isSharedDeterministicArtifactRef(ref, {
+    requireKind: true,
+    allowNullId: true
+  });
 }
 
 function isDeterministicLineageGap(gap: unknown): boolean {
@@ -413,15 +341,14 @@ function main(): void {
   }
 
   try {
-    const report = readJson(reportPath);
+    const report = readJsonFile<ReplayProvenanceReport>(reportPath);
     const failures = verifyReplayProvenanceReport(report);
 
     if (failures.length > 0) {
-      console.error("Replay provenance report verification failed:");
-      for (const failure of failures) {
-        console.error(`- ${failure.code}: ${failure.message}`);
-      }
-      process.exit(1);
+      printVerificationFailuresAndExit(
+        "Replay provenance report verification failed:",
+        failures
+      );
     }
 
     console.log("Replay provenance report verification passed.");

@@ -1,10 +1,12 @@
-import fs from "node:fs";
-import path from "node:path";
-
-type VerificationFailure = {
-  code: string;
-  message: string;
-};
+import {
+  hasObject,
+  isDeterministicArtifactRef as isSharedDeterministicArtifactRef,
+  isIncompleteStatus,
+  readJsonFile,
+  type VerificationFailure,
+  walkForSecretLikeKeys,
+  printVerificationFailuresAndExit
+} from "./lib/reportVerifierUtils";
 
 type StatusLike = {
   status?: string;
@@ -34,51 +36,7 @@ type GovernanceReport = {
   [key: string]: unknown;
 };
 
-const SECRET_KEY_PATTERN =
-  /(api[_-]?key|secret|token|password|private[_-]?key|client[_-]?secret|credential)/i;
 
-function readJson(filePath: string): GovernanceReport {
-  const absolutePath = path.resolve(filePath);
-
-  if (!fs.existsSync(absolutePath)) {
-    throw new Error(`File does not exist: ${absolutePath}`);
-  }
-
-  const raw = fs.readFileSync(absolutePath, "utf8");
-  return JSON.parse(raw) as GovernanceReport;
-}
-
-function walkForSecretLikeKeys(
-  value: unknown,
-  failures: VerificationFailure[],
-  currentPath = "$",
-): void {
-  if (Array.isArray(value)) {
-    value.forEach((entry, index) =>
-      walkForSecretLikeKeys(entry, failures, `${currentPath}[${index}]`),
-    );
-    return;
-  }
-
-  if (value && typeof value === "object") {
-    for (const [key, nestedValue] of Object.entries(value)) {
-      const nextPath = `${currentPath}.${key}`;
-
-      if (SECRET_KEY_PATTERN.test(key)) {
-        failures.push({
-          code: "SECRET_LIKE_KEY",
-          message: `Secret-like key detected at ${nextPath}`,
-        });
-      }
-
-      walkForSecretLikeKeys(nestedValue, failures, nextPath);
-    }
-  }
-}
-
-function hasObject(value: unknown): value is Record<string, unknown> {
-  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
-}
 
 function getSectionStatus(sectionName: string, value: unknown): string | undefined {
   if (!hasObject(value)) return undefined;
@@ -117,33 +75,10 @@ function collectArtifactRefs(artifacts: unknown): unknown[] {
 }
 
 function isDeterministicArtifactRef(ref: unknown): boolean {
-  if (!hasObject(ref)) return false;
-
-  const id = ref.id;
-  const pathValue = ref.path;
-  const required = ref.required;
-
-  const hasStableId = typeof id === "string" && id.trim().length > 0;
-
-  const hasStablePath =
-    pathValue === null ||
-    (typeof pathValue === "string" && pathValue.trim().length > 0);
-
-  const hasRequiredFlag = typeof required === "boolean";
-
-  return hasStableId && hasStablePath && hasRequiredFlag;
-}
-
-function isIncompleteStatus(status: unknown): boolean {
-  return [
-    "incomplete",
-    "missing",
-    "failed",
-    "not_ready",
-    "not-ready",
-    "invalid",
-    "unverified",
-  ].includes(String(status));
+  return isSharedDeterministicArtifactRef(ref, {
+    requireKind: false,
+    allowNullId: false
+  });
 }
 
 function verifyGovernanceReport(report: GovernanceReport): VerificationFailure[] {
@@ -311,15 +246,14 @@ function main(): void {
   }
 
   try {
-    const report = readJson(reportPath);
+    const report = readJsonFile<GovernanceReport>(reportPath);
     const failures = verifyGovernanceReport(report);
 
     if (failures.length > 0) {
-      console.error("Governance report verification failed:");
-      for (const failure of failures) {
-        console.error(`- ${failure.code}: ${failure.message}`);
-      }
-      process.exit(1);
+      printVerificationFailuresAndExit(
+        "Governance report verification failed:",
+        failures
+      );
     }
 
     console.log("Governance report verification passed.");
