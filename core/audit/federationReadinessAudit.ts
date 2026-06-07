@@ -158,7 +158,7 @@ function buildFederationSummary(args: {
 export function buildFederationReadinessAudit(
   createdAt = new Date().toISOString()
 ): FederationReadinessAudit {
-  const governanceReport = buildGovernanceReport(createdAt);
+  const governanceReport = buildGovernanceReport({ createdAt });
   const replayProvenanceReport = buildReplayProvenanceReport(
     null,
     null,

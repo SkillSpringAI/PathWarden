@@ -25,10 +25,24 @@ export interface GovernanceReportArtifactRef {
   kind:
     | "authority_snapshot"
     | "policy_manifest"
-    | "diagnostic_metadata_registry";
+    | "diagnostic_metadata_registry"
+    | "replay_baseline"
+    | "replay_diff";
   id: string | null;
   path: string | null;
   required: boolean;
+}
+
+export interface GovernanceReportReplayInput {
+  baseline_id: string;
+  diff_id: string;
+  baseline_path: string;
+  diff_path: string;
+}
+
+export interface GovernanceReportBuildOptions {
+  createdAt?: string;
+  replay?: GovernanceReportReplayInput;
 }
 
 export interface GovernanceReport {
@@ -166,8 +180,9 @@ function buildSummary(args: {
 }
 
 export function buildGovernanceReport(
-  createdAt = new Date().toISOString()
+  options: GovernanceReportBuildOptions = {}
 ): GovernanceReport {
+  const createdAt = options.createdAt ?? new Date().toISOString();
   const authoritySnapshot = buildAuthoritySnapshot(createdAt);
   const authorityVerification = verifyAuthoritySnapshotExport(
     authoritySnapshot,
@@ -202,7 +217,8 @@ export function buildGovernanceReport(
   const policyStatus: GovernanceReportStatus =
     policyFailures.length === 0 ? "verified" : "failed";
 
-  const replayStatus: GovernanceReportStatus = "incomplete";
+  const replayStatus: GovernanceReportStatus =
+    options.replay ? "verified" : "incomplete";
 
   const diagnosticsStatus: GovernanceReportStatus =
     activeDiagnostics.length > 0 ? "verified" : "incomplete";
@@ -236,6 +252,23 @@ export function buildGovernanceReport(
     required: true
   }
 ];
+
+if (options.replay) {
+  artifactRefs.push(
+    {
+      kind: "replay_baseline",
+      id: options.replay.baseline_id,
+      path: options.replay.baseline_path,
+      required: true
+    },
+    {
+      kind: "replay_diff",
+      id: options.replay.diff_id,
+      path: options.replay.diff_path,
+      required: true
+    }
+  );
+}
 
 const artifacts = artifactRefs.sort(compareArtifactRefs);
 
@@ -273,8 +306,8 @@ const artifacts = artifactRefs.sort(compareArtifactRefs);
       status: policyStatus
     },
     replay: {
-      baseline_id: null,
-      diff_id: null,
+      baseline_id: options.replay?.baseline_id ?? null,
+      diff_id: options.replay?.diff_id ?? null,
       status: replayStatus
     },
     diagnostics: {

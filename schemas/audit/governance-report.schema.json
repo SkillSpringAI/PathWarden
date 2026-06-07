@@ -188,7 +188,9 @@
             "enum": [
               "authority_snapshot",
               "policy_manifest",
-              "diagnostic_metadata_registry"
+              "diagnostic_metadata_registry",
+              "replay_baseline",
+              "replay_diff"
             ]
           },
           "id": {
