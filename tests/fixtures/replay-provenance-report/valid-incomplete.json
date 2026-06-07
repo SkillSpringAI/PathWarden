@@ -1,0 +1,96 @@
+{
+  "schema_version": "replay-provenance-report.v1",
+  "report_id": "replayprov_fixture_valid_incomplete",
+  "created_at": "2026-06-07T00:00:00.000Z",
+  "source": {
+    "runtime": "pathwarden",
+    "environment": "fixture"
+  },
+  "authority": {
+    "snapshot_id": "authsnap_fixture",
+    "status": "verified"
+  },
+  "replay": {
+    "baseline_id": null,
+    "diff_id": null,
+    "execution_replay_refs": [],
+    "status": "incomplete"
+  },
+  "trust": {
+    "manifest_id": null,
+    "status": "verified_with_warnings",
+    "warnings": [
+      "Fixture trust manifest reference is not supplied."
+    ],
+    "critical_failures": []
+  },
+  "revocation": {
+    "checked": false,
+    "status": "incomplete",
+    "warnings": [
+      "Fixture revocation context is incomplete because replay evidence is missing."
+    ],
+    "critical_failures": []
+  },
+  "policy": {
+    "manifest_id": "policymanifest_fixture",
+    "hashes_available": true,
+    "status": "verified"
+  },
+  "lineage": {
+    "complete": false,
+    "explainable": false,
+    "gaps": [
+      {
+        "kind": "missing_replay_baseline",
+        "severity": "warning",
+        "message": "Replay provenance does not reference a replay baseline."
+      },
+      {
+        "kind": "missing_replay_diff",
+        "severity": "warning",
+        "message": "Replay provenance does not reference a replay diff."
+      }
+    ],
+    "notes": [
+      "Fixture replay provenance report.",
+      "Missing baseline or diff artifacts are declared as lineage gaps."
+    ]
+  },
+  "summary": {
+    "status": "incomplete",
+    "severity": "warning",
+    "admissible": false,
+    "recommendation": "Fixture remains advisory until replay lineage artifacts are supplied.",
+    "notes": [
+      "Fixture replay provenance was generated from available evidence.",
+      "Required replay lineage artifacts are missing."
+    ]
+  },
+  "artifacts": [
+    {
+      "kind": "authority_snapshot",
+      "id": "authsnap_fixture",
+      "path": null,
+      "required": true
+    },
+    {
+      "kind": "policy_manifest",
+      "id": "policymanifest_fixture",
+      "path": null,
+      "required": true
+    },
+    {
+      "kind": "replay_baseline",
+      "id": null,
+      "path": null,
+      "required": true
+    },
+    {
+      "kind": "replay_diff",
+      "id": null,
+      "path": null,
+      "required": true
+    }
+  ]
+}
