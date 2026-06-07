@@ -80,7 +80,8 @@
     "test:governance-historical-trust": "tsx scripts/dev/test-governance-historical-trust.ts",
     "test:governance-historical-suspension": "tsx scripts/dev/test-governance-historical-suspension.ts",
     "verify:replay-provenance-report": "tsx scripts/dev/verify-replay-provenance-report.ts",
-    "verify:federation-readiness-audit": "tsx scripts/dev/verify-federation-readiness-audit.ts"
+    "verify:federation-readiness-audit": "tsx scripts/dev/verify-federation-readiness-audit.ts",
+    "test:governance-report-verifier": "tsx scripts/dev/test-governance-report-verifier.ts"
   },
   "devDependencies": {
     "@types/node": "^20.11.30",

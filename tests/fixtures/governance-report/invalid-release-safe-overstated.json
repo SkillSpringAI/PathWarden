@@ -1,0 +1,73 @@
+{
+  "schema_version": "governance-report.v1",
+  "report_id": "govreport_fixture_invalid_release_safe_overstated",
+  "created_at": "2026-06-07T00:00:00.000Z",
+  "source": {
+    "runtime": "pathwarden",
+    "environment": "fixture"
+  },
+  "authority": {
+    "snapshot_id": "authsnap_fixture",
+    "record_count": 1,
+    "status": "verified"
+  },
+  "trust": {
+    "status": "verified_with_warnings",
+    "warnings": [
+      "Fixture trust signer details are placeholders."
+    ],
+    "critical_failures": []
+  },
+  "revocation": {
+    "checked": true,
+    "status": "verified",
+    "warnings": [],
+    "critical_failures": []
+  },
+  "policy": {
+    "manifest_id": "policymanifest_fixture",
+    "hashes_available": true,
+    "status": "verified"
+  },
+  "replay": {
+    "baseline_id": null,
+    "diff_id": null,
+    "status": "incomplete"
+  },
+  "diagnostics": {
+    "overall_status": "verified",
+    "passed": 7,
+    "failed": 0,
+    "warnings": 0
+  },
+  "summary": {
+    "release_safe": true,
+    "status": "incomplete",
+    "severity": "warning",
+    "recommendation": "Fixture remains advisory because replay evidence is incomplete.",
+    "notes": [
+      "Fixture governance report.",
+      "Replay evidence is intentionally incomplete."
+    ]
+  },
+  "artifacts": [
+    {
+      "kind": "authority_snapshot",
+      "id": "authsnap_fixture",
+      "path": null,
+      "required": true
+    },
+    {
+      "kind": "diagnostic_metadata_registry",
+      "id": "diagnostic-metadata-registry",
+      "path": "core/common/diagnostics/diagnosticRegistry.ts",
+      "required": true
+    },
+    {
+      "kind": "policy_manifest",
+      "id": "policymanifest_fixture",
+      "path": null,
+      "required": true
+    }
+  ]
+}
