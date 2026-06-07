@@ -2,7 +2,12 @@ import {
   formatAjvErrors,
   getSchemaValidator
 } from "../common/schemaValidator";
-import { buildGovernanceReport } from "./governanceReport";
+import {
+  buildGovernanceReport,
+  type GovernanceReportReplayInput
+} from "./governanceReport";
+import type { ReplayBaseline } from "./replayBaseline";
+import type { ReplayDiff } from "./replayDiff";
 import { buildReplayProvenanceReport } from "./replayProvenanceReport";
 import { buildPolicyManifest } from "../policy/policyManifest";
 import { addPolicyHashes, verifyPolicyHashes } from "../policy/policyHasher";
@@ -30,6 +35,18 @@ export interface FederationReadinessArtifactRef {
   id: string | null;
   path: string | null;
   required: boolean;
+}
+
+export interface FederationReadinessReplayInput {
+  baseline: ReplayBaseline;
+  diff: ReplayDiff;
+  baseline_path: string;
+  diff_path: string;
+}
+
+export interface FederationReadinessBuildOptions {
+  createdAt?: string;
+  replay?: FederationReadinessReplayInput;
 }
 
 export interface FederationReadinessAudit {
@@ -156,12 +173,28 @@ function buildFederationSummary(args: {
 }
 
 export function buildFederationReadinessAudit(
-  createdAt = new Date().toISOString()
+  options: FederationReadinessBuildOptions = {}
 ): FederationReadinessAudit {
-  const governanceReport = buildGovernanceReport({ createdAt });
+  const createdAt = options.createdAt ?? new Date().toISOString();
+
+  const governanceReplayInput: GovernanceReportReplayInput | undefined =
+    options.replay
+      ? {
+          baseline_id: options.replay.baseline.baseline_id,
+          diff_id: options.replay.diff.diff_id,
+          baseline_path: options.replay.baseline_path,
+          diff_path: options.replay.diff_path
+        }
+      : undefined;
+
+  const governanceReport = buildGovernanceReport({
+    createdAt,
+    replay: governanceReplayInput
+  });
+
   const replayProvenanceReport = buildReplayProvenanceReport(
-    null,
-    null,
+    options.replay?.baseline ?? null,
+    options.replay?.diff ?? null,
     createdAt
   );
 
