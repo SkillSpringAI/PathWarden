@@ -1,0 +1,81 @@
+{
+  "schema_version": "federation-readiness-audit.v1",
+  "audit_id": "fedready_fixture_invalid_ready_overstated",
+  "created_at": "2026-06-07T00:00:00.000Z",
+  "source": {
+    "runtime": "pathwarden",
+    "environment": "fixture"
+  },
+  "governance": {
+    "report_id": "govreport_fixture",
+    "status": "incomplete",
+    "release_safe": false
+  },
+  "replay_provenance": {
+    "report_id": "replayprov_fixture",
+    "status": "incomplete",
+    "admissible": false,
+    "lineage_complete": false
+  },
+  "policy": {
+    "manifest_id": "policymanifest_fixture",
+    "hashes_available": true,
+    "status": "verified"
+  },
+  "diagnostics": {
+    "registered": 7,
+    "blocking": 7,
+    "ci_compatible": 7,
+    "status": "verified"
+  },
+  "federation": {
+    "ready": true,
+    "status": "incomplete",
+    "warnings": [
+      "Federation runtime behavior is intentionally not implemented.",
+      "Cross-runtime trust negotiation is intentionally not implemented."
+    ],
+    "critical_failures": [],
+    "missing_requirements": [
+      "Governance report is not release-safe.",
+      "Replay provenance report is not admissible.",
+      "Replay provenance lineage is incomplete."
+    ]
+  },
+  "summary": {
+    "status": "incomplete",
+    "severity": "warning",
+    "ready_for_federation": true,
+    "recommendation": "Fixture remains not ready until missing readiness requirements are supplied.",
+    "notes": [
+      "Fixture federation readiness audit.",
+      "Missing requirements are declared explicitly."
+    ]
+  },
+  "artifacts": [
+    {
+      "kind": "diagnostic_metadata_registry",
+      "id": "diagnostic-metadata-registry",
+      "path": "core/common/diagnostics/diagnosticRegistry.ts",
+      "required": true
+    },
+    {
+      "kind": "governance_report",
+      "id": "govreport_fixture",
+      "path": null,
+      "required": true
+    },
+    {
+      "kind": "policy_manifest",
+      "id": "policymanifest_fixture",
+      "path": null,
+      "required": true
+    },
+    {
+      "kind": "replay_provenance_report",
+      "id": "replayprov_fixture",
+      "path": null,
+      "required": true
+    }
+  ]
+}

@@ -82,7 +82,8 @@
     "verify:replay-provenance-report": "tsx scripts/dev/verify-replay-provenance-report.ts",
     "verify:federation-readiness-audit": "tsx scripts/dev/verify-federation-readiness-audit.ts",
     "test:governance-report-verifier": "tsx scripts/dev/test-governance-report-verifier.ts",
-    "test:replay-provenance-verifier": "tsx scripts/dev/test-replay-provenance-verifier.ts"
+    "test:replay-provenance-verifier": "tsx scripts/dev/test-replay-provenance-verifier.ts",
+    "test:federation-readiness-verifier": "tsx scripts/dev/test-federation-readiness-verifier.ts"
   },
   "devDependencies": {
     "@types/node": "^20.11.30",
