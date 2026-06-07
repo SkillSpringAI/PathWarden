@@ -65,6 +65,7 @@
                     "verify:trace-manifest":  "tsx scripts/dev/verify-trace-manifest.ts",
                     "sign:trace-manifest":  "tsx scripts/dev/sign-trace-manifest.ts",
                     "verify:trace-manifest-signature":  "tsx scripts/dev/verify-trace-manifest-signature.ts",
+                    "verify:governance-report": "tsx scripts/dev/verify-governance-report.ts",
                     "test:trace-manifest-signature-tamper":  "tsx scripts/dev/test-trace-manifest-signature-tamper.ts",
                     "test:trace-manifest-fingerprint-mismatch":  "tsx scripts/dev/test-trace-manifest-fingerprint-mismatch.ts",
                     "test:governance-trust-rejection":  "tsx scripts/dev/test-governance-trust-rejection.ts",
