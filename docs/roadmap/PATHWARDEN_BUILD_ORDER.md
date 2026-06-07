@@ -715,3 +715,310 @@ Reports are schema-valid.
 Missing evidence is declared rather than hidden.
 Generated exports remain outside git.
 Federation readiness remains advisory and non-executable.
+
+## Post-v0.1.3 Verification and Input Hardening Pass
+
+Status:
+
+```text
+implementation complete
+verification hardening complete
+input support complete
+checks passing
+
+Completed after tag:
+
+pw-v0.1.3-evidence-reporting-foundation
+
+Purpose:
+
+Harden the evidence/reporting layer before any federation runtime work.
+Keep federation readiness as an assessment artifact only.
+Prevent report drift, hidden lineage gaps, and overstated readiness confidence.
+
+Completed items:
+
+1. Governance Report Verification
+
+Implemented files:
+
+scripts/dev/verify-governance-report.ts
+
+Package script:
+
+npm run verify:governance-report -- <governance_report_json_path>
+
+Current behavior:
+
+verifies governance report schema shape
+checks required evidence sections
+checks deterministic artifact references
+supports diagnostics.overall_status
+confirms replay-incomplete reports remain release_safe false
+detects overstated summary status
+detects secret-like key leakage
+fails closed on invalid reports
+
+Implementation remains conservative:
+
+verification only
+no runtime behavior
+no federation behavior
+no signing
+no network behavior
+no delegated authority
+2. Replay Provenance Report Verification
+
+Implemented files:
+
+scripts/dev/verify-replay-provenance-report.ts
+
+Package script:
+
+npm run verify:replay-provenance-report -- <replay_provenance_report_json_path>
+
+Current behavior:
+
+verifies replay provenance report shape
+checks deterministic artifact references
+checks deterministic lineage gaps
+confirms missing baseline creates missing_replay_baseline gap
+confirms missing diff creates missing_replay_diff gap
+confirms incomplete lineage keeps lineage.complete false
+confirms incomplete lineage keeps lineage.explainable false
+confirms incomplete lineage keeps summary.admissible false
+detects secret-like key leakage
+fails closed on invalid reports
+
+Implementation remains conservative:
+
+verification only
+no replay mutation
+no executable replay behavior
+no signing
+no federation behavior
+3. Federation Readiness Audit Verification
+
+Implemented files:
+
+scripts/dev/verify-federation-readiness-audit.ts
+
+Package script:
+
+npm run verify:federation-readiness-audit -- <federation_readiness_audit_json_path>
+
+Current behavior:
+
+verifies federation readiness audit shape
+checks deterministic artifact references
+confirms federation.ready remains false when governance is incomplete or not release-safe
+confirms federation.ready remains false when replay provenance is incomplete, inadmissible, or lineage incomplete
+confirms summary.ready_for_federation is not overstated
+confirms missing readiness requirements are declared
+confirms federation runtime behavior remains intentionally not implemented
+confirms cross-runtime trust negotiation remains intentionally not implemented
+detects secret-like keys
+rejects forbidden runtime-like federation fields
+fails closed on invalid audits
+
+Implementation remains conservative:
+
+verification only
+readiness assessment only
+no federation runtime
+no delegated authority
+no signing
+no network behavior
+no cross-runtime trust negotiation
+4. Passive Diagnostic Registry Integration
+
+Updated files:
+
+core/common/diagnostics/diagnosticRegistry.ts
+
+Registered planned diagnostics:
+
+diag.governance.report_verification
+diag.replay.provenance_verification
+diag.federation.readiness_verification
+
+Current behavior:
+
+registers report verification diagnostics as planned metadata
+keeps active diagnostics count unchanged
+keeps blocking diagnostics count unchanged
+does not wire report verifiers into npm run diag
+does not introduce grouped diagnostic execution
+does not replace existing diagnostic runner
+
+Expected registry posture:
+
+total diagnostics: 10
+active diagnostics: 7
+planned diagnostics: 3
+blocking diagnostics: 7
+ci-compatible diagnostics: 10
+5. Diagnostic Metadata Verification Hardening
+
+Updated files:
+
+scripts/dev/verify-diagnostic-metadata.ts
+
+Current behavior:
+
+validates registry shape
+checks duplicate IDs
+checks missing dependencies
+checks diagnostic ID pattern
+checks self-referential dependencies
+checks active diagnostics have tags
+checks empty tags
+checks blocking diagnostics are CI-compatible
+checks active CI-compatible diagnostics do not require network
+checks active diagnostics do not require manual approval
+reports active, planned, blocking, and CI-compatible counts
+
+Implementation remains conservative:
+
+metadata verification only
+no diagnostic execution changes
+no grouped runner
+no npm run diag rewiring
+6. Governance Report Optional Replay Inputs
+
+Updated files:
+
+core/audit/governanceReport.ts
+scripts/dev/export-governance-report.ts
+schemas/audit/governance-report.schema.json
+core/audit/federationReadinessAudit.ts
+
+Current behavior:
+
+npm run export:governance-report
+
+continues to produce the advisory default posture:
+
+Replay status: incomplete
+Replay baseline id: null
+Replay diff id: null
+Summary status: incomplete
+Release safe: false
+
+Optional input behavior:
+
+npm run export:governance-report -- <replay_baseline_json_path> <replay_diff_json_path>
+
+supports fuller replay evidence by:
+
+reading replay baseline JSON
+reading replay diff JSON
+validating schema_version values
+extracting baseline_id and diff_id
+adding replay_baseline and replay_diff artifact references
+setting replay IDs in the governance report
+failing closed if only one path is supplied
+failing closed if files are missing or invalid
+
+Implementation remains conservative:
+
+evidence-aware reporting only
+no replay execution
+no federation runtime
+no signing
+no network behavior
+7. Federation Readiness Optional Replay Inputs
+
+Updated files:
+
+core/audit/federationReadinessAudit.ts
+scripts/dev/export-federation-readiness-audit.ts
+
+Current behavior:
+
+npm run export:federation-readiness-audit
+
+continues to produce the advisory default posture:
+
+Governance status: incomplete
+Governance release safe: false
+Replay provenance status: incomplete
+Replay provenance admissible: false
+Replay lineage complete: false
+Federation ready: false
+Ready for federation: false
+
+Optional input behavior:
+
+npm run export:federation-readiness-audit -- <replay_baseline_json_path> <replay_diff_json_path>
+
+supports fuller replay evidence by:
+
+reading replay baseline JSON
+reading replay diff JSON
+validating schema_version values
+passing replay evidence into governance report construction
+passing replay evidence into replay provenance construction
+failing closed if only one path is supplied
+failing closed if files are missing or invalid
+
+Implementation remains conservative:
+
+readiness assessment only
+no federation runtime
+no delegated authority
+no cross-runtime trust negotiation
+no signing
+no network behavior
+no executable federation actions
+
+Current pass result:
+
+Phase 1 complete: Evidence Verification Hardening
+Phase 2 complete: Passive Diagnostic Registry Integration
+Phase 3 complete: Report Input Support
+Phase 4 in progress: Documentation, final verification, tag
+
+Next verification pass:
+
+npm run check
+npm run diag
+npm run verify:diagnostic-metadata
+npm run export:governance-report
+npm run export:replay-provenance-report
+npm run export:federation-readiness-audit
+
+$latestGov = Get-ChildItem ".\exports\governance" -Filter "govreport_*.json" |
+  Sort-Object LastWriteTime -Descending |
+  Select-Object -First 1 -ExpandProperty FullName
+
+$latestReplay = Get-ChildItem ".\exports\replay" -Filter "replayprov_*.json" |
+  Sort-Object LastWriteTime -Descending |
+  Select-Object -First 1 -ExpandProperty FullName
+
+$latestFed = Get-ChildItem ".\exports\federation" -Filter "fedready_*.json" |
+  Sort-Object LastWriteTime -Descending |
+  Select-Object -First 1 -ExpandProperty FullName
+
+npm run verify:governance-report -- "$latestGov"
+npm run verify:replay-provenance-report -- "$latestReplay"
+npm run verify:federation-readiness-audit -- "$latestFed"
+
+git status --short
+
+Suggested next tag:
+
+pw-v0.1.4-report-verification-hardening
+
+Tag command after final verification and commit:
+
+git push
+git tag -a pw-v0.1.4-report-verification-hardening -m "PathWarden v0.1.4 report verification hardening"
+git push origin pw-v0.1.4-report-verification-hardening
+
+Next recommended implementation focus after tag:
+
+Do not start federation runtime.
+Do not wire report verifiers into npm run diag yet unless explicitly planned.
+Recommended next pass: documentation cleanup, verifier fixtures, or report input test fixtures.
+
