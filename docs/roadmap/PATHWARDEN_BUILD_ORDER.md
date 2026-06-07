@@ -1022,3 +1022,240 @@ Do not start federation runtime.
 Do not wire report verifiers into npm run diag yet unless explicitly planned.
 Recommended next pass: documentation cleanup, verifier fixtures, or report input test fixtures.
 
+
+## v0.1.5 Report Fixtures and Regression Hardening Pass
+
+Status:
+
+```text
+implementation complete
+fixture coverage complete
+documentation complete
+diagnostic metadata registration complete
+pending final verification and tag
+
+Target tag:
+
+pw-v0.1.5-report-fixtures-and-regression-hardening
+
+Purpose:
+
+Add regression coverage around report verifiers and report input support.
+Reduce risk of silent verifier drift.
+Keep federation readiness advisory and non-executable.
+
+Completed items:
+
+1. Governance Report Verifier Fixtures
+
+Implemented files:
+
+tests/fixtures/governance-report/valid-incomplete.json
+tests/fixtures/governance-report/invalid-release-safe-overstated.json
+tests/fixtures/governance-report/invalid-missing-artifacts.json
+scripts/dev/test-governance-report-verifier.ts
+
+Package script:
+
+npm run test:governance-report-verifier
+
+Current coverage:
+
+valid incomplete governance report passes
+overstated release_safe fails
+missing artifacts fail
+2. Replay Provenance Verifier Fixtures
+
+Implemented files:
+
+tests/fixtures/replay-provenance-report/valid-incomplete.json
+tests/fixtures/replay-provenance-report/invalid-missing-baseline-gap.json
+tests/fixtures/replay-provenance-report/invalid-admissible-overstated.json
+scripts/dev/test-replay-provenance-verifier.ts
+
+Package script:
+
+npm run test:replay-provenance-verifier
+
+Current coverage:
+
+valid incomplete replay provenance report passes
+missing baseline lineage gap fails
+overstated admissibility fails
+3. Federation Readiness Verifier Fixtures
+
+Implemented files:
+
+tests/fixtures/federation-readiness-audit/valid-not-ready.json
+tests/fixtures/federation-readiness-audit/invalid-ready-overstated.json
+tests/fixtures/federation-readiness-audit/invalid-missing-requirements.json
+tests/fixtures/federation-readiness-audit/invalid-runtime-field.json
+scripts/dev/test-federation-readiness-verifier.ts
+
+Package script:
+
+npm run test:federation-readiness-verifier
+
+Current coverage:
+
+valid not-ready federation readiness audit passes
+overstated readiness fails
+missing readiness requirements fail
+runtime-like federation fields fail
+4. Shared Report Verifier Utilities
+
+Implemented files:
+
+scripts/dev/lib/reportVerifierUtils.ts
+
+Refactored files:
+
+scripts/dev/verify-governance-report.ts
+scripts/dev/verify-replay-provenance-report.ts
+scripts/dev/verify-federation-readiness-audit.ts
+
+Current behavior:
+
+shared JSON loading
+shared object guards
+shared status helpers
+shared incomplete-status detection
+shared secret-like key detection
+shared artifact reference validation
+shared failure printing
+
+Regression protection:
+
+governance verifier fixtures pass
+replay provenance verifier fixtures pass
+federation readiness verifier fixtures pass
+5. Report Input Support Fixtures
+
+Implemented files:
+
+tests/fixtures/replay-inputs/replay-baseline.valid.json
+tests/fixtures/replay-inputs/replay-diff.valid.json
+tests/fixtures/replay-inputs/replay-baseline.invalid-schema.json
+scripts/dev/test-report-input-support.ts
+
+Package script:
+
+npm run test:report-input-support
+
+Current coverage:
+
+governance report accepts replay baseline and replay diff inputs
+governance report includes replay baseline and replay diff IDs
+federation readiness audit accepts replay baseline and replay diff inputs
+federation readiness remains not ready
+one-argument input fails closed
+bad replay baseline schema fails closed
+6. Report Verifier Usage Documentation
+
+Implemented files:
+
+docs/audit/REPORT_VERIFIER_USAGE.md
+
+Current coverage:
+
+verifier purpose
+verifier commands
+export commands
+fixture test commands
+recommended verification sequence
+explicit boundaries
+7. Evidence Posture Summary
+
+Implemented files:
+
+docs/audit/EVIDENCE_POSTURE_SUMMARY.md
+
+Current coverage:
+
+what evidence exists
+what is verified
+what remains advisory
+what is intentionally not implemented
+what is required before runtime federation
+8. Planned Fixture Diagnostic Metadata
+
+Updated files:
+
+core/common/diagnostics/diagnosticRegistry.ts
+
+Registered planned diagnostics:
+
+diag.governance.report_verifier_fixtures
+diag.replay.provenance_verifier_fixtures
+diag.federation.readiness_verifier_fixtures
+diag.reporting.input_fixture_verification
+
+Current registry posture:
+
+active diagnostics unchanged
+planned diagnostics increased
+no npm run diag wiring
+no grouped execution
+metadata only
+
+Expected diagnostic metadata counts:
+
+total diagnostics: 14
+active diagnostics: 7
+planned diagnostics: 7
+blocking diagnostics: 7
+ci-compatible diagnostics: 14
+
+Implementation remains conservative:
+
+no federation runtime
+no delegated authority
+no signing
+no network behavior
+no cross-runtime trust negotiation
+no executable federation actions
+no diagnostic runner replacement
+
+Final verification command set:
+
+npm run check
+npm run diag
+npm run verify:diagnostic-metadata
+
+npm run export:governance-report
+npm run export:replay-provenance-report
+npm run export:federation-readiness-audit
+
+$latestGov = Get-ChildItem ".\exports\governance" -Filter "govreport_*.json" |
+  Sort-Object LastWriteTime -Descending |
+  Select-Object -First 1 -ExpandProperty FullName
+
+$latestReplay = Get-ChildItem ".\exports\replay" -Filter "replayprov_*.json" |
+  Sort-Object LastWriteTime -Descending |
+  Select-Object -First 1 -ExpandProperty FullName
+
+$latestFed = Get-ChildItem ".\exports\federation" -Filter "fedready_*.json" |
+  Sort-Object LastWriteTime -Descending |
+  Select-Object -First 1 -ExpandProperty FullName
+
+npm run verify:governance-report -- "$latestGov"
+npm run verify:replay-provenance-report -- "$latestReplay"
+npm run verify:federation-readiness-audit -- "$latestFed"
+
+npm run test:governance-report-verifier
+npm run test:replay-provenance-verifier
+npm run test:federation-readiness-verifier
+npm run test:report-input-support
+
+git status --short
+
+Recommended next pass after tag:
+
+Do not start federation runtime yet.
+Recommended next options:
+1. verifier fixture expansion
+2. report fixture schema validation tests
+3. documentation cleanup
+4. release evidence summary
+5. diagnostic runner design only, not implementation
+
