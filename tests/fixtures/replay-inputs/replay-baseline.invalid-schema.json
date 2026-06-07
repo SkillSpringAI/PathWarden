@@ -1,0 +1,43 @@
+{
+  "schema_version": "not-replay-baseline.v1",
+  "baseline_id": "replaybase_fixture_valid",
+  "created_at": "2026-06-07T00:00:00.000Z",
+  "source": {
+    "runtime": "pathwarden",
+    "environment": "fixture"
+  },
+  "authority": {
+    "snapshot_id": "authsnap_fixture",
+    "record_count": 0,
+    "record_refs": []
+  },
+  "execution": {
+    "trace_id": "trace_fixture",
+    "record_count": 0,
+    "record_refs": [],
+    "reconstructed_chain_hash": "fixture_hash",
+    "reconstructed_chain_hash_algorithm": "sha256"
+  },
+  "trust": {
+    "manifest_id": null,
+    "signer_refs": []
+  },
+  "revocation": {
+    "checked": true,
+    "summary": []
+  },
+  "governance": {
+    "policy_refs": [],
+    "trigger_refs": []
+  },
+  "replay": {
+    "baseline_safe": true,
+    "diff_eligible": true,
+    "authority_chain_hash_mismatches": [],
+    "authority_record_hash_mismatches": [],
+    "authority_chain_continuity_breaks": [],
+    "notes": [
+      "Fixture replay baseline for report input support tests."
+    ]
+  }
+}

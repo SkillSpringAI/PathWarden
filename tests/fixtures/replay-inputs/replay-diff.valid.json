@@ -1,0 +1,46 @@
+{
+  "schema_version": "replay-diff.v1",
+  "diff_id": "replaydiff_fixture_valid",
+  "created_at": "2026-06-07T00:00:00.000Z",
+  "baseline": {
+    "baseline_id": "replaybase_fixture_valid",
+    "source": "tests/fixtures/replay-inputs/replay-baseline.valid.json"
+  },
+  "candidate": {
+    "replay_id": "trace_fixture",
+    "source": null
+  },
+  "authority": {
+    "changed": false,
+    "added": [],
+    "removed": [],
+    "modified": []
+  },
+  "execution": {
+    "changed": false,
+    "added": [],
+    "removed": [],
+    "modified": []
+  },
+  "trust": {
+    "changed": false,
+    "details": []
+  },
+  "revocation": {
+    "changed": false,
+    "details": []
+  },
+  "governance": {
+    "changed": false,
+    "policy_ref_changes": [],
+    "trigger_ref_changes": []
+  },
+  "summary": {
+    "status": "no_divergence",
+    "severity": "none",
+    "admissible": true,
+    "notes": [
+      "Fixture replay diff for report input support tests."
+    ]
+  }
+}
