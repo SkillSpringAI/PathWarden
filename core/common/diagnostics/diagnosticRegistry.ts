@@ -177,6 +177,69 @@ export const DIAGNOSTIC_METADATA_REGISTRY: DiagnosticMetadata[] = [
     tags: ["federation", "readiness", "verification"],
     status: "planned"
   },
+  {
+    id: "diag.governance.report_verifier_fixtures",
+    name: "Governance Report Verifier Fixture Diagnostic",
+    description: "Registers governance report verifier fixture coverage without wiring it into diagnostic execution.",
+    category: "diagnostics",
+    subsystem: "diagnostics",
+    severity: "info",
+    blocking: false,
+    ci_compatible: true,
+    requires: withFilesystemRequirements(),
+    dependencies: ["diag.governance.report_verification"],
+    tags: ["governance", "reporting", "fixtures", "verification"],
+    status: "planned"
+  },
+  {
+    id: "diag.replay.provenance_verifier_fixtures",
+    name: "Replay Provenance Verifier Fixture Diagnostic",
+    description: "Registers replay provenance verifier fixture coverage without wiring it into diagnostic execution.",
+    category: "diagnostics",
+    subsystem: "diagnostics",
+    severity: "info",
+    blocking: false,
+    ci_compatible: true,
+    requires: withFilesystemRequirements({
+      replay_artifacts: true
+    }),
+    dependencies: ["diag.replay.provenance_verification"],
+    tags: ["replay", "provenance", "fixtures", "verification"],
+    status: "planned"
+  },
+  {
+    id: "diag.federation.readiness_verifier_fixtures",
+    name: "Federation Readiness Verifier Fixture Diagnostic",
+    description: "Registers federation readiness verifier fixture coverage without wiring it into diagnostic execution.",
+    category: "diagnostics",
+    subsystem: "diagnostics",
+    severity: "info",
+    blocking: false,
+    ci_compatible: true,
+    requires: withFilesystemRequirements(),
+    dependencies: ["diag.federation.readiness_verification"],
+    tags: ["federation", "readiness", "fixtures", "verification"],
+    status: "planned"
+  },
+  {
+    id: "diag.reporting.input_fixture_verification",
+    name: "Report Input Fixture Verification Diagnostic",
+    description: "Registers report input support fixture coverage without wiring it into diagnostic execution.",
+    category: "diagnostics",
+    subsystem: "diagnostics",
+    severity: "info",
+    blocking: false,
+    ci_compatible: true,
+    requires: withFilesystemRequirements({
+      replay_artifacts: true
+    }),
+    dependencies: [
+      "diag.governance.report_verifier_fixtures",
+      "diag.federation.readiness_verifier_fixtures"
+    ],
+    tags: ["reporting", "inputs", "fixtures", "verification"],
+    status: "planned"
+  },
 ];
 
 export function getDiagnosticMetadataRegistry(): DiagnosticMetadata[] {
