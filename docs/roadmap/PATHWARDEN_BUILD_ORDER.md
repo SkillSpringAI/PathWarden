@@ -1259,3 +1259,54 @@ Recommended next options:
 4. release evidence summary
 5. diagnostic runner design only, not implementation
 
+## v0.1.6 Release Evidence and Documentation Cleanup
+
+### Status
+
+```text
+in progress
+Purpose
+Strengthen release evidence, documentation clarity, fixture validation, and audit readability without adding new backend runtime behavior.
+Scope
+release evidence summary
+fixture schema validation tests
+report verifier negative-case matrix
+README evidence posture update
+v0.1.5 release note
+Completed
+docs/audit/RELEASE_EVIDENCE_SUMMARY.md
+scripts/dev/test-report-fixture-schemas.ts
+docs/audit/REPORT_VERIFIER_NEGATIVE_CASE_MATRIX.md
+README.md evidence posture update
+docs/releases/pw-v0.1.5-report-fixtures-and-regression-hardening.md
+Package script added
+npm run test:report-fixture-schemas
+Current behavior
+valid report fixtures are checked against their schemas
+known negative fixtures are documented with expected failure reasons
+release evidence posture is documented
+README exposes current evidence/reporting status
+v0.1.5 release note captures regression-hardening work
+Explicit non-goals
+no federation runtime
+no delegated authority
+no cross-runtime trust negotiation
+no signing
+no network behavior
+no new execution capability
+no diagnostic runner replacement
+no grouped diagnostic execution
+no Rust implementation
+Final verification target
+npm run check
+npm run diag
+npm run verify:diagnostic-metadata
+npm run test:governance-report-verifier
+npm run test:replay-provenance-verifier
+npm run test:federation-readiness-verifier
+npm run test:report-input-support
+npm run test:report-fixture-schemas
+npm run export:governance-report
+npm run export:replay-provenance-report
+npm run export:federation-readiness-audit
+git status --short
