@@ -90,9 +90,18 @@ function renderDiagnostics(data) {
 
 function renderTasks(data) {
   clearCards();
-  viewTitle.textContent = "Queued Tasks";
+  viewTitle.textContent = "Tasks / Approval Queue";
 
   const tasks = data?.tasks || [];
+
+  cardContainer.appendChild(
+    makeCard("Approval Boundary", [
+      "This view is experimental / advanced.",
+      "User approval does not bypass policy or executor checks.",
+      "Run is only valid when the current task state and kernel policy allow it."
+    ])
+  );
+
   if (tasks.length === 0) {
     cardContainer.appendChild(makeCard("No queued tasks", [data?.message || "Nothing queued."]));
     return;
@@ -127,30 +136,30 @@ function renderTasks(data) {
     actions.className = "task-actions";
 
     const approveBtn = document.createElement("button");
-    approveBtn.textContent = "Approve";
+    approveBtn.textContent = "Approve once";
     approveBtn.onclick = async () => {
       const api = getAPI();
       if (!api?.approveTask) return showBridgeError("approveTask");
-      await runAction("Approve Task", () => api.approveTask(task.task_id));
-      await runAction("Task Summary", () => api.viewTasks());
+      await runAction("Approve Task Once", () => api.approveTask(task.task_id));
+      await runAction("Tasks / Approval Queue", () => api.viewTasks());
     };
 
     const cancelBtn = document.createElement("button");
-    cancelBtn.textContent = "Cancel";
+    cancelBtn.textContent = "Deny / Cancel";
     cancelBtn.onclick = async () => {
       const api = getAPI();
       if (!api?.cancelTask) return showBridgeError("cancelTask");
-      await runAction("Cancel Task", () => api.cancelTask(task.task_id));
-      await runAction("Task Summary", () => api.viewTasks());
+      await runAction("Deny / Cancel Task", () => api.cancelTask(task.task_id));
+      await runAction("Tasks / Approval Queue", () => api.viewTasks());
     };
 
     const runBtn = document.createElement("button");
-    runBtn.textContent = "Run";
+    runBtn.textContent = "Run approved task";
     runBtn.onclick = async () => {
       const api = getAPI();
       if (!api?.runTask) return showBridgeError("runTask");
-      await runAction("Run Task", () => api.runTask(task.task_id));
-      await runAction("Task Summary", () => api.viewTasks());
+      await runAction("Run Approved Task", () => api.runTask(task.task_id));
+      await runAction("Tasks / Approval Queue", () => api.viewTasks());
     };
 
     actions.appendChild(approveBtn);
