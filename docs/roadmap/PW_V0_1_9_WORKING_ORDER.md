@@ -7,7 +7,8 @@ Approval Queue UX Foundation
 ## Status
 
 ```text
-in progress
+implementation complete
+pending final verification and tag
 Purpose
 
 Begin shaping the approval queue as a clear user-visible workflow without expanding execution capability.
@@ -42,7 +43,7 @@ no federation runtime
 no signing
 no network behavior
 Planned slices
-Slice 1 — Approval Queue UX Contract
+Slice 1 ï¿½ Approval Queue UX Contract
 
 Create:
 
@@ -51,7 +52,7 @@ docs/ui/APPROVAL_QUEUE_UX_CONTRACT.md
 Purpose:
 
 Define what approval cards show, what states exist, and what the UI may or may not do.
-Slice 2 — Approval State Display Model
+Slice 2 ï¿½ Approval State Display Model
 
 Create or update documentation for canonical display states:
 
@@ -71,7 +72,7 @@ kernel/source-of-truth field
 allowed user action
 forbidden UI assumption
 advanced detail available
-Slice 3 — Current Task UI Copy Review
+Slice 3 ï¿½ Current Task UI Copy Review
 
 Update current desktop task-card language only if safe.
 
@@ -88,7 +89,7 @@ change approval behavior
 change execution behavior
 change task state machine
 change policy logic
-Slice 4 — Final Verification
+Slice 4 ï¿½ Final Verification
 
 Run:
 
@@ -106,6 +107,48 @@ Experimental / Advanced labels remain visible
 task controls still behave as before
 no new execution controls added
 approval language is clearer
+
+## Completed implementation
+
+```text
+docs/roadmap/PW_V0_1_9_WORKING_ORDER.md
+docs/ui/APPROVAL_QUEUE_UX_CONTRACT.md
+docs/ui/APPROVAL_STATE_DISPLAY_MODEL.md
+apps/desktop/ui/src/index.html task/approval queue labels
+apps/desktop/ui/src/renderer.js approval boundary card
+apps/desktop/ui/src/renderer.js safer approval action labels
+Current approval queue posture
+Task / Approval Queue remains experimental.
+Approval display is clearer.
+Approval does not imply policy bypass.
+Run is labelled as Run approved task.
+Cancel is labelled as Deny / Cancel.
+Task draft creation is labelled experimental.
+No task behavior changed.
+No execution authority was expanded.
+
+Final verification target
+npm run check
+npm run diag
+npm run verify:diagnostic-metadata
+npm run export:governance-report
+npm run export:replay-provenance-report
+npm run export:federation-readiness-audit
+npm run export:latest-report-index
+npm run verify:latest-report-index
+npm run test:report-fixture-schemas
+git status --short
+
+Manual desktop check
+desktop app launches
+View Evidence still works
+View Tasks / Approval Queue opens
+task controls are clearly experimental
+approval boundary card is visible
+buttons use safer labels
+no new execution behavior was added
+```
+
 Recommended tag
 pw-v0.1.9-approval-queue-ux-foundation
 
