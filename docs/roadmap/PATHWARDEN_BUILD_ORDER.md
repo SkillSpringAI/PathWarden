@@ -1310,3 +1310,70 @@ npm run export:governance-report
 npm run export:replay-provenance-report
 npm run export:federation-readiness-audit
 git status --short
+
+## v0.1.7 Evidence UI Shell and Report Index
+
+### Status
+
+```text
+in progress
+Purpose
+Make PathWarden's existing evidence/reporting layer visible and understandable through a read-only local UI foundation.
+Build posture
+visibility first
+read-only first
+no new execution behavior
+no federation runtime
+no Rust yet
+no backend abstraction expansion unless it directly supports UI visibility
+Completed
+docs/ui/PATHWARDEN_EVIDENCE_UI_SHELL_DESIGN.md
+docs/ui/REPORT_VIEWER_DATA_CONTRACT.md
+scripts/dev/export-latest-report-index.ts
+scripts/dev/verify-latest-report-index.ts
+Package scripts added
+npm run export:latest-report-index
+npm run verify:latest-report-index
+Current behavior
+latest report index export scans existing generated report folders
+latest report index summarizes governance, replay provenance, and federation readiness reports
+latest report index verification checks shape, paths, statuses, and required metadata
+generated index remains under exports/report-index/latest-report-index.json
+generated index remains out of git
+Explicit non-goals
+no action execution
+no approval queue yet
+no report generation from UI
+no diagnostic execution from UI
+no policy editing
+no authority mutation
+no signing
+no federation runtime
+no delegated authority
+no cross-runtime trust negotiation
+no network behavior
+no Rust/native module
+Next implementation slice
+minimal read-only evidence UI shell
+UI implementation boundary
+The UI may display evidence.
+The UI must not make governance decisions.
+The UI must not execute actions.
+The UI must not promote federation readiness.
+Recommended next files
+frontend/UI entry files if already present in repo
+or
+docs/ui/MINIMAL_EVIDENCE_UI_IMPLEMENTATION_PLAN.md before code if UI structure is not yet clear
+Verification target
+npm run check
+npm run diag
+npm run verify:diagnostic-metadata
+npm run export:governance-report
+npm run export:replay-provenance-report
+npm run export:federation-readiness-audit
+npm run export:latest-report-index
+npm run verify:latest-report-index
+npm run test:report-fixture-schemas
+git status --short
+Recommended tag
+pw-v0.1.7-evidence-ui-shell
