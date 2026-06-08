@@ -7,7 +7,8 @@ Desktop Evidence Viewer Refinement
 ## Status
 
 ```text
-in progress
+implementation complete
+pending final verification and tag
 Purpose
 
 Turn the working Evidence Overview into a cleaner, more demo-ready evidence/report viewer without adding new authority, execution behavior, or backend complexity.
@@ -42,7 +43,7 @@ no federation runtime
 no signing
 no network behavior
 Planned slices
-Slice 1 — Evidence viewer refinement contract
+Slice 1 ï¿½ Evidence viewer refinement contract
 
 Create:
 
@@ -51,7 +52,7 @@ docs/ui/EVIDENCE_VIEWER_REFINEMENT_CONTRACT.md
 Purpose:
 
 Define the simple/advanced split for the Evidence Overview.
-Slice 2 — Evidence Overview UI copy and hierarchy
+Slice 2 ï¿½ Evidence Overview UI copy and hierarchy
 
 Update:
 
@@ -71,7 +72,7 @@ changing index schema
 changing export scripts
 changing verification logic
 adding report generation from UI
-Slice 3 — Light visual refinement
+Slice 3 ï¿½ Light visual refinement
 
 Update:
 
@@ -88,7 +89,7 @@ Not allowed:
 full redesign
 new UI framework
 mockup rebuild
-Slice 4 — Final verification
+Slice 4 ï¿½ Final verification
 
 Run:
 
@@ -111,6 +112,48 @@ general-user summary is readable
 report paths are available for power users
 Advanced Raw Output still shows JSON
 no new execution behavior added
+## Completed implementation
+
+```text
+docs/roadmap/PW_V0_1_10_WORKING_ORDER.md
+docs/ui/EVIDENCE_VIEWER_REFINEMENT_CONTRACT.md
+apps/desktop/ui/src/renderer.js refined Evidence Overview hierarchy
+apps/desktop/ui/src/renderer.js dedicated Report Paths card
+apps/desktop/ui/src/renderer.js dedicated Read-Only Boundary card
+apps/desktop/ui/src/styles.css evidence card readability refinement
+Current evidence viewer posture
+View Evidence remains the validated desktop UI slice.
+Evidence Summary appears first.
+What This Means explains status in general-user language.
+Governance Evidence, Replay Provenance, and Federation Readiness are separated.
+Report Paths are available for power users.
+Advanced Raw Output still exposes raw JSON.
+The view remains read-only.
+No execution behavior was added.
+No report-generation behavior was added.
+No federation runtime was added.
+Final verification target
+npm run check
+npm run diag
+npm run verify:diagnostic-metadata
+npm run export:governance-report
+npm run export:replay-provenance-report
+npm run export:federation-readiness-audit
+npm run export:latest-report-index
+npm run verify:latest-report-index
+npm run test:report-fixture-schemas
+git status --short
+
+Manual desktop check
+desktop app launches
+View Evidence works
+Evidence Summary appears first
+What This Means appears second
+Report Paths card is visible
+Read-Only Boundary card is visible
+Advanced Raw Output still shows JSON
+no new execution controls added
+
 Recommended tag
 pw-v0.1.10-desktop-evidence-viewer-refinement
 
