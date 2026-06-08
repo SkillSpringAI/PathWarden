@@ -159,6 +159,11 @@ body {
   font-size: 0.9rem;
 }
 
+.boundaryNote {
+  margin-top: 8px;
+  max-width: 780px;
+}
+
 #outputText {
   background: #020617;
   border: 1px solid #1e293b;
