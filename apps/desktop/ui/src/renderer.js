@@ -79,7 +79,7 @@ function renderDiagnostics(data) {
 
   (report.results || []).forEach((result) => {
     cardContainer.appendChild(
-      makeCard(`${result.id} · ${result.name}`, [
+      makeCard(`${result.id} - ${result.name}`, [
         `Severity: ${result.severity}`,
         `Status: ${result.status}`,
         `Detail: ${result.detail}`
@@ -198,7 +198,67 @@ function renderStartup(data) {
     ])
   );
 }
+function renderEvidenceIndex(result) {
+  clearCards();
+  viewTitle.textContent = "Evidence Overview";
 
+  const data = result?.data;
+
+  if (!data?.ok) {
+    cardContainer.appendChild(
+      makeCard("No latest report index", [
+        data?.message || "No latest report index found.",
+        `Expected Path: ${data?.path || "exports/report-index/latest-report-index.json"}`,
+        "Run the export commands before viewing evidence."
+      ])
+    );
+
+    (data?.expected_commands || []).forEach((command) => {
+      cardContainer.appendChild(makeCard("Required Command", [command]));
+    });
+
+    return;
+  }
+
+  const index = data.index;
+  const reports = index?.reports || {};
+
+  cardContainer.appendChild(
+    makeCard("Evidence Boundary", [
+      "Read-only evidence viewer.",
+      "This view does not execute actions, approve tasks, modify policy, sign artifacts, or start federation.",
+      "Federation readiness remains advisory and non-executable."
+    ])
+  );
+
+  cardContainer.appendChild(
+    makeCard("Governance Report", [
+      `Path: ${reports.governance?.path || "missing"}`,
+      `ID: ${reports.governance?.id || "missing"}`,
+      `Status: ${reports.governance?.status || "missing"}`,
+      `Release Safe: ${reports.governance?.release_safe === true ? "Yes" : "No"}`
+    ])
+  );
+
+  cardContainer.appendChild(
+    makeCard("Replay Provenance", [
+      `Path: ${reports.replay_provenance?.path || "missing"}`,
+      `ID: ${reports.replay_provenance?.id || "missing"}`,
+      `Status: ${reports.replay_provenance?.status || "missing"}`,
+      `Admissible: ${reports.replay_provenance?.admissible === true ? "Yes" : "No"}`,
+      `Lineage Complete: ${reports.replay_provenance?.lineage_complete === true ? "Yes" : "No"}`
+    ])
+  );
+
+  cardContainer.appendChild(
+    makeCard("Federation Readiness", [
+      `Path: ${reports.federation_readiness?.path || "missing"}`,
+      `ID: ${reports.federation_readiness?.id || "missing"}`,
+      `Status: ${reports.federation_readiness?.status || "missing"}`,
+      `Ready for Federation: ${reports.federation_readiness?.ready_for_federation === true ? "Yes" : "No"}`
+    ])
+  );
+}
 function renderGeneric(result) {
   clearCards();
   viewTitle.textContent = "Output";
@@ -212,6 +272,9 @@ function renderGeneric(result) {
   switch (data.type) {
     case "diagnostics":
       renderDiagnostics(data);
+      break;
+    case "latest-report-index":
+      renderEvidenceIndex(result);
       break;
     case "tasks":
       renderTasks(data);
@@ -301,7 +364,37 @@ document.getElementById("diagnosticsBtn").addEventListener("click", () => {
   if (!api?.runDiagnostics) return showBridgeError("runDiagnostics");
   runAction("Diagnostics Run", () => api.runDiagnostics());
 });
+document.getElementById("evidenceBtn").addEventListener("click", async () => {
+  const api = getAPI();
 
+  if (!api?.readLatestReportIndex) {
+    return showBridgeError("readLatestReportIndex");
+  }
+
+  try {
+    setStatus("Evidence Overview loading...");
+    setOutput("Loading Evidence Overview...");
+    clearCards();
+    viewTitle.textContent = "Evidence Overview";
+
+    const data = await api.readLatestReportIndex();
+
+    renderEvidenceIndex({ data });
+
+    setOutput(JSON.stringify(data, null, 2));
+    setStatus(data.ok ? "Evidence Overview completed" : "Evidence Overview finished with issues");
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+
+    clearCards();
+    cardContainer.appendChild(
+      makeCard("Evidence Overview failed", [message])
+    );
+
+    setStatus("Evidence Overview failed");
+    setOutput(`Unhandled error:\n${message}`);
+  }
+});
 document.getElementById("diagnosticsLatestBtn").addEventListener("click", () => {
   const api = getAPI();
   if (!api?.viewDiagnosticsLatest) return showBridgeError("viewDiagnosticsLatest");
