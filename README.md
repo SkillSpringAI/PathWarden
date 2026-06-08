@@ -26,6 +26,67 @@ PathWarden currently supports:
 
 The current implementation remains local-first and filesystem-focused.
 
+## Evidence and Reporting Status
+
+Current evidence/reporting tag:
+
+```text
+pw-v0.1.5-report-fixtures-and-regression-hardening
+
+PathWarden currently supports local evidence generation and verification for:
+
+authority snapshots
+replay baselines
+replay diffs
+authority export verification
+policy manifests
+policy hashing
+diagnostic metadata
+governance reports
+replay provenance reports
+federation readiness audits
+report verifiers
+verifier fixture tests
+report input support tests
+
+Current evidence posture:
+
+local evidence generation is implemented
+report verification is implemented
+fixture-based regression coverage is implemented
+report input support is tested
+federation readiness remains advisory and non-executable
+
+PathWarden does not currently implement:
+
+federation runtime
+delegated authority
+cross-runtime trust negotiation
+signing
+network behavior
+remote endpoint calls
+runtime federation decisions
+diagnostic runner replacement
+grouped diagnostic execution
+
+Recommended local verification sequence:
+
+npm run check
+npm run diag
+npm run verify:diagnostic-metadata
+npm run test:governance-report-verifier
+npm run test:replay-provenance-verifier
+npm run test:federation-readiness-verifier
+npm run test:report-input-support
+npm run test:report-fixture-schemas
+
+Evidence references:
+
+docs/audit/RELEASE_EVIDENCE_SUMMARY.md
+docs/audit/EVIDENCE_POSTURE_SUMMARY.md
+docs/audit/REPORT_VERIFIER_USAGE.md
+docs/audit/REPORT_VERIFIER_NEGATIVE_CASE_MATRIX.md
+
 ## Governance model
 
 PathWarden follows a simple execution rule:
