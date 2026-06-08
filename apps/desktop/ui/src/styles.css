@@ -29,6 +29,21 @@ body {
   margin-bottom: 24px;
 }
 
+.buttonGroup {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.sectionLabel {
+  margin: 18px 0 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.72;
+}
+
 .sidebar button,
 .secondary {
   display: block;
@@ -137,6 +152,11 @@ body {
 
 .raw-panel h3 {
   margin-bottom: 8px;
+}
+
+.muted {
+  opacity: 0.72;
+  font-size: 0.9rem;
 }
 
 #outputText {

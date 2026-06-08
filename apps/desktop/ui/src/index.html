@@ -11,11 +11,16 @@
     <aside class="sidebar">
       <h1>Pathwarden</h1>
 
-      <div class="button-group">
+      <div class="buttonGroup">
+        <div class="sectionLabel">Validated</div>
+        <button id="evidenceBtn">View Evidence</button>
+      </div>
+
+      <div class="buttonGroup">
+        <div class="sectionLabel">Experimental / Advanced</div>
         <button id="startupBtn">Run Startup</button>
         <button id="diagnosticsBtn">Run Diagnostics</button>
         <button id="diagnosticsLatestBtn">View Diagnostics</button>
-        <button id="evidenceBtn">View Evidence</button>
         <button id="tasksBtn">View Tasks</button>
         <button id="auditBtn">View Audit</button>
       </div>
@@ -74,7 +79,10 @@
         <div id="cardContainer" class="card-container"></div>
 
         <section class="raw-panel">
-          <h3>Raw Output</h3>
+          <h2>Advanced Raw Output</h2>
+          <p class="muted">
+            Power-user detail. General users can rely on the summary cards above.
+          </p>
           <pre id="outputText">Waiting for action...</pre>
         </section>
       </section>
