@@ -1,5 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
+const fs = require("fs");
 const { spawn } = require("child_process");
 
 function createWindow() {
@@ -64,6 +65,47 @@ function runPathwardenJsonScript(relativeScriptPath, extraArgs = []) {
   });
 }
 
+function readLatestReportIndex() {
+  const repoRoot = path.resolve(__dirname, "..", "..", "..");
+  const indexPath = path.join(
+    repoRoot,
+    "exports",
+    "report-index",
+    "latest-report-index.json"
+  );
+
+  if (!fs.existsSync(indexPath)) {
+    return {
+      ok: false,
+      type: "latest-report-index",
+      message: "No latest report index found.",
+      path: path.relative(repoRoot, indexPath).replace(/\\/g, "/"),
+      expected_commands: [
+        "npm run export:governance-report",
+        "npm run export:replay-provenance-report",
+        "npm run export:federation-readiness-audit",
+        "npm run export:latest-report-index"
+      ]
+    };
+  }
+
+  try {
+    return {
+      ok: true,
+      type: "latest-report-index",
+      path: path.relative(repoRoot, indexPath).replace(/\\/g, "/"),
+      index: JSON.parse(fs.readFileSync(indexPath, "utf8"))
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      type: "latest-report-index",
+      message: error instanceof Error ? error.message : String(error),
+      path: path.relative(repoRoot, indexPath).replace(/\\/g, "/")
+    };
+  }
+}
+
 ipcMain.handle("pathwarden:runStartup", async () => runPathwardenJsonScript("Pathwarden/scripts/dev/run-startup-json.ts"));
 ipcMain.handle("pathwarden:runDiagnostics", async () => runPathwardenJsonScript("Pathwarden/scripts/dev/run-diagnostics-json.ts"));
 ipcMain.handle("pathwarden:viewTasks", async () => runPathwardenJsonScript("Pathwarden/scripts/dev/get-tasks-json.ts"));
@@ -82,6 +124,7 @@ ipcMain.handle("pathwarden:getDeviceFolders", async () => runPathwardenJsonScrip
 ipcMain.handle("pathwarden:getDeviceApps", async () => runPathwardenJsonScript("Pathwarden/scripts/dev/get-device-apps-json.ts"));
 ipcMain.handle("pathwarden:getAccessPolicy", async () => runPathwardenJsonScript("Pathwarden/scripts/dev/get-access-policy-json.ts"));
 ipcMain.handle("pathwarden:saveAccessPolicy", async (_, foldersJson, appsJson) => runPathwardenJsonScript("Pathwarden/scripts/dev/save-access-policy-json.ts", [foldersJson, appsJson]));
+ipcMain.handle("pathwarden:readLatestReportIndex", async () => readLatestReportIndex());
 
 app.whenReady().then(() => {
   createWindow();
