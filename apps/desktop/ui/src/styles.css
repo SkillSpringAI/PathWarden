@@ -116,6 +116,7 @@ body {
   border: 1px solid #334155;
   border-radius: 12px;
   padding: 16px;
+  border-left: 3px solid rgba(255, 255, 255, 0.16);
 }
 
 .data-card h3 {
@@ -127,6 +128,11 @@ body {
 .data-card p {
   margin: 6px 0;
   color: #cbd5e1;
+  line-height: 1.45;
+}
+
+.data-card p:first-of-type {
+  margin-top: 4px;
 }
 
 .task-actions {
