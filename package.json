@@ -84,7 +84,8 @@
     "test:governance-report-verifier": "tsx scripts/dev/test-governance-report-verifier.ts",
     "test:replay-provenance-verifier": "tsx scripts/dev/test-replay-provenance-verifier.ts",
     "test:federation-readiness-verifier": "tsx scripts/dev/test-federation-readiness-verifier.ts",
-    "test:report-input-support": "tsx scripts/dev/test-report-input-support.ts"
+    "test:report-input-support": "tsx scripts/dev/test-report-input-support.ts",
+    "test:report-fixture-schemas": "tsx scripts/dev/test-report-fixture-schemas.ts"
   },
   "devDependencies": {
     "@types/node": "^20.11.30",

@@ -15,7 +15,7 @@
     "trace_id": "trace_fixture",
     "record_count": 0,
     "record_refs": [],
-    "reconstructed_chain_hash": "fixture_hash",
+    "reconstructed_chain_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
     "reconstructed_chain_hash_algorithm": "sha256"
   },
   "trust": {
