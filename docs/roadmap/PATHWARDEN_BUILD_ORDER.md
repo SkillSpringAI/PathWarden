@@ -1316,21 +1316,21 @@ git status --short
 ### Status
 
 ```text
-in progress
+implementation complete
+pending final verification and tag
 Purpose
 Make PathWarden's existing evidence/reporting layer visible and understandable through a read-only local UI foundation.
-Build posture
-visibility first
-read-only first
-no new execution behavior
-no federation runtime
-no Rust yet
-no backend abstraction expansion unless it directly supports UI visibility
 Completed
 docs/ui/PATHWARDEN_EVIDENCE_UI_SHELL_DESIGN.md
 docs/ui/REPORT_VIEWER_DATA_CONTRACT.md
+docs/ui/MINIMAL_EVIDENCE_UI_IMPLEMENTATION_PLAN.md
+docs/ui/PATHWARDEN_SHELL_UI_REFERENCE.md
 scripts/dev/export-latest-report-index.ts
 scripts/dev/verify-latest-report-index.ts
+apps/desktop/main/main.cjs evidence index IPC
+apps/desktop/preload/preload.cjs evidence index bridge
+apps/desktop/ui/src/index.html View Evidence entrypoint
+apps/desktop/ui/src/renderer.js simplified Evidence Overview renderer
 Package scripts added
 npm run export:latest-report-index
 npm run verify:latest-report-index
@@ -1338,11 +1338,20 @@ Current behavior
 latest report index export scans existing generated report folders
 latest report index summarizes governance, replay provenance, and federation readiness reports
 latest report index verification checks shape, paths, statuses, and required metadata
+desktop shell has a working View Evidence button
+Evidence Overview displays simplified user-facing evidence cards
+raw JSON remains available in Raw Output for power users
 generated index remains under exports/report-index/latest-report-index.json
 generated index remains out of git
+UI posture
+current desktop shell is a functional bridge prototype
+View Evidence is the validated v0.1.7 UI slice
+target end-state UI should follow the PathWarden Shell / UI Reference direction
+general users should see simplified governance/evidence states
+power users may access raw JSON and artifact paths
 Explicit non-goals
-no action execution
-no approval queue yet
+no new action execution
+no approval queue implementation
 no report generation from UI
 no diagnostic execution from UI
 no policy editing
@@ -1352,18 +1361,8 @@ no federation runtime
 no delegated authority
 no cross-runtime trust negotiation
 no network behavior
+no React/Vite migration
 no Rust/native module
-Next implementation slice
-minimal read-only evidence UI shell
-UI implementation boundary
-The UI may display evidence.
-The UI must not make governance decisions.
-The UI must not execute actions.
-The UI must not promote federation readiness.
-Recommended next files
-frontend/UI entry files if already present in repo
-or
-docs/ui/MINIMAL_EVIDENCE_UI_IMPLEMENTATION_PLAN.md before code if UI structure is not yet clear
 Verification target
 npm run check
 npm run diag
@@ -1375,5 +1374,17 @@ npm run export:latest-report-index
 npm run verify:latest-report-index
 npm run test:report-fixture-schemas
 git status --short
+Manual desktop check
+cd apps/desktop
+npm start
+
+Expected:
+
+desktop app launches
+View Evidence button works
+Evidence Overview shows simplified cards
+Raw Output still exposes JSON
+no new execution controls were added
+federation remains advisory and non-executable
 Recommended tag
-pw-v0.1.7-evidence-ui-shell
+pw-v0.1.7-evidence-ui-shells
