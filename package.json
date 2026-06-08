@@ -64,6 +64,7 @@
     "export:federation-readiness-audit": "tsx scripts/dev/export-federation-readiness-audit.ts",
     "export:latest-report-index": "tsx scripts/dev/export-latest-report-index.ts",
     "verify:trace-manifest": "tsx scripts/dev/verify-trace-manifest.ts",
+    "verify:latest-report-index": "tsx scripts/dev/verify-latest-report-index.ts",
     "sign:trace-manifest": "tsx scripts/dev/sign-trace-manifest.ts",
     "verify:trace-manifest-signature": "tsx scripts/dev/verify-trace-manifest-signature.ts",
     "verify:governance-report": "tsx scripts/dev/verify-governance-report.ts",
