@@ -241,17 +241,25 @@ function renderEvidenceIndex(result) {
       makeCard("No evidence index found", [
         data?.message || "No latest report index found.",
         `Expected path: ${data?.path || "exports/report-index/latest-report-index.json"}`,
-        "Generate the latest reports before viewing evidence."
+        "Generate the latest evidence reports before using this view."
       ])
     );
 
     cardContainer.appendChild(
-      makeCard("Generate evidence", [
+      makeCard("Required Commands", [
         "npm run export:governance-report",
         "npm run export:replay-provenance-report",
         "npm run export:federation-readiness-audit",
         "npm run export:latest-report-index",
         "npm run verify:latest-report-index"
+      ])
+    );
+
+    cardContainer.appendChild(
+      makeCard("Read-Only Boundary", [
+        "This view does not generate reports.",
+        "This view does not approve or execute tasks.",
+        "This view does not mutate policy, authority, or federation state."
       ])
     );
 
@@ -265,37 +273,37 @@ function renderEvidenceIndex(result) {
   const federation = reports.federation_readiness || {};
 
   cardContainer.appendChild(
-    makeCard("Current Evidence Posture", [
-      `Governance: ${evidenceStatusLabel(governance.status)}`,
+    makeCard("Evidence Summary", [
+      `Governance evidence: ${evidenceStatusLabel(governance.status)}`,
+      `Release-safe: ${yesNoUnknown(governance.release_safe, "Yes", "No")}`,
       `Replay lineage: ${yesNoUnknown(replay.lineage_complete, "Complete", "Incomplete")}`,
       `Replay admissibility: ${yesNoUnknown(replay.admissible, "Admissible", "Not admissible")}`,
-      `Federation: ${yesNoUnknown(federation.ready_for_federation, "Ready for design review", "Not ready")}`
+      `Federation readiness: ${yesNoUnknown(federation.ready_for_federation, "Ready", "Not ready")}`
     ])
   );
 
   cardContainer.appendChild(
-    makeCard("User Summary", [
+    makeCard("What This Means", [
       governance.release_safe === true
-        ? "Governance evidence is currently release-safe."
-        : "Governance evidence is not currently release-safe.",
+        ? "Governance evidence is currently suitable for release review."
+        : "Governance evidence needs review before it should be treated as release-safe.",
       replay.lineage_complete === true
-        ? "Replay lineage is complete."
-        : "Replay lineage is incomplete or not available.",
+        ? "Replay lineage is complete, so the evidence chain is easier to inspect."
+        : "Replay lineage is incomplete or unavailable, so provenance should be treated cautiously.",
       replay.admissible === true
-        ? "Replay provenance is admissible."
+        ? "Replay provenance is currently admissible."
         : "Replay provenance is not currently admissible.",
       federation.ready_for_federation === true
-        ? "Federation design may be considered."
+        ? "Federation design review may be considered."
         : "Federation is not ready. This UI does not enable federation runtime."
     ])
   );
 
   cardContainer.appendChild(
-    makeCard("Governance Report", [
+    makeCard("Governance Evidence", [
       `Status: ${evidenceStatusLabel(governance.status)}`,
       `Release-safe: ${yesNoUnknown(governance.release_safe, "Yes", "No")}`,
-      `Report ID: ${governance.id || "Missing"}`,
-      `Path: ${governance.path || "Missing"}`
+      `Report ID: ${governance.id || "Missing"}`
     ])
   );
 
@@ -304,8 +312,7 @@ function renderEvidenceIndex(result) {
       `Status: ${evidenceStatusLabel(replay.status)}`,
       `Admissible: ${yesNoUnknown(replay.admissible, "Yes", "No")}`,
       `Lineage complete: ${yesNoUnknown(replay.lineage_complete, "Yes", "No")}`,
-      `Report ID: ${replay.id || "Missing"}`,
-      `Path: ${replay.path || "Missing"}`
+      `Report ID: ${replay.id || "Missing"}`
     ])
   );
 
@@ -314,15 +321,27 @@ function renderEvidenceIndex(result) {
       `Status: ${evidenceStatusLabel(federation.status)}`,
       `Ready for federation: ${yesNoUnknown(federation.ready_for_federation, "Yes", "No")}`,
       `Audit ID: ${federation.id || "Missing"}`,
-      `Path: ${federation.path || "Missing"}`
+      "Federation readiness is advisory. This UI does not enable federation runtime."
     ])
   );
 
   cardContainer.appendChild(
-    makeCard("Power User Detail", [
-      "Raw JSON remains available in the Raw Output panel below.",
-      "Artifact paths are shown for direct inspection.",
-      "This view is read-only and does not execute actions."
+    makeCard("Report Paths", [
+      `Latest index: ${data.path || "Missing"}`,
+      `Governance report: ${governance.path || "Missing"}`,
+      `Replay provenance report: ${replay.path || "Missing"}`,
+      `Federation readiness audit: ${federation.path || "Missing"}`
+    ])
+  );
+
+  cardContainer.appendChild(
+    makeCard("Read-Only Boundary", [
+      "This view is read-only.",
+      "It does not generate reports.",
+      "It does not approve or execute tasks.",
+      "It does not mutate policy or authority.",
+      "It does not start federation.",
+      "Raw JSON remains available in Advanced Raw Output."
     ])
   );
 }
