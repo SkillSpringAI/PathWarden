@@ -6,6 +6,34 @@ It is designed to execute local actions only when they pass explicit governance 
 
 PathWarden is not an autonomous agent. It is the governed local execution layer: the part of the system allowed to touch files, run approved tasks, emit audit records, and preserve forensic traces.
 
+## Current Demo: Evidence Overview
+
+PathWarden currently has a validated read-only desktop demo path:
+
+```text
+View Evidence
+
+This workflow shows the latest local evidence posture through simplified desktop cards while preserving raw JSON for power users.
+
+What the demo shows
+governance report status
+release-safe posture
+replay provenance status
+replay lineage completeness
+federation readiness status
+report artifact paths
+read-only evidence boundary
+advanced raw JSON output
+What the demo does not do
+execute tasks
+approve actions
+mutate policy
+generate reports from the UI
+start federation runtime
+perform signing
+use network behavior
+```
+
 ## Current status
 
 PathWarden currently supports:
