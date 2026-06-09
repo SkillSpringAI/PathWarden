@@ -490,7 +490,7 @@ document.getElementById("diagnosticsLatestBtn").addEventListener("click", () => 
 document.getElementById("tasksBtn").addEventListener("click", () => {
   const api = getAPI();
   if (!api?.viewTasks) return showBridgeError("viewTasks");
-  runAction("Task Summary", () => api.viewTasks());
+  runAction("Tasks / Approval Queue", () => api.viewTasks());
 });
 
 document.getElementById("auditBtn").addEventListener("click", () => {
