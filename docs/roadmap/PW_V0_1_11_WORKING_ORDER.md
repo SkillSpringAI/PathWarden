@@ -7,7 +7,8 @@ Demo Readiness and Public-Facing Walkthrough
 ## Status
 
 ```text
-in progress
+implementation complete
+pending final verification and tag
 Purpose
 
 Make the current PathWarden state explainable to another person through a short demo flow, README guidance, screenshots, and a clear release narrative.
@@ -44,7 +45,7 @@ no federation runtime
 no signing
 no network behavior
 Planned slices
-Slice 1 — Demo walkthrough
+Slice 1 ï¿½ Demo walkthrough
 
 Create:
 
@@ -53,7 +54,7 @@ docs/demo/PATHWARDEN_EVIDENCE_OVERVIEW_DEMO.md
 Purpose:
 
 Explain how to run the validated evidence workflow from clean checkout to desktop view.
-Slice 2 — Screenshot checklist
+Slice 2 ï¿½ Screenshot checklist
 
 Create:
 
@@ -62,7 +63,7 @@ docs/demo/SCREENSHOT_CAPTURE_CHECKLIST.md
 Purpose:
 
 Define screenshots needed for README, release notes, and public-facing explanation.
-Slice 3 — README evidence overview section
+Slice 3 ï¿½ README evidence overview section
 
 Update:
 
@@ -71,7 +72,7 @@ README.md
 Purpose:
 
 Add a short current-state demo section without overselling unfinished capabilities.
-Slice 4 — Final verification
+Slice 4 ï¿½ Final verification
 
 Run:
 
@@ -92,6 +93,44 @@ View Evidence works
 Evidence Overview is demo-ready
 README/demo docs match current behavior
 no new execution behavior added
+
+## Completed implementation
+
+```text
+docs/roadmap/PW_V0_1_11_WORKING_ORDER.md
+docs/demo/PATHWARDEN_EVIDENCE_OVERVIEW_DEMO.md
+docs/demo/SCREENSHOT_CAPTURE_CHECKLIST.md
+README.md Evidence Overview demo section
+Current demo posture
+View Evidence is the validated desktop demo path.
+Evidence Overview is documented as read-only.
+Demo commands are documented from repo root.
+Screenshot checklist defines validated screenshots.
+README explains what the demo shows and does not show.
+Task / Approval Queue remains experimental / advanced.
+No new execution behavior was added.
+No report-generation behavior from UI was added.
+No federation runtime was added.
+Final verification target
+npm run check
+npm run diag
+npm run verify:diagnostic-metadata
+npm run export:governance-report
+npm run export:replay-provenance-report
+npm run export:federation-readiness-audit
+npm run export:latest-report-index
+npm run verify:latest-report-index
+npm run test:report-fixture-schemas
+git status --short
+Manual desktop check
+desktop app launches
+View Evidence works
+Evidence Overview matches the demo walkthrough
+README/demo docs match current behavior
+Advanced Raw Output remains visible
+no new execution controls added
+```
+
 Recommended tag
 pw-v0.1.11-demo-readiness-and-walkthrough
 
