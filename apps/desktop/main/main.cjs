@@ -19,7 +19,7 @@ function createWindow() {
 
 function runPathwardenJsonScript(relativeScriptPath, extraArgs = []) {
   return new Promise((resolvePromise) => {
-    const repoRoot = path.resolve(__dirname, "..", "..", "..", "..");
+    const repoRoot = path.resolve(__dirname, "..", "..", "..");
     const tsxPath = path.join(repoRoot, "node_modules", "tsx", "dist", "cli.mjs");
     const scriptPath = path.join(repoRoot, relativeScriptPath);
 
@@ -141,6 +141,7 @@ ipcMain.handle("pathwarden:runDiagnostics", async () => runPathwardenJsonScript(
 ipcMain.handle("pathwarden:viewTasks", async () => runPathwardenJsonScript("Pathwarden/scripts/dev/get-tasks-json.ts"));
 ipcMain.handle("pathwarden:viewAuditRecent", async () => runPathwardenJsonScript("Pathwarden/scripts/dev/get-audit-json.ts"));
 ipcMain.handle("pathwarden:viewDiagnosticsLatest", async () => runPathwardenJsonScript("Pathwarden/scripts/dev/get-diagnostics-json.ts"));
+ipcMain.handle("pathwarden:planUserRequest", async (_, text) => runPathwardenJsonScript("scripts/dev/plan-user-request-json.ts", [text]));
 
 ipcMain.handle("pathwarden:approveTask", async (_, taskId) => runPathwardenJsonScript("Pathwarden/scripts/dev/approve-task.ts", [taskId]));
 ipcMain.handle("pathwarden:cancelTask", async (_, taskId) => runPathwardenJsonScript("Pathwarden/scripts/dev/cancel-task.ts", [taskId]));

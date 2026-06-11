@@ -428,6 +428,29 @@ function renderGeneric(result) {
       break;
   }
 }
+
+function renderUserRequestPlan(data) {
+  clearCards();
+  viewTitle.textContent = "User Request Plan";
+
+  cardContainer.appendChild(
+    makeCard("Planned Request", [
+      `Request: ${data.request || "N/A"}`,
+      `Intent: ${data.intent || "N/A"}`,
+      `Capability: ${data.capability || "N/A"}`,
+      `Mode: ${data.mode || "N/A"}`,
+      `Risk: ${data.risk || "N/A"}`,
+      `Execution Status: ${data.execution_status || "N/A"}`
+    ])
+  );
+
+  cardContainer.appendChild(
+    makeCard("Boundary", [
+      data.boundary || "Planning only. No execution occurred.",
+      data.next_step || "Review the planned capability before any future execution step."
+    ])
+  );
+}
 /* PATHWARDEN:RENDERERS:END */
 
 /* PATHWARDEN:RUNNER:START */
@@ -510,6 +533,24 @@ document.getElementById("evidenceBtn").addEventListener("click", async () => {
     setStatus("Evidence Overview failed");
     setOutput(`Unhandled error:\n${message}`);
   }
+});
+document.getElementById("planUserRequestBtn").addEventListener("click", () => {
+  const api = getAPI();
+  if (!api?.planUserRequest) return showBridgeError("planUserRequest");
+
+  const input = document.getElementById("userRequestInput");
+  const text = input?.value?.trim() || "";
+
+  if (!text) {
+    clearCards();
+    viewTitle.textContent = "User Request Plan";
+    cardContainer.appendChild(makeCard("No request entered", ["Enter a request to plan."]));
+    setStatus("No user request entered");
+    setOutput("No request entered.");
+    return;
+  }
+
+  runAction("User Request Plan", () => api.planUserRequest(text));
 });
 document.getElementById("capabilitiesBtn").addEventListener("click", async () => {
   const api = getAPI();
