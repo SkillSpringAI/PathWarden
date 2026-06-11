@@ -345,6 +345,36 @@ function renderEvidenceIndex(result) {
     ])
   );
 }
+
+function renderCapabilities(result) {
+  clearCards();
+  viewTitle.textContent = "Capabilities";
+
+  const data = result || {};
+  const inventory = data.inventory || data || {};
+
+  cardContainer.appendChild(
+    makeCard("Capabilities Summary", [
+      "This view lists available capabilities grouped by stability and implementation status.",
+      `Loaded: ${inventory ? "Yes" : "No"}`
+    ])
+  );
+
+  const groups = [
+    ["Validated", inventory.validated],
+    ["Advanced Reporting", inventory.advancedReporting],
+    ["Experimental", inventory.experimental],
+    ["Not Implemented", inventory.notImplemented],
+    ["Authority Mechanisms", inventory.authorityMechanisms]
+  ];
+
+  groups.forEach(([title, items]) => {
+    if (!items || items.length === 0) return;
+    cardContainer.appendChild(
+      makeCard(title, items.map((i) => `${i}`))
+    );
+  });
+}
 function renderGeneric(result) {
   clearCards();
   viewTitle.textContent = "Output";
@@ -478,6 +508,37 @@ document.getElementById("evidenceBtn").addEventListener("click", async () => {
     );
 
     setStatus("Evidence Overview failed");
+    setOutput(`Unhandled error:\n${message}`);
+  }
+});
+document.getElementById("capabilitiesBtn").addEventListener("click", async () => {
+  const api = getAPI();
+
+  if (!api?.readCapabilityInventory) {
+    return showBridgeError("readCapabilityInventory");
+  }
+
+  try {
+    setStatus("Capabilities loading...");
+    setOutput("Loading Capabilities...");
+    clearCards();
+    viewTitle.textContent = "Capabilities";
+
+    const data = await api.readCapabilityInventory();
+
+    renderCapabilities(data);
+
+    setOutput(JSON.stringify(data, null, 2));
+    setStatus(data.ok ? "Capabilities loaded" : "Capabilities finished with issues");
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+
+    clearCards();
+    cardContainer.appendChild(
+      makeCard("Capabilities failed", [message])
+    );
+
+    setStatus("Capabilities failed");
     setOutput(`Unhandled error:\n${message}`);
   }
 });

@@ -9,6 +9,7 @@ const api = {
   viewAuditRecent: () => ipcRenderer.invoke("pathwarden:viewAuditRecent"),
   viewDiagnosticsLatest: () => ipcRenderer.invoke("pathwarden:viewDiagnosticsLatest"),
   readLatestReportIndex: () => ipcRenderer.invoke("pathwarden:readLatestReportIndex"),
+  readCapabilityInventory: () => ipcRenderer.invoke("pathwarden:readCapabilityInventory"),
 
   approveTask: (taskId) => ipcRenderer.invoke("pathwarden:approveTask", taskId),
   cancelTask: (taskId) => ipcRenderer.invoke("pathwarden:cancelTask", taskId),

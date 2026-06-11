@@ -106,6 +106,36 @@ function readLatestReportIndex() {
   }
 }
 
+function readCapabilityInventory() {
+  const repoRoot = path.resolve(__dirname, "..", "..", "..");
+  const inventoryPath = path.join(repoRoot, "apps", "desktop", "data", "capability-inventory.display.json");
+
+  if (!fs.existsSync(inventoryPath)) {
+    return {
+      ok: false,
+      type: "capability-inventory",
+      message: "No capability inventory found.",
+      path: path.relative(repoRoot, inventoryPath).replace(/\\/g, "/")
+    };
+  }
+
+  try {
+    return {
+      ok: true,
+      type: "capability-inventory",
+      path: path.relative(repoRoot, inventoryPath).replace(/\\/g, "/"),
+      inventory: JSON.parse(fs.readFileSync(inventoryPath, "utf8"))
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      type: "capability-inventory",
+      message: error instanceof Error ? error.message : String(error),
+      path: path.relative(repoRoot, inventoryPath).replace(/\\/g, "/")
+    };
+  }
+}
+
 ipcMain.handle("pathwarden:runStartup", async () => runPathwardenJsonScript("Pathwarden/scripts/dev/run-startup-json.ts"));
 ipcMain.handle("pathwarden:runDiagnostics", async () => runPathwardenJsonScript("Pathwarden/scripts/dev/run-diagnostics-json.ts"));
 ipcMain.handle("pathwarden:viewTasks", async () => runPathwardenJsonScript("Pathwarden/scripts/dev/get-tasks-json.ts"));
@@ -125,6 +155,10 @@ ipcMain.handle("pathwarden:getDeviceApps", async () => runPathwardenJsonScript("
 ipcMain.handle("pathwarden:getAccessPolicy", async () => runPathwardenJsonScript("Pathwarden/scripts/dev/get-access-policy-json.ts"));
 ipcMain.handle("pathwarden:saveAccessPolicy", async (_, foldersJson, appsJson) => runPathwardenJsonScript("Pathwarden/scripts/dev/save-access-policy-json.ts", [foldersJson, appsJson]));
 ipcMain.handle("pathwarden:readLatestReportIndex", async () => readLatestReportIndex());
+ipcMain.handle(
+  "pathwarden:readCapabilityInventory",
+  async () => readCapabilityInventory()
+);
 
 app.whenReady().then(() => {
   createWindow();

@@ -1,0 +1,29 @@
+{
+  "validated": [
+    "Evidence Overview",
+    "Latest Report Index"
+  ],
+  "advancedReporting": [
+    "Governance Report Export",
+    "Replay Provenance Report Export",
+    "Federation Readiness Audit"
+  ],
+  "experimental": [
+    "Tasks / Approval Queue",
+    "Filesystem Read",
+    "Filesystem Move",
+    "Filesystem Copy",
+    "Filesystem Rename",
+    "Filesystem Delete"
+  ],
+  "notImplemented": [
+    "Filesystem Search",
+    "Filesystem Write"
+  ],
+  "authorityMechanisms": [
+    "Capability Grant Validation",
+    "Permission Tokens",
+    "Execution Policy",
+    "Access Policy"
+  ]
+}
