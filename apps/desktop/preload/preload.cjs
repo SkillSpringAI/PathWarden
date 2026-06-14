@@ -10,6 +10,7 @@ const api = {
   viewDiagnosticsLatest: () => ipcRenderer.invoke("pathwarden:viewDiagnosticsLatest"),
   readLatestReportIndex: () => ipcRenderer.invoke("pathwarden:readLatestReportIndex"),
   planUserRequest: (text) => ipcRenderer.invoke("pathwarden:planUserRequest", text),
+  inspectPath: (targetPath) => ipcRenderer.invoke("pathwarden:inspectPath", targetPath),
   readCapabilityInventory: () => ipcRenderer.invoke("pathwarden:readCapabilityInventory"),
 
   approveTask: (taskId) => ipcRenderer.invoke("pathwarden:approveTask", taskId),
@@ -27,3 +28,4 @@ const api = {
 };
 
 contextBridge.exposeInMainWorld("pathwardenAPI", api);
+

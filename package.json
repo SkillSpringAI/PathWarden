@@ -88,9 +88,10 @@
     "test:federation-readiness-verifier": "tsx scripts/dev/test-federation-readiness-verifier.ts",
     "test:report-input-support": "tsx scripts/dev/test-report-input-support.ts",
     "test:report-fixture-schemas": "tsx scripts/dev/test-report-fixture-schemas.ts",
-    "plan:user-request": "tsx scripts/dev/plan-user-request-json.ts"
-    ,
-    "test:user-request-planner": "tsx scripts/dev/test-user-request-planner.ts"
+    "plan:user-request": "tsx scripts/dev/plan-user-request-json.ts",
+    "test:user-request-planner": "tsx scripts/dev/test-user-request-planner.ts",
+    "inspect:path": "tsx scripts/dev/inspect-path-json.ts",
+    "test:filesystem-inspect": "tsx scripts/dev/test-filesystem-inspect.ts"
   },
   "devDependencies": {
     "@types/node": "^20.11.30",

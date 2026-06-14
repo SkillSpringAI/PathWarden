@@ -375,6 +375,61 @@ function renderCapabilities(result) {
     );
   });
 }
+function renderFilesystemInspect(data) {
+  clearCards();
+  viewTitle.textContent = "Read-Only Path Inspection";
+
+  cardContainer.appendChild(
+    makeCard("Inspection Summary", [
+      `Path: ${data.path || "N/A"}`,
+      `Directories: ${Array.isArray(data.directories) ? data.directories.length : 0}`,
+      `Files: ${Array.isArray(data.files) ? data.files.length : 0}`,
+      `Status: ${data.ok ? "Allowed and inspected" : "Not inspected"}`,
+      data.message ? `Message: ${data.message}` : "Read-only inspection completed."
+    ])
+  );
+
+  cardContainer.appendChild(
+    makeCard("Read-Only Boundary", [
+      "This view lists immediate folder contents only.",
+      "It does not read file contents.",
+      "It does not write, move, rename, copy, delete, or execute files.",
+      "Access is constrained by config/access-policy.json and path guards."
+    ])
+  );
+
+  const directories = Array.isArray(data.directories) ? data.directories : [];
+  const files = Array.isArray(data.files) ? data.files : [];
+
+  directories.slice(0, 25).forEach((entry) => {
+    cardContainer.appendChild(
+      makeCard(`Folder: ${entry.name}`, [
+        `Path: ${entry.path}`,
+        `Modified: ${entry.modified_at || "Unknown"}`
+      ])
+    );
+  });
+
+  files.slice(0, 25).forEach((entry) => {
+    cardContainer.appendChild(
+      makeCard(`File: ${entry.name}`, [
+        `Path: ${entry.path}`,
+        `Size: ${entry.size_bytes ?? "Unknown"} bytes`,
+        `Modified: ${entry.modified_at || "Unknown"}`
+      ])
+    );
+  });
+
+  if (directories.length + files.length > 50) {
+    cardContainer.appendChild(
+      makeCard("Result Limit", [
+        "Only the first 25 folders and first 25 files are shown as cards.",
+        "Full JSON remains available in Advanced Raw Output."
+      ])
+    );
+  }
+}
+
 function renderGeneric(result) {
   clearCards();
   viewTitle.textContent = "Output";
@@ -440,7 +495,8 @@ function renderUserRequestPlan(data) {
       `Capability: ${data.capability || "N/A"}`,
       `Mode: ${data.mode || "N/A"}`,
       `Risk: ${data.risk || "N/A"}`,
-      `Execution Status: ${data.execution_status || "N/A"}`
+      `Execution Status: ${data.execution_status || "N/A"}`,
+      `Workflow Status: ${data.workflow_status || "N/A"}`
     ])
   );
 
@@ -601,6 +657,25 @@ document.getElementById("auditBtn").addEventListener("click", () => {
   runAction("Recent Audit", () => api.viewAuditRecent());
 });
 
+document.getElementById("inspectPathBtn").addEventListener("click", () => {
+  const api = getAPI();
+  if (!api?.inspectPath) return showBridgeError("inspectPath");
+
+  const input = document.getElementById("inspectPathInput");
+  const targetPath = input?.value?.trim() || "";
+
+  if (!targetPath) {
+    clearCards();
+    viewTitle.textContent = "Read-Only Path Inspection";
+    cardContainer.appendChild(makeCard("No path entered", ["Enter an allowed folder path to inspect."]));
+    setStatus("No path entered");
+    setOutput("No path entered.");
+    return;
+  }
+
+  runAction("Read-Only Path Inspection", () => api.inspectPath(targetPath));
+});
+
 document.getElementById("clearBtn").addEventListener("click", () => {
   clearCards();
   setOutput("Waiting for action...");
@@ -620,3 +695,7 @@ if (api?.ping) {
   setOutput("Bridge error: window.pathwardenAPI is undefined.");
 }
 /* PATHWARDEN:BOOT:END */
+
+
+
+

@@ -142,6 +142,7 @@ ipcMain.handle("pathwarden:viewTasks", async () => runPathwardenJsonScript("Path
 ipcMain.handle("pathwarden:viewAuditRecent", async () => runPathwardenJsonScript("Pathwarden/scripts/dev/get-audit-json.ts"));
 ipcMain.handle("pathwarden:viewDiagnosticsLatest", async () => runPathwardenJsonScript("Pathwarden/scripts/dev/get-diagnostics-json.ts"));
 ipcMain.handle("pathwarden:planUserRequest", async (_, text) => runPathwardenJsonScript("scripts/dev/plan-user-request-json.ts", [text]));
+ipcMain.handle("pathwarden:inspectPath", async (_, targetPath) => runPathwardenJsonScript("scripts/dev/inspect-path-json.ts", [targetPath]));
 
 ipcMain.handle("pathwarden:approveTask", async (_, taskId) => runPathwardenJsonScript("Pathwarden/scripts/dev/approve-task.ts", [taskId]));
 ipcMain.handle("pathwarden:cancelTask", async (_, taskId) => runPathwardenJsonScript("Pathwarden/scripts/dev/cancel-task.ts", [taskId]));
@@ -176,3 +177,4 @@ app.on("window-all-closed", () => {
     app.quit();
   }
 });
+

@@ -16,7 +16,7 @@ const cases: ExpectedPlan[] = [
   {
     request: "Show me PDFs modified this week",
     intent: "filesystem_search",
-    capability: "filesystem.search",
+    capability: "filesystem.inspect",
     risk: "low"
   },
   {
@@ -34,7 +34,7 @@ const cases: ExpectedPlan[] = [
   {
     request: "Find duplicate-looking filenames",
     intent: "duplicate_filename_review",
-    capability: "filesystem.search",
+    capability: "filesystem.inspect",
     risk: "medium"
   },
   {
@@ -79,6 +79,8 @@ for (const testCase of cases) {
   if (parsed.risk !== testCase.risk) fail(`Wrong risk for "${testCase.request}". Got ${parsed.risk}.`);
   if (parsed.mode !== "read_only") fail(`Mode was not read_only for "${testCase.request}".`);
   if (parsed.execution_status !== "not_executed") fail(`Planner executed something for "${testCase.request}".`);
+  if (parsed.capability === "filesystem.search") fail(`Planner returned unimplemented filesystem.search for "${testCase.request}".`);
+  if (parsed.capability === "filesystem.write") fail(`Planner returned unimplemented filesystem.write for "${testCase.request}".`);
 }
 
 console.log(JSON.stringify({

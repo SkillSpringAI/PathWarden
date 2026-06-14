@@ -66,7 +66,16 @@
               <button id="planUserRequestBtn">Plan Request</button>
             </section>
 
-          <section class="subpanel">
+                    <section class="subpanel">
+            <h3>Read-Only Path Inspection</h3>
+            <p class="muted">
+              Inspect an allowed folder without reading file contents or changing anything.
+            </p>
+            <textarea id="inspectPathInput" rows="3" placeholder="Example: C:\Users\Laptop\Documents"></textarea>
+            <button id="inspectPathBtn">Inspect Folder</button>
+          </section>
+
+        <section class="subpanel">
             <h3>Default Task Templates</h3>
             <button id="loadDefaultTasksBtn">Load Experimental Task Templates</button>
             <div id="defaultTasksContainer" class="list-container"></div>
@@ -108,3 +117,4 @@
   <script src="./renderer.js"></script>
 </body>
 </html>
+
