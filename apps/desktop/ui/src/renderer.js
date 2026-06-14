@@ -430,6 +430,59 @@ function renderFilesystemInspect(data) {
   }
 }
 
+function renderFilesystemSummary(data) {
+  clearCards();
+  viewTitle.textContent = "Directory Summary";
+
+  cardContainer.appendChild(
+    makeCard("Folder Summary", [
+      `Path: ${data.path || "N/A"}`,
+      `Files: ${data.file_count ?? 0}`,
+      `Folders: ${data.directory_count ?? 0}`,
+      `Visible File Size: ${data.total_visible_file_size_bytes ?? 0} bytes`,
+      `Status: ${data.ok ? "Summarized" : "Not summarized"}`,
+      data.message ? `Message: ${data.message}` : "Metadata-only summary completed."
+    ])
+  );
+
+  const extensions = Array.isArray(data.extension_breakdown) ? data.extension_breakdown : [];
+  if (extensions.length > 0) {
+    cardContainer.appendChild(
+      makeCard("Extension Breakdown", extensions.slice(0, 10).map((entry) =>
+        `${entry.extension}: ${entry.count}`
+      ))
+    );
+  }
+
+  const largestFiles = Array.isArray(data.largest_files) ? data.largest_files : [];
+  if (largestFiles.length > 0) {
+    cardContainer.appendChild(
+      makeCard("Largest Files", largestFiles.map((file) =>
+        `${file.name}: ${file.size_bytes} bytes`
+      ))
+    );
+  }
+
+  const recentFiles = Array.isArray(data.recent_files) ? data.recent_files : [];
+  if (recentFiles.length > 0) {
+    cardContainer.appendChild(
+      makeCard("Recently Modified Files", recentFiles.map((file) =>
+        `${file.name}: ${file.modified_at || "Unknown"}`
+      ))
+    );
+  }
+
+  cardContainer.appendChild(
+    makeCard("Read-Only Boundary", [
+      "This summary uses immediate directory metadata only.",
+      "It does not read file contents.",
+      "It does not recurse through subfolders.",
+      "It does not write, move, rename, copy, delete, or execute files.",
+      "Access is constrained by config/access-policy.json and path guards."
+    ])
+  );
+}
+
 function renderGeneric(result) {
   clearCards();
   viewTitle.textContent = "Output";
@@ -676,6 +729,25 @@ document.getElementById("inspectPathBtn").addEventListener("click", () => {
   runAction("Read-Only Path Inspection", () => api.inspectPath(targetPath));
 });
 
+document.getElementById("summarizePathBtn").addEventListener("click", () => {
+  const api = getAPI();
+  if (!api?.summarizePath) return showBridgeError("summarizePath");
+
+  const input = document.getElementById("summarizePathInput");
+  const targetPath = input?.value?.trim() || "";
+
+  if (!targetPath) {
+    clearCards();
+    viewTitle.textContent = "Directory Summary";
+    cardContainer.appendChild(makeCard("No path entered", ["Enter an allowed folder path to summarize."]));
+    setStatus("No path entered");
+    setOutput("No path entered.");
+    return;
+  }
+
+  runAction("Directory Summary", () => api.summarizePath(targetPath));
+});
+
 document.getElementById("clearBtn").addEventListener("click", () => {
   clearCards();
   setOutput("Waiting for action...");
@@ -695,6 +767,9 @@ if (api?.ping) {
   setOutput("Bridge error: window.pathwardenAPI is undefined.");
 }
 /* PATHWARDEN:BOOT:END */
+
+
+
 
 
 

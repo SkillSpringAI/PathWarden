@@ -91,7 +91,9 @@
     "plan:user-request": "tsx scripts/dev/plan-user-request-json.ts",
     "test:user-request-planner": "tsx scripts/dev/test-user-request-planner.ts",
     "inspect:path": "tsx scripts/dev/inspect-path-json.ts",
-    "test:filesystem-inspect": "tsx scripts/dev/test-filesystem-inspect.ts"
+    "test:filesystem-inspect": "tsx scripts/dev/test-filesystem-inspect.ts",
+    "summarize:path": "tsx scripts/dev/summarize-path-json.ts",
+    "test:filesystem-summary": "tsx scripts/dev/test-filesystem-summary.ts"
   },
   "devDependencies": {
     "@types/node": "^20.11.30",
