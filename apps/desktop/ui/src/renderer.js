@@ -483,6 +483,54 @@ function renderFilesystemSummary(data) {
   );
 }
 
+function renderFilesystemSearch(data) {
+  clearCards();
+  viewTitle.textContent = "Filesystem Search";
+
+  cardContainer.appendChild(
+    makeCard("Search Summary", [
+      `Path: ${data.path || "N/A"}`,
+      `Matches: ${data.match_count ?? 0}`,
+      `Extension: ${data.query?.extension || "Any"}`,
+      `Name Contains: ${data.query?.nameContains || "Any"}`,
+      `Minimum Size: ${data.query?.minSizeBytes ?? "None"}`,
+      `Status: ${data.ok ? "Search completed" : "Search failed"}`,
+      data.message ? `Message: ${data.message}` : "Metadata-only search completed."
+    ])
+  );
+
+  const matches = Array.isArray(data.matches) ? data.matches : [];
+
+  matches.slice(0, 30).forEach((entry) => {
+    cardContainer.appendChild(
+      makeCard(`Match: ${entry.name}`, [
+        `Path: ${entry.path}`,
+        `Size: ${entry.size_bytes ?? "Unknown"} bytes`,
+        `Modified: ${entry.modified_at || "Unknown"}`
+      ])
+    );
+  });
+
+  if (matches.length > 30) {
+    cardContainer.appendChild(
+      makeCard("Result Limit", [
+        "Only the first 30 matches are shown as cards.",
+        "Full JSON remains available in Advanced Raw Output."
+      ])
+    );
+  }
+
+  cardContainer.appendChild(
+    makeCard("Read-Only Boundary", [
+      "This search uses immediate directory metadata only.",
+      "It does not read file contents.",
+      "It does not recurse through subfolders.",
+      "It does not write, move, rename, copy, delete, or execute files.",
+      "Access is constrained by config/access-policy.json and path guards."
+    ])
+  );
+}
+
 function renderGeneric(result) {
   clearCards();
   viewTitle.textContent = "Output";
@@ -748,6 +796,44 @@ document.getElementById("summarizePathBtn").addEventListener("click", () => {
   runAction("Directory Summary", () => api.summarizePath(targetPath));
 });
 
+document.getElementById("searchPathBtn").addEventListener("click", () => {
+  const api = getAPI();
+  if (!api?.searchPath) return showBridgeError("searchPath");
+
+  const pathInput = document.getElementById("searchPathInput");
+  const extensionInput = document.getElementById("searchExtensionInput");
+  const nameInput = document.getElementById("searchNameInput");
+  const minSizeInput = document.getElementById("searchMinSizeInput");
+
+  const targetPath = pathInput?.value?.trim() || "";
+  const extension = extensionInput?.value?.trim() || "";
+  const nameContains = nameInput?.value?.trim() || "";
+  const minSizeText = minSizeInput?.value?.trim() || "";
+  const minSizeBytes = minSizeText ? Number(minSizeText) : undefined;
+
+  if (!targetPath) {
+    clearCards();
+    viewTitle.textContent = "Filesystem Search";
+    cardContainer.appendChild(makeCard("No path entered", ["Enter an allowed folder path to search."]));
+    setStatus("No path entered");
+    setOutput("No path entered.");
+    return;
+  }
+
+  if (minSizeText && Number.isNaN(minSizeBytes)) {
+    clearCards();
+    viewTitle.textContent = "Filesystem Search";
+    cardContainer.appendChild(makeCard("Invalid minimum size", ["Minimum size must be a number of bytes."]));
+    setStatus("Invalid minimum size");
+    setOutput("Invalid minimum size.");
+    return;
+  }
+
+  runAction("Filesystem Search", () =>
+    api.searchPath(targetPath, extension, nameContains, minSizeBytes)
+  );
+});
+
 document.getElementById("clearBtn").addEventListener("click", () => {
   clearCards();
   setOutput("Waiting for action...");
@@ -767,6 +853,9 @@ if (api?.ping) {
   setOutput("Bridge error: window.pathwardenAPI is undefined.");
 }
 /* PATHWARDEN:BOOT:END */
+
+
+
 
 
 

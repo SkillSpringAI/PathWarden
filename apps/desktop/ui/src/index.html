@@ -84,6 +84,18 @@
             <button id="summarizePathBtn">Summarize Folder</button>
           </section>
 
+                  <section class="subpanel">
+            <h3>Filesystem Search</h3>
+            <p class="muted">
+              Search immediate files in an allowed folder by extension, name, or minimum size. Metadata-only and read-only.
+            </p>
+            <textarea id="searchPathInput" rows="2" placeholder="Folder path: C:\Users\Laptop\Documents"></textarea>
+            <input id="searchExtensionInput" placeholder="Extension, e.g. .txt" />
+            <input id="searchNameInput" placeholder="Name contains, e.g. skill" />
+            <input id="searchMinSizeInput" placeholder="Minimum size bytes, e.g. 1000000" />
+            <button id="searchPathBtn">Search Folder</button>
+          </section>
+
         <section class="subpanel">
             <h3>Default Task Templates</h3>
             <button id="loadDefaultTasksBtn">Load Experimental Task Templates</button>
@@ -126,5 +138,6 @@
   <script src="./renderer.js"></script>
 </body>
 </html>
+
 
 

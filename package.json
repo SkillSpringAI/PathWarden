@@ -93,7 +93,9 @@
     "inspect:path": "tsx scripts/dev/inspect-path-json.ts",
     "test:filesystem-inspect": "tsx scripts/dev/test-filesystem-inspect.ts",
     "summarize:path": "tsx scripts/dev/summarize-path-json.ts",
-    "test:filesystem-summary": "tsx scripts/dev/test-filesystem-summary.ts"
+    "test:filesystem-summary": "tsx scripts/dev/test-filesystem-summary.ts",
+    "search:path": "tsx scripts/dev/search-path-json.ts",
+    "test:filesystem-search": "tsx scripts/dev/test-filesystem-search.ts"
   },
   "devDependencies": {
     "@types/node": "^20.11.30",
