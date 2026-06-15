@@ -17,36 +17,34 @@ type RequestPlan = {
 function planUserRequest(request: string): RequestPlan {
   const normalized = request.toLowerCase().trim();
 
-  if (normalized.includes("pdf") && normalized.includes("modified")) {
-    return makePlan(
-      request,
-      "document_discovery",
-      "filesystem.inspect",
-      "low",
-      "partial_workflow_available"
-    );
+  if (normalized.includes("find") || normalized.includes("search")) {
+    return makePlan(request, "filesystem_search", "filesystem.search", "low");
   }
 
-  if (normalized.includes("large") && normalized.includes("files")) {
+  if (normalized.includes("summarize") || normalized.includes("summary")) {
+    return makePlan(request, "folder_summary", "filesystem.summary", "low");
+  }
+
+  if (
+    normalized.includes("inspect") ||
+    normalized.includes("list") ||
+    normalized.includes("show")
+  ) {
     return makePlan(request, "filesystem_inspection", "filesystem.inspect", "low");
   }
 
-  if (normalized.includes("list") && normalized.includes("folders")) {
-    return makePlan(request, "folder_listing", "filesystem.inspect", "low");
+  if (normalized.includes("large") && normalized.includes("files")) {
+    return makePlan(request, "filesystem_search", "filesystem.search", "low");
   }
 
   if (normalized.includes("duplicate")) {
     return makePlan(
       request,
       "duplicate_filename_review",
-      "filesystem.inspect",
+      "filesystem.search",
       "medium",
       "partial_workflow_available"
     );
-  }
-
-  if (normalized.includes("summarize") && normalized.includes("folder")) {
-    return makePlan(request, "folder_summary", "filesystem.inspect", "low");
   }
 
   return makePlan(request, "unknown", "none", "unknown");
@@ -74,7 +72,7 @@ function makePlan(
       capability === "none"
         ? "Refine the request into a supported read-only file workflow."
         : workflowStatus === "partial_workflow_available"
-          ? "Inspect an allowed folder first. More specific filtering is not implemented yet."
+          ? "A partial workflow is available. Review the planned capability before execution."
           : "Review the planned capability before any future execution step."
   };
 }

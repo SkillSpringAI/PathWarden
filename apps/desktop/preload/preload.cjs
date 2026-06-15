@@ -14,6 +14,8 @@ const api = {
   summarizePath: (targetPath) => ipcRenderer.invoke("pathwarden:summarizePath", targetPath),
   searchPath: (targetPath, extension, nameContains, minSizeBytes) =>
     ipcRenderer.invoke("pathwarden:searchPath", targetPath, extension, nameContains, minSizeBytes),
+  executePlannedRequest: (requestText) =>
+    ipcRenderer.invoke("pathwarden:executePlannedRequest", requestText),
   readCapabilityInventory: () => ipcRenderer.invoke("pathwarden:readCapabilityInventory"),
 
   approveTask: (taskId) => ipcRenderer.invoke("pathwarden:approveTask", taskId),
@@ -31,6 +33,7 @@ const api = {
 };
 
 contextBridge.exposeInMainWorld("pathwardenAPI", api);
+
 
 
 

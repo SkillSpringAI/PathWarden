@@ -531,6 +531,66 @@ function renderFilesystemSearch(data) {
   );
 }
 
+function renderPlannedRequestExecution(data) {
+  clearCards();
+  viewTitle.textContent = "Planned Request Execution";
+
+  cardContainer.appendChild(
+    makeCard("Execution Summary", [
+      `Request: ${data.request || "N/A"}`,
+      `Capability: ${data.plan?.capability || "N/A"}`,
+      `Intent: ${data.plan?.intent || "N/A"}`,
+      `Mode: ${data.plan?.mode || "N/A"}`,
+      `Status: ${data.ok ? "Executed" : "Not executed"}`,
+      `Message: ${data.message || "N/A"}`
+    ])
+  );
+
+  if (data.execution?.type === "filesystem-search") {
+    renderFilesystemSearch(data.execution);
+    cardContainer.prepend(
+      makeCard("Planner Bridge", [
+        `Request: ${data.request || "N/A"}`,
+        `Selected Capability: ${data.plan?.capability || "N/A"}`,
+        "Planner selected filesystem search and executed it through the read-only bridge."
+      ])
+    );
+    return;
+  }
+
+  if (data.execution?.type === "filesystem-summary") {
+    renderFilesystemSummary(data.execution);
+    cardContainer.prepend(
+      makeCard("Planner Bridge", [
+        `Request: ${data.request || "N/A"}`,
+        `Selected Capability: ${data.plan?.capability || "N/A"}`,
+        "Planner selected directory summary and executed it through the read-only bridge."
+      ])
+    );
+    return;
+  }
+
+  if (data.execution?.type === "filesystem-inspect") {
+    renderFilesystemInspect(data.execution);
+    cardContainer.prepend(
+      makeCard("Planner Bridge", [
+        `Request: ${data.request || "N/A"}`,
+        `Selected Capability: ${data.plan?.capability || "N/A"}`,
+        "Planner selected path inspection and executed it through the read-only bridge."
+      ])
+    );
+    return;
+  }
+
+  cardContainer.appendChild(
+    makeCard("Read-Only Boundary", [
+      "This bridge only executes supported read-only capabilities.",
+      "It does not write, move, rename, copy, delete, or execute files.",
+      "Unsupported requests are refused without execution."
+    ])
+  );
+}
+
 function renderGeneric(result) {
   clearCards();
   viewTitle.textContent = "Output";
@@ -834,6 +894,25 @@ document.getElementById("searchPathBtn").addEventListener("click", () => {
   );
 });
 
+document.getElementById("executePlannedRequestBtn").addEventListener("click", () => {
+  const api = getAPI();
+  if (!api?.executePlannedRequest) return showBridgeError("executePlannedRequest");
+
+  const input = document.getElementById("executePlannedRequestInput");
+  const requestText = input?.value?.trim() || "";
+
+  if (!requestText) {
+    clearCards();
+    viewTitle.textContent = "Planned Request Execution";
+    cardContainer.appendChild(makeCard("No request entered", ["Enter a supported read-only request to run."]));
+    setStatus("No request entered");
+    setOutput("No request entered.");
+    return;
+  }
+
+  runAction("Planned Request Execution", () => api.executePlannedRequest(requestText));
+});
+
 document.getElementById("clearBtn").addEventListener("click", () => {
   clearCards();
   setOutput("Waiting for action...");
@@ -853,6 +932,9 @@ if (api?.ping) {
   setOutput("Bridge error: window.pathwardenAPI is undefined.");
 }
 /* PATHWARDEN:BOOT:END */
+
+
+
 
 
 

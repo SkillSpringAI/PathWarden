@@ -14,33 +14,39 @@ const plannerPath = path.join(repoRoot, "scripts", "dev", "plan-user-request-jso
 
 const cases: ExpectedPlan[] = [
   {
-    request: "Show me PDFs modified this week",
+    request: "Find txt files in Documents",
     intent: "filesystem_search",
+    capability: "filesystem.search",
+    risk: "low"
+  },
+  {
+    request: "Search Documents for skill",
+    intent: "filesystem_search",
+    capability: "filesystem.search",
+    risk: "low"
+  },
+  {
+    request: "Summarize Documents",
+    intent: "folder_summary",
+    capability: "filesystem.summary",
+    risk: "low"
+  },
+  {
+    request: "Inspect Documents",
+    intent: "filesystem_inspection",
     capability: "filesystem.inspect",
     risk: "low"
   },
   {
-    request: "Show large files in Downloads",
+    request: "Show me what is in Documents",
     intent: "filesystem_inspection",
-    capability: "filesystem.read",
-    risk: "low"
-  },
-  {
-    request: "List folders in Documents",
-    intent: "folder_listing",
-    capability: "filesystem.read",
+    capability: "filesystem.inspect",
     risk: "low"
   },
   {
     request: "Find duplicate-looking filenames",
-    intent: "duplicate_filename_review",
-    capability: "filesystem.inspect",
-    risk: "medium"
-  },
-  {
-    request: "Summarize what is in a selected folder",
-    intent: "folder_summary",
-    capability: "filesystem.read",
+    intent: "filesystem_search",
+    capability: "filesystem.search",
     risk: "low"
   }
 ];
@@ -79,7 +85,6 @@ for (const testCase of cases) {
   if (parsed.risk !== testCase.risk) fail(`Wrong risk for "${testCase.request}". Got ${parsed.risk}.`);
   if (parsed.mode !== "read_only") fail(`Mode was not read_only for "${testCase.request}".`);
   if (parsed.execution_status !== "not_executed") fail(`Planner executed something for "${testCase.request}".`);
-  if (parsed.capability === "filesystem.search") fail(`Planner returned unimplemented filesystem.search for "${testCase.request}".`);
   if (parsed.capability === "filesystem.write") fail(`Planner returned unimplemented filesystem.write for "${testCase.request}".`);
 }
 

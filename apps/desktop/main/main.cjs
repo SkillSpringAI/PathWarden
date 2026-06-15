@@ -152,6 +152,9 @@ ipcMain.handle("pathwarden:searchPath", async (_, targetPath, extension, nameCon
     ...(minSizeBytes ? ["--min-size-bytes", String(minSizeBytes)] : [])
   ])
 );
+ipcMain.handle("pathwarden:executePlannedRequest", async (_, requestText) =>
+  runPathwardenJsonScript("scripts/dev/execute-planned-request-json.ts", [requestText])
+);
 
 ipcMain.handle("pathwarden:approveTask", async (_, taskId) => runPathwardenJsonScript("Pathwarden/scripts/dev/approve-task.ts", [taskId]));
 ipcMain.handle("pathwarden:cancelTask", async (_, taskId) => runPathwardenJsonScript("Pathwarden/scripts/dev/cancel-task.ts", [taskId]));
@@ -186,6 +189,7 @@ app.on("window-all-closed", () => {
     app.quit();
   }
 });
+
 
 
 
