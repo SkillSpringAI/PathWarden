@@ -1,29 +1,40 @@
 {
   "validated": [
     "Evidence Overview",
+    "Capabilities View",
     "Latest Report Index"
   ],
   "advancedReporting": [
     "Governance Report Export",
     "Replay Provenance Report Export",
-    "Federation Readiness Audit"
+    "Federation Readiness Audit",
+    "Replay Baseline",
+    "Replay Diff"
   ],
   "experimental": [
+    "User Request Planner",
+    "Planned Request Execution",
+    "Read-Only Path Inspection",
+    "Directory Summary",
+    "Filesystem Search",
     "Tasks / Approval Queue",
     "Filesystem Read",
     "Filesystem Move",
     "Filesystem Copy",
     "Filesystem Rename",
-    "Filesystem Delete"
+    "Filesystem Delete",
+    "Access Policy Settings"
   ],
   "notImplemented": [
-    "Filesystem Search",
     "Filesystem Write"
   ],
   "authorityMechanisms": [
     "Capability Grant Validation",
     "Permission Tokens",
+    "Legitimacy Artifacts",
     "Execution Policy",
-    "Access Policy"
+    "Access Policy",
+    "Trigger Registry",
+    "Revocation Handling"
   ]
 }

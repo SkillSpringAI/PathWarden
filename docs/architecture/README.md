@@ -2,398 +2,216 @@
 
 ## Overview
 
-PathWarden is a governed local execution runtime.
+PathWarden is a governed local execution runtime with a desktop shell on top of a policy-first core. The architecture is intentionally split so authority, execution, audit, replay, and UI remain inspectable instead of collapsing into one opaque automation layer.
 
-The system is intentionally split into layers so that:
+The current shape of the system is:
 
 ```text
-authority
-policy
-execution
-audit
-replay
+desktop shell / developer scripts
+            ↓
+     planning or task intake
+            ↓
+      governance validation
+            ↓
+ bounded capability execution
+            ↓
+      audit persistence
+            ↓
+   replay and evidence export
+```
 
-remain separable and inspectable.
+PathWarden is not designed as an unrestricted agent. It is designed to prove:
 
-The architecture prioritises:
+- who authorized an action
+- why it was allowed or refused
+- what local capability ran
+- what policy applied
+- what evidence was persisted
+- whether authority was later revoked or invalidated
 
-explicit authority
-bounded execution
-deterministic validation
-replayability
-revocation
-auditability
-fail-closed behaviour
+## Main Subsystems
 
-PathWarden is not designed as an unrestricted autonomous agent.
+### Governance kernel
 
-It is designed as a constrained execution layer capable of proving:
-
-who authorised an action
-why it was allowed
-what executed
-what policy applied
-what audit evidence exists
-whether authority was later revoked
-High-level architecture
-User / App
-    ?
-Capability Grant Validation
-    ?
-Permission Token Issuance
-    ?
-Legitimacy Artifact Generation
-    ?
-Task Creation
-    ?
-Task Runner
-    ?
-Execution Policy Validation
-    ?
-Permission Token Enforcement
-    ?
-Filesystem Execution
-    ?
-Audit Persistence
-    ?
-Authority Replay
-    ?
-Execution Replay
-    ?
-Trace Export
-Main subsystems
-1. Governance Kernel
-
-Location:
-
-core/kernel/
+Location: `core/kernel/`
 
 Responsible for:
 
-capability grants
-permission-token validation
-legitimacy artifacts
-trigger validation
-trigger drift detection
-execution policy enforcement
-refusal construction
-risk handling
-invariant enforcement
+- capability grant validation
+- permission-token validation and revocation checks
+- legitimacy artifacts
+- trigger validation and drift warnings
+- refusal construction
+- risk handling
+- execution-policy enforcement
 
-The kernel is the authority layer.
+The kernel is the authority layer. Execution should not occur until the kernel has allowed it.
 
-It decides whether execution is legitimate before execution occurs.
+### Execution layer
 
-2. Execution Layer
-
-Location:
-
-core/executor/
+Location: `core/executor/`
 
 Responsible for:
 
-committed execution
-filesystem operations
-policy enforcement
-runtime validation
-audit emission
+- governed filesystem execution
+- commit and undo execution paths
+- runtime validation handoff
+- audit emission
 
-The executor does not independently decide authority.
+The executor does not invent authority on its own. It executes only after governance approval succeeds.
 
-It executes only after governance approval succeeds.
+### Task system
 
-3. Task System
-
-Location:
-
-core/tasks/
+Location: `core/tasks/`
 
 Responsible for:
 
-task lifecycle
-task queueing
-task execution
-approval gating
-task audit events
-authority propagation into execution
+- task lifecycle and persistence
+- approval-gated execution
+- queue and lock handling
+- task audit history
+- carrying authority context into execution
 
-Tasks act as governance-aware execution envelopes.
+Tasks are the main queued execution envelope in the current repo.
 
-4. Audit Layer
+### Filesystem capability layer
 
-Location:
+Location: `capabilities/filesystem/`
 
-core/audit/
-audit/
+Current source-backed capabilities include:
+
+- inspection of an allowed directory
+- directory summary from immediate metadata
+- metadata-only search over immediate files
+- governed move, copy, rename, and delete execution paths
+
+`fsWrite.ts` is still unimplemented and should not be documented as a supported developer or desktop workflow.
+
+### Audit and replay layer
+
+Locations: `core/audit/`, `audit/`, `exports/`
 
 Responsible for:
 
-audit event persistence
-authority artifact persistence
-replay reconstruction
-trace export
+- audit event persistence
+- authority artifact persistence
+- replay by trace ID
+- trace export
+- replay baselines and replay diffs
+- governance and federation-readiness evidence outputs
 
-The audit layer exists for:
+Replay is part of the product’s evidence model, not just a debugging aid.
 
-debugging
-forensic reconstruction
-governance verification
-future federation visibility
-5. Policy Layer
+### Policy and schema layer
 
-Location:
+Locations: `policy/`, `schemas/`
 
-policy/
+Responsible for:
 
-Responsible for runtime governance configuration.
+- execution policy
+- trigger registry
+- app and tool registry data
+- grants and refusals
+- revocation lists
+- schema validation of core runtime artifacts
 
-Current policy domains:
+PathWarden prefers explicit data contracts over implicit runtime assumptions.
 
-policy/runtime/
-policy/triggers/
-policy/authority/
+### Desktop shell
 
-Examples:
+Location: `apps/desktop/`
 
-execution policy
-trigger registry
-token revocation list
-6. Schema Layer
+Responsible for:
 
-Location:
+- surfacing validated evidence status
+- exposing a lightweight capability inventory
+- bridging to selected developer scripts
+- offering experimental read-only planning and inspection flows
 
-schemas/
+The desktop shell is currently a thin interface over local scripts and should be treated as a bounded operator surface, not a full productized control plane.
 
-All major governance objects are schema-validated.
+## Current Capability Shape
 
-Examples:
+Current validated desktop slices:
 
-actions
-plans
-commits
-triggers
-policies
-authority objects
+- Evidence Overview
+- Capabilities view
 
-PathWarden prefers explicit schemas over implicit runtime assumptions.
+Current experimental or advanced slices:
 
-Authority model
-Capability grants
+- diagnostics and audit viewing
+- task and approval queue management
+- user-request planning
+- read-only folder inspection
+- directory summary
+- metadata-only filesystem search
+- planned-request execution for supported read-only flows
 
-Capability grants determine whether an application is allowed to request authority.
+## Authority Model
 
-Capability grants evaluate:
+Capability grants determine whether an app or tool can request authority. Successful validation leads to bounded authority artifacts such as permission tokens and legitimacy artifacts.
 
-app identity
-tool identity
-requested risk
-approval requirement
-registry state
-policy compatibility
+Permission tokens currently capture fields such as:
 
-Successful grants issue:
+- token ID
+- trace ID
+- app ID
+- tool ID
+- granted operations
+- risk ceiling
+- approval requirement
+- audit requirement
+- issuer
+- expiry
 
-permission token
-+
-legitimacy artifact
-Permission tokens
+Revocation state is loaded from `policy/authority/permission-token-revocations.json`, and replay surfaces revoked token evidence explicitly.
 
-Permission tokens are bounded authority objects.
+## Replay and Evidence
 
-Current token fields include:
+Replay reconstructs execution state using:
 
-token ID
-trace ID
-app ID
-tool ID
-granted operations
-risk ceiling
-approval requirement
-issuer
-expiry
-audit requirement
+- authority records
+- audit events
+- revocation data
+- reconstructed authority chains
 
-Permission tokens are enforced during execution.
+Current replay and evidence tooling covers:
 
-Revocation
+- replay by trace ID
+- trace export
+- replay baselines
+- replay diffs
+- governance reports
+- replay provenance reports
+- federation-readiness audits
+- latest report index export
 
-Revocation is handled through:
-
-policy/authority/permission-token-revocations.json
-
-Revoked tokens fail validation and therefore fail execution.
-
-Replay surfaces revoked-token evidence explicitly.
-
-Replay system
-
-Replay reconstructs execution history using:
-
-authority records
-audit events
-execution traces
-reconstructed authority chains
-
-Replay utilities:
-
-npm run replay:trace -- <trace_id>
-npm run export:trace -- <trace_id>
-
-Replay output includes:
-
-permission token IDs
-legitimacy artifact IDs
-revoked token IDs
-audit decision codes
-reconstructed chain
-Trigger system
-
-Trigger definitions are stored in:
-
-policy/triggers/trigger-registry.json
-
-Runtime trigger hits are validated against the registry.
-
-Unknown or disabled triggers generate drift warnings instead of silently diverging.
-
-This prevents governance drift between:
-
-runtime behaviour
-and
-declared governance state
-Current execution boundaries
+## Current Boundaries
 
 PathWarden currently supports:
 
-local filesystem execution
-governed task execution
-replayable authority chains
+- local-first governed execution
+- explicit authority artifacts
+- replayable evidence
+- advisory federation-readiness reporting
 
-PathWarden does not yet implement:
+PathWarden does not currently provide:
 
-distributed execution
-swarm orchestration
-federation
-cryptographic signing
-remote authority propagation
-autonomous planning
+- federation runtime
+- delegated cross-runtime authority
+- remote execution
+- unrestricted natural-language planning
+- production-ready operator UX
 
-These are future layers.
+## Architectural Direction
 
-Development methodology
+The project is evolving toward governed execution infrastructure rather than general-purpose automation tooling.
 
-PathWarden is intentionally developed incrementally.
+That direction includes:
 
-Preferred workflow:
+- stronger authority integrity
+- clearer policy surfaces
+- portable replay evidence
+- future federation compatibility
 
-inspect
-? patch narrowly
-? run check
-? run diagnostics
-? commit clean milestone
-
-Governance features should gain diagnostics before becoming mandatory.
-
-The project prioritises architectural integrity over development speed.
-
-Architectural direction
-
-PathWarden is evolving toward:
-
-governed execution infrastructure
-
-rather than:
-
-general automation tooling
-
-The long-term direction includes:
-
-federated governance
-delegated authority
-replayable distributed execution
-authority-chain integrity
-bounded orchestration
-governance-first local automation
-
-Governance trust layer
-
-Location:
-
-```text
-core/trust/
-policy/trust/
-
-The governance trust layer validates the authenticity and validity of governance evidence.
-
-Current capabilities include:
-
-multi-signer trust
-signer lifecycle validation
-fingerprint validation
-purpose enforcement
-historical trust verification
-trust-manifest validation
-signature-envelope validation
-
-The trust layer allows replay and audit systems to distinguish:
-
-trusted authority
-revoked authority
-suspended authority
-historically valid authority
-
-Replay integrity layer
-
-Replay is no longer treated solely as a debugging capability.
-
-Replay now acts as a governance evidence reconstruction system.
-
-Current replay integrity validation includes:
-
-authority-chain hash validation
-authority-record hash validation
-continuity-break detection
-revocation awareness
-authority reconstruction
-audit reconstruction
-
-Replay outputs are consumed by diagnostics and trace export tooling.
-
-Diagnostic layer
-
-Location:
-
-scripts/dev/
-diagnostics/
-
-Diagnostics continuously verify:
-
-governance integrity
-trust integrity
-replay integrity
-authority continuity
-schema validity
-execution correctness
-
-The diagnostic system intentionally executes deterministically so results remain reproducible across runs.
-
-Federation readiness
-
-Federation is not currently implemented.
-
-However several subsystems have been designed with federation compatibility in mind:
-
-authority artifacts
-permission tokens
-legitimacy artifacts
-replay bundles
-trust manifests
-
-The current architecture is intended to support future:
-
-portable authority
-cross-runtime verification
-delegated authority
-replayable federation
-
-without requiring redesign of the local governance model.
+Historical roadmap and release documents in `docs/roadmap/` and `docs/releases/` remain useful context, but this file should be treated as the current architecture summary.

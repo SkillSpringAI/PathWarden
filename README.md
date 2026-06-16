@@ -1,309 +1,132 @@
 # PathWarden
 
-PathWarden is a local-first governed execution runtime for filesystem and task automation.
+PathWarden is a local-first governed execution runtime for filesystem and task automation. It is the layer that decides whether local work should be allowed, records why, and preserves replayable evidence after the fact.
 
-It is designed to execute local actions only when they pass explicit governance checks: schema validation, capability grants, permission-token authority, execution policy, audit logging, trace continuity, revocation checks, and replayable evidence.
+PathWarden is not an unrestricted autonomous agent. The project is centered on bounded authority, explicit policy, auditability, and replay.
 
-PathWarden is not an autonomous agent. It is the governed local execution layer: the part of the system allowed to touch files, run approved tasks, emit audit records, and preserve forensic traces.
+## What Exists Today
 
-## Current Demo: Evidence Overview
+Current implemented areas include:
 
-PathWarden currently has a validated read-only desktop demo path:
+- Governance kernel validation for capability grants, permission tokens, legitimacy artifacts, triggers, refusals, risk, and execution policy
+- Local task storage, approval gating, task execution, and task history
+- Replayable audit and authority persistence
+- Evidence export and verification for governance, replay provenance, federation readiness, policy manifests, and authority snapshots
+- Read-only filesystem inspection, directory summary, and metadata-only search
+- A desktop shell with a validated evidence view and additional experimental or advanced controls
 
-```text
-View Evidence
+## Current Product Surface
 
-This workflow shows the latest local evidence posture through simplified desktop cards while preserving raw JSON for power users.
+The repo currently exposes two main ways to work with PathWarden.
 
-What the demo shows
-governance report status
-release-safe posture
-replay provenance status
-replay lineage completeness
-federation readiness status
-report artifact paths
-read-only evidence boundary
-advanced raw JSON output
-What the demo does not do
-execute tasks
-approve actions
-mutate policy
-generate reports from the UI
-start federation runtime
-perform signing
-use network behavior
-```
+### CLI and developer scripts
 
-## Current status
+The root `package.json` is the main developer entry point. It includes scripts for:
+
+- type-checking
+- diagnostics and regression coverage
+- evidence export and verification
+- replay and trace export
+- read-only filesystem inspection, summary, and search
+- user-request planning and approval-queue task creation
+
+### Desktop shell
+
+The Electron shell lives under `apps/desktop/`.
+
+Current desktop status:
+
+- Validated: `View Evidence`, `View Capabilities`
+- Experimental or advanced: diagnostics, audit viewing, task queue controls, user-request planning, read-only folder inspection, directory summary, metadata-only search, planned-request execution, and approval-request creation
+
+The desktop shell is still a thin bridge over local scripts and governance logic. It is not yet a polished end-user product.
+
+## Current Boundaries
 
 PathWarden currently supports:
 
-- Filesystem action planning and committed execution
-- Schema-validated plans, commits, actions, authority artifacts, policies, and trigger registries
-- Approval-gated task execution
-- Capability grant validation
-- Permission token issuance, validation, enforcement, and revocation
-- Decision legitimacy artifacts
-- Authority artifact persistence
-- Authority and execution replay by trace ID
-- Trace export utilities
-- Runtime audit logging
-- Task history and result archiving
-- Trigger registry validation and drift warning
-- Pre-commit checks using TypeScript and diagnostics
+- local execution only
+- explicit authority artifacts
+- policy-checked filesystem and task workflows
+- replay and evidence generation
+- advisory federation-readiness reporting
 
-The current implementation remains local-first and filesystem-focused.
+PathWarden does not currently provide:
 
-## Evidence and Reporting Status
+- unrestricted natural-language automation
+- networked execution
+- delegated cross-runtime authority
+- federation runtime
+- remote trust negotiation
+- production-ready policy administration UX
 
-Current evidence/reporting tag:
+`capabilities/filesystem/fsWrite.ts` remains unimplemented, and write-like desktop workflows should still be treated as incomplete unless a specific governed path is documented in code and tests.
 
-```text
-pw-v0.1.5-report-fixtures-and-regression-hardening
-
-PathWarden currently supports local evidence generation and verification for:
-
-authority snapshots
-replay baselines
-replay diffs
-authority export verification
-policy manifests
-policy hashing
-diagnostic metadata
-governance reports
-replay provenance reports
-federation readiness audits
-report verifiers
-verifier fixture tests
-report input support tests
-
-Current evidence posture:
-
-local evidence generation is implemented
-report verification is implemented
-fixture-based regression coverage is implemented
-report input support is tested
-federation readiness remains advisory and non-executable
-
-PathWarden does not currently implement:
-
-federation runtime
-delegated authority
-cross-runtime trust negotiation
-signing
-network behavior
-remote endpoint calls
-runtime federation decisions
-diagnostic runner replacement
-grouped diagnostic execution
-
-Recommended local verification sequence:
-
-npm run check
-npm run diag
-npm run verify:diagnostic-metadata
-npm run test:governance-report-verifier
-npm run test:replay-provenance-verifier
-npm run test:federation-readiness-verifier
-npm run test:report-input-support
-npm run test:report-fixture-schemas
-
-Evidence references:
-
-docs/audit/RELEASE_EVIDENCE_SUMMARY.md
-docs/audit/EVIDENCE_POSTURE_SUMMARY.md
-docs/audit/REPORT_VERIFIER_USAGE.md
-docs/audit/REPORT_VERIFIER_NEGATIVE_CASE_MATRIX.md
-
-## Governance model
-
-PathWarden follows a simple execution rule:
-
-```text
-No local action should execute unless its authority, risk, policy, and audit path are explicit.
-The main chain is:
-
-Capability Grant
-? Permission Token
-? Legitimacy Artifact
-? Task Payload
-? Execution Policy
-? Permission Token Validation
-? Filesystem Execution
-? Audit Event
-? Authority Replay
-? Execution Replay
-Authority model
-
-PathWarden now treats execution authority as a first-class object.
-
-Permission tokens
-
-Permission tokens define bounded authority:
-
-token ID
-trace ID
-app ID
-tool ID
-granted operations
-risk ceiling
-approval requirement
-audit requirement
-issuer
-expiry
-signature stub
-
-A supplied permission token is enforced at execution time. Invalid scope, trace mismatch, expired token, revoked token, or excessive risk causes refusal.
-
-Decision legitimacy artifacts
-
-Decision legitimacy artifacts explain why authority was legitimate:
-
-artifact ID
-trace ID
-mode
-decision code
-invariant checks
-trigger hits
-approval state
-capability source
-authority chain
-risk level
-audit requirement
-
-These artifacts are persisted and replayable.
-
-Execution policy
-
-Execution behaviour is controlled by:
-
-policy/runtime/execution-policy.json
-
-Current policy fields:
-
-mandatory_permission_tokens
-mandatory_audit
-allow_legacy_execution
-
-This allows staged migration from compatibility mode to mandatory permission-token enforcement.
-
-Revocation
-
-Permission tokens can be revoked through:
-
-policy/authority/permission-token-revocations.json
-
-Revoked tokens are refused by the permission-token validator and therefore fail through task and execution paths.
-
-Replay also surfaces revoked token IDs.
-
-Trigger registry
-
-Runtime trigger hits are governed by:
-
-policy/triggers/trigger-registry.json
-
-The registry defines:
-
-trigger ID
-name
-severity
-plane
-enabled status
-description
-
-Runtime trigger hits are validated against the registry. Unknown or disabled triggers emit drift warnings instead of silently diverging.
-
-Audit and replay
-
-PathWarden writes runtime audit evidence under:
-
-audit/
-
-Runtime audit output is intentionally ignored by git.
-
-Replay utilities can reconstruct execution context by trace ID:
-
-npm run replay:trace -- <trace_id>
-npm run export:trace -- <trace_id>
-
-Replay output includes:
-
-authority records
-permission token IDs
-legitimacy artifact IDs
-revoked token IDs
-audit decision codes
-reconstructed authority/execution chain
-
-Trace exports are written to:
-
-exports/traces/
-
-Runtime exports are ignored by git.
-
-Main commands
+## Key Commands
 
 Install dependencies:
 
+```bash
 npm install
+cd apps/desktop && npm install
+```
 
 Type-check:
 
+```bash
 npm run check
+```
 
-Run diagnostics:
+Run the main regression and diagnostic chain:
 
+```bash
 npm run diag
+```
 
-Replay a trace:
+Plan a read-only user request:
 
-npm run replay:trace -- <trace_id>
+```bash
+npm run plan:user-request -- "Find txt files in Documents"
+```
 
-Export a trace:
+Execute a supported read-only planned request:
 
-npm run export:trace -- <trace_id>
-Development discipline
+```bash
+npm run execute:planned-request -- "Find txt files in Documents"
+```
 
-PathWarden should be developed using a guarded workflow:
+Export current evidence artifacts:
 
-inspect files
-? patch narrowly
-? run check
-? run diagnostics
-? commit only clean milestones
+```bash
+npm run export:governance-report
+npm run export:replay-provenance-report
+npm run export:federation-readiness-audit
+npm run export:latest-report-index
+```
 
-Every governance feature should have diagnostic coverage before becoming mandatory.
+Launch the desktop shell:
 
-Current limitations
+```bash
+cd apps/desktop
+npm start
+```
 
-PathWarden does not yet provide:
+## Repository Map
 
-full natural-language task creation
-autonomous planning
-swarm/federated orchestration
-production UI polish
-cryptographic signing of permission tokens
-hash-chained authority artifacts
-remote revocation propagation
-production-grade policy administration
+- `core/` - governance, audit, execution, trust, and task runtime logic
+- `capabilities/` - filesystem capability implementations
+- `policy/` - execution policy, triggers, grants, trust, refusals, and revocations
+- `schemas/` - JSON schemas for runtime artifacts
+- `scripts/dev/` - developer-facing commands and regression scripts
+- `apps/desktop/` - Electron shell
+- `docs/` - architecture, governance, replay, diagnostics, capability, and release notes
 
-These are future layers. The current focus is governed local execution and replayable authority.
+## Suggested Reading
 
-Roadmap
+- [Architecture Overview](C:/Users/Laptop/Desktop/Pathwarden/docs/architecture/README.md)
+- [Capability Inventory](C:/Users/Laptop/Desktop/Pathwarden/docs/capabilities/CAPABILITY_INVENTORY.md)
+- [Governance Overview](C:/Users/Laptop/Desktop/Pathwarden/docs/governance/README.md)
+- [Replay Overview](C:/Users/Laptop/Desktop/Pathwarden/docs/replay/README.md)
+- [Diagnostics Overview](C:/Users/Laptop/Desktop/Pathwarden/docs/diagnostics/README.md)
 
-Near-term priorities:
-
-Complete README and architecture documentation
-Strengthen task authority and replay documentation
-Add richer trace export formats
-Add authority-chain hashing
-Add token expiry and revocation replay diagnostics
-Add governance export bundles
-Prepare federation-aware permission-token fields
-Build UI only after backend governance remains stable
-Project principle
-
-PathWarden prioritises explicit authority over convenience.
-
-A local action should not be merely possible. It should be authorised, bounded, traceable, auditable, replayable, and revocable.
+Historical release notes under `docs/releases/` and roadmap notes under `docs/roadmap/` are useful context, but they should be read as milestone snapshots rather than the single source of truth for current capability posture.

@@ -151,16 +151,16 @@ Authority hash validation: implemented
 Record hash validation: implemented
 Continuity break detection: implemented
 Revocation replay awareness: implemented
-Replay diffing: not implemented
+Replay baselines: implemented
+Replay diffing: implemented
+Replay provenance reporting: implemented
 Replay snapshots: not implemented
 Replay drift detection: not implemented
 Future Replay Features
 
 Future replay hardening may include:
 
-replayDiff.ts
 replaySnapshot.ts
-replayBaseline.ts
 replayDriftDetector.ts
 replayExportVerifier.ts
 
