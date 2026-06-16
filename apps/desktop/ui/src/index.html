@@ -105,6 +105,15 @@
             <button id="executePlannedRequestBtn">Plan and Run</button>
           </section>
 
+                  <section class="subpanel">
+            <h3>Create Planned Request Approval</h3>
+            <p class="muted">
+              Create an approval-gated planned request. This queues the request but does not execute it.
+            </p>
+            <textarea id="plannedRequestTaskInput" rows="3" placeholder="Example: Find txt files in Documents"></textarea>
+            <button id="createPlannedRequestTaskBtn">Create Approval Request</button>
+          </section>
+
         <section class="subpanel">
             <h3>Default Task Templates</h3>
             <button id="loadDefaultTasksBtn">Load Experimental Task Templates</button>
@@ -147,6 +156,7 @@
   <script src="./renderer.js"></script>
 </body>
 </html>
+
 
 
 

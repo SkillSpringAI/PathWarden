@@ -138,7 +138,7 @@ function readCapabilityInventory() {
 
 ipcMain.handle("pathwarden:runStartup", async () => runPathwardenJsonScript("Pathwarden/scripts/dev/run-startup-json.ts"));
 ipcMain.handle("pathwarden:runDiagnostics", async () => runPathwardenJsonScript("Pathwarden/scripts/dev/run-diagnostics-json.ts"));
-ipcMain.handle("pathwarden:viewTasks", async () => runPathwardenJsonScript("Pathwarden/scripts/dev/get-tasks-json.ts"));
+ipcMain.handle("pathwarden:viewTasks", async () => runPathwardenJsonScript("scripts/dev/get-tasks-json.ts"));
 ipcMain.handle("pathwarden:viewAuditRecent", async () => runPathwardenJsonScript("Pathwarden/scripts/dev/get-audit-json.ts"));
 ipcMain.handle("pathwarden:viewDiagnosticsLatest", async () => runPathwardenJsonScript("Pathwarden/scripts/dev/get-diagnostics-json.ts"));
 ipcMain.handle("pathwarden:planUserRequest", async (_, text) => runPathwardenJsonScript("scripts/dev/plan-user-request-json.ts", [text]));
@@ -156,11 +156,12 @@ ipcMain.handle("pathwarden:executePlannedRequest", async (_, requestText) =>
   runPathwardenJsonScript("scripts/dev/execute-planned-request-json.ts", [requestText])
 );
 
-ipcMain.handle("pathwarden:approveTask", async (_, taskId) => runPathwardenJsonScript("Pathwarden/scripts/dev/approve-task.ts", [taskId]));
-ipcMain.handle("pathwarden:cancelTask", async (_, taskId) => runPathwardenJsonScript("Pathwarden/scripts/dev/cancel-task.ts", [taskId]));
-ipcMain.handle("pathwarden:runTask", async (_, taskId) => runPathwardenJsonScript("Pathwarden/scripts/dev/run-task.ts", [taskId]));
+ipcMain.handle("pathwarden:approveTask", async (_, taskId) => runPathwardenJsonScript("scripts/dev/approve-task.ts", [taskId]));
+ipcMain.handle("pathwarden:cancelTask", async (_, taskId) => runPathwardenJsonScript("scripts/dev/cancel-task.ts", [taskId]));
+ipcMain.handle("pathwarden:runTask", async (_, taskId) => runPathwardenJsonScript("scripts/dev/run-task.ts", [taskId]));
 
 ipcMain.handle("pathwarden:createTaskDraftFromText", async (_, text) => runPathwardenJsonScript("Pathwarden/scripts/dev/create-task-draft-json.ts", [text]));
+ipcMain.handle("pathwarden:createPlannedRequestTask", async (_, text) => runPathwardenJsonScript("scripts/dev/create-planned-request-task-json.ts", [text]));
 ipcMain.handle("pathwarden:getDefaultTasks", async () => runPathwardenJsonScript("Pathwarden/scripts/dev/get-default-tasks-json.ts"));
 ipcMain.handle("pathwarden:createTaskFromTemplate", async (_, templateId) => runPathwardenJsonScript("Pathwarden/scripts/dev/create-task-from-template-json.ts", [templateId]));
 
@@ -189,6 +190,8 @@ app.on("window-all-closed", () => {
     app.quit();
   }
 });
+
+
 
 
 

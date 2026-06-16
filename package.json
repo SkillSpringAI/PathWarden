@@ -97,7 +97,13 @@
                     "search:path":  "tsx scripts/dev/search-path-json.ts",
                     "test:filesystem-search":  "tsx scripts/dev/test-filesystem-search.ts",
                     "execute:planned-request":  "tsx scripts/dev/execute-planned-request-json.ts",
-                    "test:planner-execution-bridge":  "tsx scripts/dev/test-planner-execution-bridge.ts"
+                    "test:planner-execution-bridge":  "tsx scripts/dev/test-planner-execution-bridge.ts",
+                    "create:planned-request-task":  "tsx scripts/dev/create-planned-request-task-json.ts",
+                    "run:task":  "tsx scripts/dev/run-task.ts",
+                    "get:tasks":  "tsx scripts/dev/get-tasks-json.ts",
+                    "approve:task":  "tsx scripts/dev/approve-task.ts",
+                    "cancel:task":  "tsx scripts/dev/cancel-task.ts",
+                    "test:planned-request-approval-queue":  "tsx scripts/dev/test-planned-request-approval-queue.ts"
                 },
     "devDependencies":  {
                             "@types/node":  "^20.11.30",

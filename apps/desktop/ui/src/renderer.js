@@ -913,6 +913,52 @@ document.getElementById("executePlannedRequestBtn").addEventListener("click", ()
   runAction("Planned Request Execution", () => api.executePlannedRequest(requestText));
 });
 
+document.getElementById("createPlannedRequestTaskBtn").addEventListener("click", async () => {
+  const api = getAPI();
+  if (!api?.createPlannedRequestTask) return showBridgeError("createPlannedRequestTask");
+
+  const input = document.getElementById("plannedRequestTaskInput");
+  const text = input?.value?.trim() || "";
+
+  if (!text) {
+    clearCards();
+    viewTitle.textContent = "Planned Request Approval";
+    cardContainer.appendChild(makeCard("No request entered", ["Enter a request to queue for approval."]));
+    setStatus("No planned request entered");
+    setOutput("No request entered.");
+    return;
+  }
+
+  await runAction("Create Planned Request Approval", () => api.createPlannedRequestTask(text));
+
+  if (api.viewTasks) {
+    await runAction("Tasks / Approval Queue", () => api.viewTasks());
+  }
+});
+
+document.getElementById("createPlannedRequestTaskBtn").addEventListener("click", async () => {
+  const api = getAPI();
+  if (!api?.createPlannedRequestTask) return showBridgeError("createPlannedRequestTask");
+
+  const input = document.getElementById("plannedRequestTaskInput");
+  const text = input?.value?.trim() || "";
+
+  if (!text) {
+    clearCards();
+    viewTitle.textContent = "Planned Request Approval";
+    cardContainer.appendChild(makeCard("No request entered", ["Enter a request to queue for approval."]));
+    setStatus("No planned request entered");
+    setOutput("No request entered.");
+    return;
+  }
+
+  await runAction("Create Planned Request Approval", () => api.createPlannedRequestTask(text));
+
+  if (api.viewTasks) {
+    await runAction("Tasks / Approval Queue", () => api.viewTasks());
+  }
+});
+
 document.getElementById("clearBtn").addEventListener("click", () => {
   clearCards();
   setOutput("Waiting for action...");
@@ -932,6 +978,8 @@ if (api?.ping) {
   setOutput("Bridge error: window.pathwardenAPI is undefined.");
 }
 /* PATHWARDEN:BOOT:END */
+
+
 
 
 

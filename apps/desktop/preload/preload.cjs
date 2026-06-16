@@ -23,6 +23,7 @@ const api = {
   runTask: (taskId) => ipcRenderer.invoke("pathwarden:runTask", taskId),
 
   createTaskDraftFromText: (text) => ipcRenderer.invoke("pathwarden:createTaskDraftFromText", text),
+  createPlannedRequestTask: (text) => ipcRenderer.invoke("pathwarden:createPlannedRequestTask", text),
   getDefaultTasks: () => ipcRenderer.invoke("pathwarden:getDefaultTasks"),
   createTaskFromTemplate: (templateId) => ipcRenderer.invoke("pathwarden:createTaskFromTemplate", templateId),
 
@@ -33,6 +34,7 @@ const api = {
 };
 
 contextBridge.exposeInMainWorld("pathwardenAPI", api);
+
 
 
 
